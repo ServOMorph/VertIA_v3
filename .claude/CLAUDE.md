@@ -114,3 +114,6 @@ Section réservée aux règles propres à ce projet, hors périmètre du kit. Ce
 
 - Installation : installer sur le lecteur D: quand c'est possible.
 - Lancement : créer un `run.py` à la racine pour lancer le projet si besoin. Si plusieurs `run.py` sont nécessaires, les nommer `run_<nom>.py`.
+- Délégation code : Claude est chef de projet. Tâches bien délimitées → Codex (`_codex/run_codex.ps1`, revue en `-Sandbox read-only`, code délicat en `workspace-write`) ou OpenCode (`_codex/run_opencode.ps1`, tâches simples à brief autonome). Cycle : brief depuis `_codex/BRIEF_TEMPLATE.md` → `-DryRun` → run → lecture STATUT/OUVERT → revue du diff → commit par Claude seul. Inscrire chaque délégation dans `file_agents.md`.
+- Dossiers de référence (VibeObs, IA_V7, ComfyUI-Qwen, ACE-Step-1.5, CreaZik_V3, site_internet_ST_v3, IA_Eco-Responsable, TableauDeBord) : lecture seule, ne jamais y écrire.
+- Architecture et faits moteurs : `_docs/architecture.md` ; mise en production : `MISE_EN_PROD.md` (mis à jour par `/close`, vérifié par `/mise_en_prod`).

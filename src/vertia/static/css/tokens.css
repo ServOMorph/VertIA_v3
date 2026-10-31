@@ -1,0 +1,44 @@
+@font-face {
+  font-family: "Space Grotesk";
+  src: url(../fonts/space-grotesk-latin.woff2) format("woff2");
+  font-weight: 300 700;
+  font-display: swap;
+}
+
+@font-face {
+  font-family: "Inter";
+  src: url(../fonts/inter-latin.woff2) format("woff2");
+  font-weight: 100 900;
+  font-display: swap;
+}
+
+:root {
+  color-scheme: dark;
+  --bg: #050d08;
+  --surface: rgb(16 34 24 / .72);
+  --surface-strong: rgb(12 26 18 / .92);
+  --text: #e8f6ec;
+  --muted: #9bb5a4;
+  --accent: #9bff7a;
+  --accent-2: #3de0b5;
+  --amber: #ffb347;
+  --on-accent: #04110a;
+  --soft: rgb(155 255 122 / .14);
+  --line: rgb(155 255 122 / .16);
+  --erreur: #ff9d7a;
+  --erreur-fond: rgb(255 157 122 / .1);
+  --card-bg: linear-gradient(160deg, rgb(26 52 37 / .72), rgb(9 20 14 / .78));
+  --glow: 0 0 26px rgb(155 255 122 / .35);
+  --glow-hover: 0 0 38px rgb(155 255 122 / .55);
+  --radius: 16px;
+  --radius-sm: 10px;
+  --radius-pill: 999px;
+  --gap: 1rem;
+  --topbar: 3.75rem;
+  --font-body: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+  --font-title: "Space Grotesk", var(--font-body);
+  --c-image: #5fd4ff;
+  --c-musique: #ff7ad9;
+  --c-video: #ffe066;
+  --c-chat: #9bff7a;
+}

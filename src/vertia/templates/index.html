@@ -1,0 +1,79 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#050d08">
+  <title>VertIA</title>
+  <link rel="preload" href="/static/fonts/space-grotesk-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="preload" href="/static/fonts/inter-latin.woff2" as="font" type="font/woff2" crossorigin>
+  <link rel="icon" href="/static/img/logo.png">
+  <link rel="stylesheet" href="/static/css/tokens.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/css/app.css?v={{ version }}">
+</head>
+<body>
+  <header class="topbar">
+    <div class="brand">
+      <img src="/static/img/logo.webp" alt="" class="brand__logo" width="36" height="36">
+      <span class="brand__name">Vert<em>IA</em></span>
+      <span class="pulse" id="etat-serveur" role="status" aria-live="polite" title="Connexion au serveur">hors ligne</span>
+    </div>
+    <nav class="panel-toggles" aria-label="Afficher ou masquer les panneaux" id="panel-toggles">
+      <button type="button" class="toggle" data-toggle="chat" aria-pressed="true">Discussion</button>
+      <button type="button" class="toggle" data-toggle="fichiers" aria-pressed="true">Fichiers</button>
+      <button type="button" class="toggle" data-toggle="memoire" aria-pressed="false">Mémoire</button>
+      <button type="button" class="toggle" data-toggle="outils" aria-pressed="false">Outils</button>
+    </nav>
+  </header>
+
+  <main class="workspace" id="workspace">
+    <section class="panel panel--main" data-panel="chat" aria-labelledby="titre-chat">
+      <header class="panel__head">
+        <h2 id="titre-chat">Discussion</h2>
+      </header>
+      <div class="panel__body" id="chat-zone">
+        <div class="empty">
+          <p class="eyebrow">Bienvenue</p>
+          <p>Décrivez ce que vous voulez créer : une image, une musique, bientôt une vidéo. Je prépare la demande, vous validez.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="fichiers" aria-labelledby="titre-fichiers">
+      <header class="panel__head">
+        <h2 id="titre-fichiers">Fichiers</h2>
+        <button type="button" class="icon-btn" data-close="fichiers" aria-label="Masquer le panneau Fichiers">×</button>
+      </header>
+      <div class="panel__body" id="fichiers-zone">
+        <p class="muted">Les images, musiques et vidéos créées dans la discussion apparaîtront ici.</p>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="memoire" aria-labelledby="titre-memoire">
+      <header class="panel__head">
+        <h2 id="titre-memoire">Mémoire et file d'attente</h2>
+        <button type="button" class="icon-btn" data-close="memoire" aria-label="Masquer le panneau Mémoire">×</button>
+      </header>
+      <div class="panel__body" id="memoire-zone">
+        <p class="muted">L'état de la mémoire de l'ordinateur et les tâches en attente apparaîtront ici.</p>
+      </div>
+    </section>
+
+    <section class="panel" data-panel="outils" aria-labelledby="titre-outils">
+      <header class="panel__head">
+        <h2 id="titre-outils">Outils</h2>
+        <button type="button" class="icon-btn" data-close="outils" aria-label="Masquer le panneau Outils">×</button>
+      </header>
+      <div class="panel__body" id="outils-zone">
+        <p class="muted">Les outils disponibles (image, musique, vidéo) et leur état apparaîtront ici.</p>
+      </div>
+    </section>
+  </main>
+
+  <footer class="footer muted">Tout fonctionne sur votre ordinateur. Rien n'est envoyé sur internet.</footer>
+
+  <script src="/static/vendor/marked.umd.js?v={{ version }}"></script>
+  <script src="/static/vendor/purify.min.js?v={{ version }}"></script>
+  <script type="module" src="/static/js/main.js?v={{ version }}"></script>
+</body>
+</html>

@@ -13,3 +13,5 @@ node_modules/
 data/
 outputs/
 *.log
+_codex/runs/
+.playwright-mcp/

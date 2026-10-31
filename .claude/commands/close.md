@@ -266,4 +266,13 @@ Lire `.claude/zones.md` pour obtenir la table des alias → dossiers réels.
 <!-- Convention : toute règle liée à une étape précise de la Procédure ci-dessus doit la
      référencer explicitement par son numéro (ex: "Étape 6 : ..."), plutôt que compter sur la
      position physique de cette zone (toujours en fin de fichier). -->
+Étape 8 (complément, après README) : mettre à jour `MISE_EN_PROD.md` à la racine.
+- Si la session a modifié des dépendances, la configuration, des variables d'environnement, le schéma
+  de base (migrations), des ports, des moteurs externes (chemins, commandes de lancement) ou la
+  procédure de lancement : réécrire les sections concernées (Prérequis, Moteurs externes, Variables
+  d'environnement — noms et rôle, jamais de valeurs secrètes —, Installation, Lancement, Vérification,
+  Retour arrière) et ajouter en tête du Journal une ligne `AAAA-MM-JJ vX.Y : changement`.
+- Sinon, ne pas toucher le fichier.
+Étape 12 : confirmer explicitement que l'étape 8 complément a été traitée.
+Étape 13 : inclure `MISE_EN_PROD.md` dans le `git add`.
 <!-- SPECIFICITES PROJET : FIN -->
