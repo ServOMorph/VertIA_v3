@@ -1,0 +1,15 @@
+.env
+.env.*
+!.env.example
+*.key
+*.pem
+credentials*.json
+*token*.json
+*.token
+.claude/settings.local.json
+__pycache__/
+.venv/
+node_modules/
+data/
+outputs/
+*.log
