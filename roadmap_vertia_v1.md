@@ -9,7 +9,7 @@ Méthode : Claude chef de projet ; tâches bien délimitées déléguées à Cod
 
 ---
 
-## Phase 0 — Fondations [EN COURS]
+## Phase 0 — Fondations [FAIT]
 - Squelette FastAPI (`src/vertia/`), `config.py` (Settings depuis `.env`), SQLite + migrations versionnées, bus d'événements SSE unique.
 - `run.py` : uvicorn `--reload` + attente du port + ouverture du navigateur.
 - Front vanilla en modules ES : layout à panneaux affichables/masquables (Chat, Fichiers, Mémoire & file, Outils), état persistant (localStorage), charte SérénIA Tech (polices locales Space Grotesk / Inter, tokens CSS).
@@ -20,7 +20,7 @@ Méthode : Claude chef de projet ; tâches bien délimitées déléguées à Cod
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 1 — Chat (port IA_V7 en async) [TODO]
+## Phase 1 — Chat (port IA_V7 en async) [EN COURS]
 - Client Ollama `httpx.AsyncClient` (stream, keep_alive, num_ctx cohérent, /api/ps, load/unload ciblé — jamais `taskkill` global).
 - Dossiers (prompt système par dossier), conversations, messages, titre auto, éphémère corrigé (historique en mémoire).
 - Gestion du contexte : fenêtre glissante + résumé incrémental des messages écartés, calibrage via `prompt_eval_count`, garde de dépassement.
