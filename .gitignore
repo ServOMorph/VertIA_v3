@@ -25,3 +25,4 @@ _codex/runs/
 
 _orchestration/state/
 _orchestration/etat.md
+.tmp_*/

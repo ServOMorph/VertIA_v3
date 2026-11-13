@@ -1,0 +1,5 @@
+{
+  "private": true,
+  "scripts": { "test:ui": "node tests/ui_chat.cjs" },
+  "devDependencies": { "@playwright/test": "1.61.1" }
+}

@@ -38,6 +38,11 @@ class Settings:
     acestep_port: int
     vram_limit_percent: int
     ram_limit_percent: int
+    engine_idle_seconds: int = 300
+    local_config: Path = ROOT / ".vertia-local.json"
+    ollama_executable: str = ''
+    ollama_autostart: bool = True
+    resident_vram_reserve_mb: int = 512
 
     @classmethod
     def from_env(cls, **overrides: object) -> "Settings":
@@ -58,7 +63,19 @@ class Settings:
             acestep_port=int(_env("VERTIA_ACESTEP_PORT", "8001")),
             vram_limit_percent=int(_env("VERTIA_VRAM_LIMIT_PERCENT", "92")),
             ram_limit_percent=int(_env("VERTIA_RAM_LIMIT_PERCENT", "90")),
+            engine_idle_seconds=max(0, int(_env("VERTIA_ENGINE_IDLE_SECONDS", "300"))),
+            ollama_executable=_env('VERTIA_OLLAMA_EXECUTABLE', ''),
+            ollama_autostart=_env('VERTIA_OLLAMA_AUTOSTART', 'true').lower() not in {'0', 'false', 'no'},
+            resident_vram_reserve_mb=max(128, int(_env('VERTIA_RESIDENT_VRAM_RESERVE_MB', '512'))),
         )
+        config_path = Path(overrides.get("local_config", settings.local_config))
+        if config_path.is_file():
+            from vertia.setup import SetupConfig
+            try:
+                saved = SetupConfig.model_validate_json(config_path.read_text(encoding="utf-8"))
+            except (ValueError, OSError) as exc:
+                raise ValueError(f"Configuration locale illisible : {config_path}. Corrigez ou renommez ce fichier.") from exc
+            settings = replace(settings, **saved.settings_values())
         return replace(settings, **overrides) if overrides else settings
 
     @property

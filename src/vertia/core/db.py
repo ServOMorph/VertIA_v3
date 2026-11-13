@@ -12,6 +12,65 @@ MIGRATIONS: list[str] = [
         valeur TEXT NOT NULL
     );
     """,
+    """
+    CREATE TABLE dossiers (
+        id TEXT PRIMARY KEY, nom TEXT NOT NULL, system_prompt TEXT NOT NULL DEFAULT ''
+    );
+    CREATE TABLE conversations (
+        id TEXT PRIMARY KEY, dossier_id TEXT REFERENCES dossiers(id) ON DELETE SET NULL,
+        titre TEXT NOT NULL, modele TEXT NOT NULL,
+        resume TEXT NOT NULL DEFAULT '', resume_count INTEGER NOT NULL DEFAULT 0,
+        date_maj TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE TABLE messages (
+        id INTEGER PRIMARY KEY AUTOINCREMENT,
+        conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+        role TEXT NOT NULL CHECK (role IN ('user', 'assistant')),
+        contenu TEXT NOT NULL, statut TEXT NOT NULL,
+        erreur TEXT NOT NULL DEFAULT ''
+    );
+    CREATE INDEX messages_conversation ON messages(conversation_id, id);
+    """,
+    """
+    CREATE TABLE jobs (
+        id TEXT PRIMARY KEY, kind TEXT NOT NULL, engine TEXT NOT NULL,
+        payload TEXT NOT NULL DEFAULT '{}', priority INTEGER NOT NULL DEFAULT 0,
+        resumable INTEGER NOT NULL DEFAULT 1,
+        status TEXT NOT NULL DEFAULT 'attente', progress REAL NOT NULL DEFAULT 0,
+        error TEXT NOT NULL DEFAULT '', revision INTEGER NOT NULL DEFAULT 0,
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX jobs_pending ON jobs(status, priority);
+    """,
+    """
+    CREATE TABLE actions (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+        message_id INTEGER NOT NULL, tool TEXT NOT NULL, parameters TEXT NOT NULL,
+        status TEXT NOT NULL DEFAULT 'proposee', job_id TEXT,
+        result TEXT NOT NULL DEFAULT '{}'
+    );
+    CREATE INDEX actions_conversation ON actions(conversation_id);
+    """,
+    """
+    CREATE TABLE fichiers (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+        action_id TEXT NOT NULL, job_id TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('image','audio','video')),
+        mime TEXT NOT NULL, name TEXT NOT NULL, size INTEGER NOT NULL,
+        prompt TEXT NOT NULL, parameters TEXT NOT NULL,
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX fichiers_conversation ON fichiers(conversation_id);
+    """,
+    """
+    ALTER TABLE dossiers ADD COLUMN epingle INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE dossiers ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE conversations ADD COLUMN epingle INTEGER NOT NULL DEFAULT 0;
+    ALTER TABLE conversations ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
+    """,
 ]
 
 

@@ -10,6 +10,7 @@
   <link rel="icon" href="/static/img/logo.png">
   <link rel="stylesheet" href="/static/css/tokens.css?v={{ version }}">
   <link rel="stylesheet" href="/static/css/app.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/css/chat.css?v={{ version }}">
 </head>
 <body>
   <header class="topbar">
@@ -17,8 +18,10 @@
       <img src="/static/img/logo.webp" alt="" class="brand__logo" width="36" height="36">
       <span class="brand__name">Vert<em>IA</em></span>
       <span class="pulse" id="etat-serveur" role="status" aria-live="polite" title="Connexion au serveur">hors ligne</span>
+      <span class="pulse" id="etat-ollama" role="status" aria-live="polite" title="Service Ollama et modèles chargés">Ollama : vérification…</span>
     </div>
     <nav class="panel-toggles" aria-label="Afficher ou masquer les panneaux" id="panel-toggles">
+      <button type="button" class="toggle" id="ouvrir-installation">Accueil et réglages</button>
       <button type="button" class="toggle" data-toggle="chat" aria-pressed="true">Discussion</button>
       <button type="button" class="toggle" data-toggle="fichiers" aria-pressed="true">Fichiers</button>
       <button type="button" class="toggle" data-toggle="memoire" aria-pressed="false">Mémoire</button>
@@ -26,17 +29,47 @@
     </nav>
   </header>
 
+  <div class="app-layout">
+    <aside class="navigation" aria-labelledby="navigation-titre">
+      <h2 id="navigation-titre" class="visually-hidden">Discussions et projets</h2>
+      <div class="navigation-create">
+        <button type="button" class="navigation-new-chat" id="nouvelle-discussion"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M8 3H4.5A1.5 1.5 0 0 0 3 4.5v11A1.5 1.5 0 0 0 4.5 17h11a1.5 1.5 0 0 0 1.5-1.5V12 M10 11l-1 3 3-1 6-6-2-2z"/></svg>Nouveau chat</button>
+        <button type="button" class="navigation-create-project" id="nouveau-dossier" aria-label="Créer un dossier" title="Nouveau projet"><svg viewBox="0 0 20 20" aria-hidden="true"><path d="M2.5 5.5h5l1.7 2h8.3v8.8H2.5z M10 10v4 M8 12h4"/></svg>Nouveau projet</button>
+      </div>
+      <div id="navigation-arbre" aria-label="Dossiers et discussions" title="Glissez pour classer ou déplacer. Le menu … permet d’épingler, renommer et supprimer."></div>
+      <details class="navigation-shortcuts">
+        <summary>Accès rapide et sélection</summary>
+        <label>Discussion <select id="conversations" aria-label="Discussion"></select></label>
+        <button type="button" class="toggle" id="renommer-discussion">Renommer la discussion</button>
+        <button type="button" class="toggle" id="supprimer-discussion">Supprimer la discussion</button>
+        <button type="button" class="toggle" id="modifier-dossier">Modifier le dossier sélectionné</button>
+        <button type="button" class="toggle" id="supprimer-dossier">Supprimer le dossier sélectionné</button>
+      </details>
+    </aside>
   <main class="workspace" id="workspace">
     <section class="panel panel--main" data-panel="chat" aria-labelledby="titre-chat">
       <header class="panel__head">
         <h2 id="titre-chat">Discussion</h2>
       </header>
-      <div class="panel__body" id="chat-zone">
-        <div class="empty">
-          <p class="eyebrow">Bienvenue</p>
-          <p>Décrivez ce que vous voulez créer : une image, une musique, bientôt une vidéo. Je prépare la demande, vous validez.</p>
-        </div>
+      <div class="chat-controls">
+        <label>Dossier <select id="dossiers" aria-label="Dossier"><option value="">Sans dossier</option></select></label>
+        <label>Modèle <select id="modeles" aria-label="Modèle"></select></label>
+        <button type="button" class="toggle" id="actualiser-modeles">Actualiser les modèles Ollama</button>
+        <label><input type="checkbox" id="ephemere"> Éphémère (en mémoire)</label>
       </div>
+      <p class="chat-status muted" id="accueil-avertissement" role="status"></p>
+      <p class="chat-status muted" id="modeles-statut" role="status"></p>
+      <div class="panel__body" id="chat-zone" role="log" aria-label="Messages de la discussion"></div>
+      <p class="chat-status muted" id="chat-statut" role="status" aria-live="polite">Choisissez un modèle et écrivez votre message.</p>
+      <form id="chat-form" class="chat-compose">
+        <label for="chat-message" class="muted">Votre message</label>
+        <textarea id="chat-message" rows="3" maxlength="100000" required placeholder="Écrivez votre message…"></textarea>
+        <div id="chat-pieces-jointes" aria-label="Pièces jointes sélectionnées" aria-live="polite"></div>
+        <div class="chat-actions">
+          <button class="btn" type="submit" id="envoyer-message">Envoyer</button>
+          <button class="btn btn--ghost" type="button" id="stop-chat">Stop et annuler la file</button>
+        </div>
+      </form>
     </section>
 
     <section class="panel" data-panel="fichiers" aria-labelledby="titre-fichiers">
@@ -69,8 +102,59 @@
       </div>
     </section>
   </main>
+  </div>
 
-  <footer class="footer muted">Tout fonctionne sur votre ordinateur. Rien n'est envoyé sur internet.</footer>
+  <dialog id="installation-dialog" aria-labelledby="installation-titre">
+    <h2 id="installation-titre">Bienvenue dans VertIA</h2>
+    <p>1. Vérifiez vos moteurs ci-dessous. Le chat utilise Ollama ; image, musique et vidéo sont facultatifs.</p>
+    <p>2. Écrivez votre demande dans Discussion. Pour créer un fichier, relisez la carte proposée puis validez-la.</p>
+    <p>3. Retrouvez le résultat dans Fichiers. Mémoire affiche la tâche en cours ; les moteurs se relaient sur le GPU.</p>
+    <details>
+      <summary>Comment démarrer le chat avec Ollama ?</summary>
+      <ol>
+        <li>VertIA démarre automatiquement le service Ollama installé sur cet ordinateur, ou réutilise celui qui fonctionne déjà. Le badge en haut indique son état et les modèles chargés.</li>
+        <li>Le modèle défini dans les réglages est préchargé au démarrage. Le badge indique l’attente du GPU, le chargement puis le nom du modèle chargé. Les modèles installés apparaissent automatiquement dans la liste.</li>
+        <li>L’adresse habituelle est <code>http://127.0.0.1:11434</code>. Si vous changez cette adresse dans les réglages ci-dessous, enregistrez et redémarrez VertIA.</li>
+        <li>Cliquez « Accéder à la discussion », puis « Nouvelle discussion », écrivez votre message et cliquez « Envoyer ». Si vous choisissez un autre modèle ou si le précédent a été déchargé, il sera chargé à la demande.</li>
+      </ol>
+      <p class="muted">Si aucun modèle n’est installé, installez-en un dans Ollama avant de poursuivre. VertIA ne télécharge pas les modèles.</p>
+    </details>
+    <form id="installation-form">
+      <details id="installation-chemins">
+        <summary>Chemins et modèle de chat</summary>
+        <p class="muted">Indiquez les dossiers contenant les moteurs déjà installés. Ces réglages prennent effet après un arrêt puis un relancement de VertIA.</p>
+        <label>Adresse locale Ollama <input name="ollama_url" required maxlength="200"></label>
+        <label>Modèle de chat <input name="default_model" required maxlength="200" list="installation-modeles"></label>
+        <datalist id="installation-modeles"></datalist>
+        <label>Dossier ComfyUI <input name="comfy_dir" required maxlength="1000"></label>
+        <label>Port ComfyUI <input name="comfy_port" type="number" required min="1024" max="65535"></label>
+        <label>Dossier ACE-Step <input name="acestep_dir" required maxlength="1000"></label>
+        <label>Port ACE-Step <input name="acestep_port" type="number" required min="1024" max="65535"></label>
+      </details>
+      <div class="chat-actions">
+        <button type="button" class="btn btn--ghost" id="installation-diagnostic">Vérifier les moteurs</button>
+        <button type="submit" class="btn">Enregistrer les réglages</button>
+      </div>
+    </form>
+    <p id="installation-statut" role="status" aria-live="polite"></p>
+    <div id="installation-resultats" aria-live="polite"></div>
+    <p class="muted">Le diagnostic ne lance aucun moteur et ne télécharge aucun modèle. Un moteur arrêté peut être correctement installé. La présence d’un fichier ne garantit pas une génération réussie.</p>
+    <button type="button" class="btn" id="installation-fermer">Accéder à la discussion</button>
+  </dialog>
+
+  <dialog id="dossier-dialog">
+    <form id="dossier-form">
+      <h2>Dossier de discussions</h2>
+      <label>Nom <input id="dossier-nom" maxlength="120" required></label>
+      <label>Instructions pour l'assistant <textarea id="dossier-prompt" rows="7" maxlength="30000"></textarea></label>
+      <div class="chat-actions">
+        <button class="btn" type="submit">Enregistrer</button>
+        <button class="btn btn--ghost" type="button" id="fermer-dossier">Annuler</button>
+      </div>
+    </form>
+  </dialog>
+
+  <footer class="footer muted">Les moteurs configurés par l’assistant sont locaux. Les téléchargements de modèles se font séparément.</footer>
 
   <script src="/static/vendor/marked.umd.js?v={{ version }}"></script>
   <script src="/static/vendor/purify.min.js?v={{ version }}"></script>

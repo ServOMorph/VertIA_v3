@@ -29,6 +29,14 @@ def wait_port(host: str, port: int, timeout: float = 30.0) -> bool:
     return False
 
 
+def port_in_use(host: str, port: int) -> bool:
+    try:
+        with socket.create_connection((host, port), timeout=.5):
+            return True
+    except OSError:
+        return False
+
+
 def open_when_ready(url: str, host: str, port: int) -> None:
     if wait_port(host, port):
         webbrowser.open(url)
@@ -43,6 +51,15 @@ def main() -> None:
     args = parser.parse_args()
 
     settings = Settings.from_env()
+    if port_in_use(settings.host, settings.port):
+        print(
+            f"Lancement annulé : le port {settings.port} est déjà utilisé. "
+            "Une ancienne instance de VertIA peut encore servir une API obsolète. "
+            "Arrêtez-la avec Ctrl+C dans son terminal, puis relancez cette commande. "
+            "Aucun nouveau serveur ni navigateur n’a été ouvert.",
+            file=sys.stderr,
+        )
+        raise SystemExit(1)
     if not args.no_browser:
         threading.Thread(
             target=open_when_ready, args=(settings.url, settings.host, settings.port), daemon=True

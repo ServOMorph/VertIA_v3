@@ -2,6 +2,15 @@
 
 Recherche du 2026-10-31. [V] = vérifié sur source, [E] = estimation / chiffre communautaire.
 
+## Décision d’intégration — 2026-11-02
+
+L’utilisateur a validé Wan 2.2 TI2V-5B GGUF Q4_K_M pour la phase 7. Cette décision
+autorise son intégration ; elle ne valide pas les performances ni la qualité sur la machine.
+Le tableau des mesures ci-dessous reste à remplir par les tests réels.
+Le graphe suit le [template officiel ComfyUI](https://raw.githubusercontent.com/Comfy-Org/workflow_templates/main/templates/video_wan2_2_5B_ti2v.json),
+consulté le 2026-11-02 : encodeur Wan, latent TI2V, shift 8, uni_pc/simple, CFG 5, 24 fps.
+Adaptations locales : chargeur GGUF, VAE tuilé, MP4 H.264, bornes prudentes de surface/durée.
+
 ## Candidats retenus (RTX 4060 8 Go, 48 Go RAM)
 
 | Rang | Modèle | Licence | Téléchargement | Temps attendu |

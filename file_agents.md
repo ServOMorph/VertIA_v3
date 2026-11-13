@@ -7,8 +7,39 @@ Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude 
 ## Ensuite (séquentiel)
 
 ## En attente (utilisateur)
+- Réutilisation du modèle résident : chat au-delà de 92 % avec réserve de 512 Mio/3 %, refus proche de saturation et pics réels à valider (`tests_manuels.md`).
+- Préchargement du modèle par défaut : états attente/chargement, premier message, mémoire et annulation GPU réels à valider après redémarrage (`tests_manuels.md`).
+- Instance obsolète sur le port 4310 : arrêter l’ancien serveur puis relancer le code actuel ; vérification des nouvelles API et du démarrage Ollama (`tests_manuels.md`).
+- Démarrage automatique Ollama : lancement réel, réutilisation/arrêt limité au processus détenu, badge service/modèles et reprise réseau à valider (`tests_manuels.md`).
+- Navigation latérale et accueil : validation sur l’instance réelle après redémarrage, migration des anciennes discussions, rangement persistant et premier échange Ollama (`tests_manuels.md`).
+- Phase 8 Accueil/distribution : parcours novice, installation sur autre machine, diagnostic réel, réglages après redémarrage et restauration à valider (`tests_manuels.md`). Installateur décrit, non réalisé.
+- Phase 7 Vidéo : Wan validé, texte/image → MP4 et carte livrés ; routage LLM, qualité, mémoire, annulation et codec réels à vérifier (`tests_manuels.md`).
+- Phase 6 Consolidation : annulations et récupération réelles après arrêt de moteur, fichier local absent (`tests_manuels.md`).
+- Phase 5 Musique : vrai LLM, qualité des paroles/chant/instrumental, ressources, arrêt ACE et lecture/téléchargement MP3 (`tests_manuels.md`) après tests Python/Edge simulés.
+- Phase 4 Fichiers : téléchargements et Explorateur réels, copie persistante, édition Qwen avec références et qualité ; lecteurs réels musique/vidéo après branchement des moteurs (`tests_manuels.md`).
+- Phase 3 Outils/Qwen : validation du routage avec le vrai LLM, génération, ressources, reprise et aperçu réels (`tests_manuels.md`) après tests simulés Python/Edge.
+- Phase 2 Ressources : validation matérielle et Ollama réel (`tests_manuels.md`) après tests simulés de l'arbitre, de la file et du panneau Mémoire.
+- Phase 1 Chat : validation avec Ollama réel (`tests_manuels.md`) après implémentation et tests simulés par Codex.
 - Test vidéo n°1 Wan 2.2 TI2V-5B (`tests_manuels.md`).
 
 ## Terminé
+- 2026-11-13 · Codex · correction des 4 défauts de la revue (orphelins après mort du parent, busy() après relance annulée, active de l'arbitre après démarrage raté, libération Ollama injoignable) ; 6 tests de régression, 240 tests verts. Aucun moteur lancé.
+- 2026-11-13 · Codex (read-only) · revue du code non commité des phases 1 à 8 : 4 défauts IMPORTANT, aucun BLOQUANT.
+- 2026-11-07 · agent chat_codex (délégation explicite utilisateur) · zone de chat inspirée de Codex, copie exacte des messages utilisateur/assistant y compris Markdown et flux Unicode, header synchronisé, formulaire mobile accessible ; test dédié et test UI principal réussis, captures bureau/mobile contrôlées.
+- 2026-11-07 · Codex · garde VRAM pour même modèle GPU et contexte déjà résidents : réserve 512 Mio/3 %, seuil normal conservé pour chargement/changement, RAM inchangée ; métadonnées de modèle transmises en mémoire via la file, compteur Windows Name corrigé. 203 tests Python réussis, contrôle mémoire réel en lecture seule autorisé sur l’état courant (modèle déchargé, VRAM 22,44 %), aucun calcul GPU.
+- 2026-11-07 · agent sidebar_codex (délégation explicite utilisateur) · navigation inspirée de la capture Codex : Nouveau chat, Épinglés/Projets, conversations indentées, Afficher plus ; tests Edge simulés complets réussis et capture contrôlée.
+- 2026-11-07 · Codex · préchargement unique du modèle Ollama par défaut après disponibilité du service, via la file GPU avec garde mémoire, annulation protégée et badge d’avancement ; tests simulés, aucun chargement réel ni serveur lancé.
+- 2026-11-07 · Codex · cause du démarrage Ollama reproduite par GET réels sans lancement : refus TCP Windows après environ 2,04 s, délai HTTP de 2 s trop court ; connexion portée à 5 s, lecture conservée à 2 s, régression simulée ajoutée. 14 tests de supervision réussis ; lancement réel à valider après redémarrage utilisateur.
+- 2026-11-03 · Codex · diagnostic réel des 404 : instance du 31 octobre encore active sur 4310 ; garde de port occupé dans le lanceur, erreur UI explicite pour les routes absentes, tests ciblés. Aucun processus arrêté ni serveur lancé.
+- 2026-11-03 · Codex · démarrage automatique du service Ollama dans le lifespan, découverte de l’exécutable, réutilisation d’instance, supervision HTTP sans préchargement, badge service/modèles et actualisation automatique ; tests avec processus/HTTP simulés, aucun serveur ni GPU lancé par Codex.
+- 2026-11-02 · Codex · correction de l’accès immédiat à Discussion, délais réseau de l’accueil, navigation gauche dossiers/discussions, épinglage, renommage, suppression avec confirmation, ordre persistant, glisser-déposer et alternatives clavier ; aide Ollama intégrée. Validation API et Edge simulée ; aucun serveur, GPU ni commit.
+- 2026-11-02 · Codex · phase 8 : accueil guidé, diagnostic HTTP/disque sans lancement, réglages locaux atomiques appliqués au redémarrage, récupération Ollama, guide installation/dépannage/sauvegarde et plan d’installateur ; tests Python/Edge simulés. Validation réelle et fabrication de l’installateur en attente ; aucun serveur, GPU ni commit, roadmap inchangée.
+- 2026-11-02 · Codex · phase 7 : intégration Wan 2.2 TI2V-5B GGUF validée par l’utilisateur, graphe texte/image vers MP4 H.264 muet, serveur et identité GPU partagés avec Qwen, carte et lecteur vidéo, copie/aperçu bornés ; tests Python/Edge simulés. Aucun serveur, GPU, téléchargement de modèle ni commit ; validation réelle en attente, roadmap inchangée.
+- 2026-11-02 · Codex · phase 6 : revue des couches livrées, arrêt des processus mutualisé, survivants et annulations répétées protégés, contrôles ComfyUI et aperçu absent corrigés ; tests de régression et documentation développeur. Validation matérielle en attente ; aucun serveur, GPU ni commit ; roadmap inchangée.
+- 2026-11-01 · Codex · phase 5 : adaptateur ACE-Step paresseux, arrêt de l’arbre détenu, outil musique et validation des paroles/caption/durée, carte dédiée et copie MP3 en galerie ; tests Python/Edge simulés. Validation réelle en attente ; aucun serveur, GPU ni commit ; roadmap inchangée.
+- 2026-11-01 · Codex · phase 4 : stockage des nouveaux résultats et métadonnées, galerie image/audio/vidéo, téléchargement et dossier Windows, références courtes dans le chat et édition Qwen ; tests API/Edge simulés, validation réelle en attente. Aucun serveur, génération GPU ou commit ; roadmap inchangée.
+- 2026-11-01 · Codex · phase 3 : contrats Engine/Tool, registre modulaire, orchestration et cartes validables, adaptateur Qwen, aperçu et tests simulés ; validation réelle en attente, aucun serveur ni génération GPU lancé, aucun commit. Contrôle des correctifs externes prévu en lecture seule par l’adaptateur, application manuelle requise si absents. Roadmap inchangée.
+- 2026-11-01 · Codex · phase 2 : mesures mémoire, arbitre GPU, jobs SQLite, garde-fous, inactivité, panneau Mémoire et branchement Chat ; validation réelle en attente, aucun serveur ni génération GPU lancé, aucun commit. Roadmap inchangée.
+- 2026-11-01 · Codex · implémentation phase 1 Chat, tests Python et UI simulée Edge ; aucun serveur ni appel GPU lancé, aucun commit. Roadmap laissée inchangée dans l'attente de la validation manuelle.
 - 2026-10-31 · sous-agents Explore · analyses IA_V7, ComfyUI-Qwen/ACE-Step/CreaZik, délégation, charte/UI/TableauDeBord.
 - 2026-10-31 · sous-agent recherche · état de l'art vidéo locale (`_docs/benchmark_video.md`).
