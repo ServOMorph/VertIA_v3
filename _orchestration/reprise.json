@@ -1,0 +1,7 @@
+{
+  "creation_llm": {
+    "cwd": "D:\\ServOMorph\\creation_llm",
+    "cmd": ["D:\\ServOMorph\\creation_llm\\.venv\\Scripts\\python.exe", "run_369m.py"],
+    "match": "run_369m.py"
+  }
+}
