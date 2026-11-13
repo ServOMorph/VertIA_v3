@@ -15,3 +15,13 @@ outputs/
 *.log
 _codex/runs/
 .playwright-mcp/
+.tmp_tests/
+.tmp_tests_phase3/
+.tmp_tests_music/
+.tmp_ui/
+
+.vertia-local.json
+.vertia-local.json.*.tmp
+
+_orchestration/state/
+_orchestration/etat.md
