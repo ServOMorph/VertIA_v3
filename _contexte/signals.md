@@ -28,6 +28,7 @@
 - `D:\ServOMorph\VibeObs\DEPLOYMENTS.md` : ligne VertIA_v3 ajoutée (seule écriture autorisée dans le kit).
 - Jeton GPU : creation_llm détient un jeton long interruptible ; état courant par `python _orchestration/vram_lock.py status`.
 - Mode `/telephone` installé (copie du kit VibeObs, demande validée par VibeObs puis par l'utilisateur le 2026-11-13).
+- Relance après fermeture de toutes les sessions : ouvrir VertIA (`/start`, puis `vram_lock.py status`), puis les 4 sessions ; l'entraînement creation_llm (processus détaché) continue et garde le jeton ; les attentes `--wait` sont à relancer ; texte « orchestr » des 4 CLAUDE.md non relu.
 - Résidus Codex non commités (README, MISE_EN_PROD, tests_manuels, src/, tests/...) volontairement exclus du commit d'orchestration.
 
 ## Dernière session (2026-11-13)
