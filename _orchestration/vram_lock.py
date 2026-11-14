@@ -20,6 +20,7 @@ BASELINE_DEFAUT_MIB = 1200
 DUREE_MAX_MIN = 45
 DUREE_MAX_LONGUE_MIN = 1440
 FILE_TTL_S = 300
+PRIORITE_TACHE_LONGUE = 9
 ATTENTE_CODES = {2, 3, 4, 7}
 
 
@@ -186,7 +187,9 @@ def tenter(a, session):
             return 7
         if actif or rang > 0:
             write_json("queue.json", queue_triee)
-            if actif and lock.get("long") and lock.get("interruptible") and not a.long:
+            if actif and lock.get("long") and lock.get("interruptible") and (
+                not a.long or a.priority < lock.get("priority", PRIORITE_TACHE_LONGUE)
+            ):
                 if not pause_flag(lock["holder"]).exists():
                     pause_flag(lock["holder"]).write_text(f"demande de {session}\n", encoding="utf-8")
                     journal(f"PAUSE_DEMANDEE holder={lock['holder']} par={session}")
@@ -207,7 +210,7 @@ def tenter(a, session):
             return 4
         minutes = bornes_duree(a.minutes, a.long)
         lock = {
-            "holder": session, "gb": a.gb, "long": a.long,
+            "holder": session, "gb": a.gb, "long": a.long, "priority": a.priority,
             "interruptible": not a.non_interruptible, "started": now(),
             "expires": now() + minutes * 60,
         }

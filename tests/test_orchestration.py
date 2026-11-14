@@ -69,6 +69,33 @@ def test_pause_demandee_au_detenteur_long(lock):
     assert run(lock, "acquire", "video") == 0
 
 
+def test_demande_longue_prioritaire_met_le_detenteur_en_pause(lock):
+    assert run(lock, "acquire", "llm", "--long", "--minutes", "600", "--priority", "9") == 0
+    assert run(lock, "acquire", "video", "--long", "--non-interruptible", "--priority", "2") == 2
+    assert run(lock, "should-pause", "llm") == 0
+    assert run(lock, "release", "llm") == 0
+    assert run(lock, "acquire", "video", "--long", "--non-interruptible", "--priority", "2") == 0
+
+
+def test_demande_longue_non_prioritaire_ne_met_pas_en_pause(lock):
+    assert run(lock, "acquire", "llm", "--long", "--minutes", "600", "--priority", "2") == 0
+    assert run(lock, "acquire", "video", "--long", "--priority", "5") == 2
+    assert run(lock, "should-pause", "llm") == 1
+    assert run(lock, "acquire", "x", "--long", "--priority", "2") == 2
+    assert run(lock, "should-pause", "llm") == 1
+
+
+def test_jeton_ancien_sans_priorite_traite_comme_tache_longue(lock):
+    import json
+    assert run(lock, "acquire", "llm", "--long", "--minutes", "600") == 0
+    chemin = lock.STATE / "lock.json"
+    donnees = json.loads(chemin.read_text(encoding="utf-8"))
+    donnees.pop("priority")
+    chemin.write_text(json.dumps(donnees), encoding="utf-8")
+    assert run(lock, "acquire", "video", "--long", "--priority", "5") == 2
+    assert run(lock, "should-pause", "llm") == 0
+
+
 def test_pas_de_pause_si_detenteur_non_interruptible(lock):
     assert run(lock, "acquire", "video", "--non-interruptible") == 0
     assert run(lock, "acquire", "x") == 2
