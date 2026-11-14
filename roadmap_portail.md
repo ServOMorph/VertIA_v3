@@ -75,6 +75,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 ## Phase 2 — Architecture cible [TODO]
 - Arborescence définitive, contrat de module (déclaration, capacités, besoins VRAM, adaptateur), `models/` partagé et jonctions, config des chemins.
 - Contrat CLI / API versionné (commandes, codes de sortie, timeout, démarrage automatique).
+- Boucle demande / génération / retour (décision utilisateur du 2026-11-15, version hybride) : demande avec critère de réussite et nombre d'essais maximal ; livraison dans `outbox/<session>/` (jamais d'écriture dans le dossier d'une session) ; retour de la session (valide / à refaire + motif) ; analyse des frictions par VertIA seulement pour un type de demande nouveau ou après 2 échecs ; journal de chaque demande, essai et retour, pour améliorer les zones et les sessions.
 - Procédure d'archivage des dépôts.
 - Mise à jour de `_docs/architecture.md`.
 - Gate : architecture validée par l'utilisateur.
@@ -88,6 +89,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 - Pour les modèles Ollama locaux : creation_llm interrompu proprement (checkpoint sauvegardé, jeton GPU libéré) avant le benchmark, puis relancé uniquement sur ordre écrit de l'utilisateur, pas automatiquement à la fin du benchmark.
 - Dossiers, `.gitignore` (engines, models, outputs), registre de modules, résolution des chemins par config.
 - `vertia_gen.py` : soumission de job, démarrage automatique du serveur, attente, sortie sur une ligne.
+- Boucle demande / retour dans `vertia_gen.py` : `outbox/<session>/`, commande de retour, plafond d'essais, journal ; tests (succès au premier essai, refus puis succès, plafond atteint).
 - Écran d'accueil du portail (choix d'activité), alimenté par le registre.
 - Tests : registre, chemins, module factice, CLI (serveur absent, GPU occupé, timeout, succès).
 
