@@ -26,3 +26,4 @@ _codex/runs/
 _orchestration/state/
 _orchestration/etat.md
 .tmp_*/
+_contexte/journal_session.md

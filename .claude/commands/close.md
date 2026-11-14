@@ -275,4 +275,9 @@ Lire `.claude/zones.md` pour obtenir la table des alias → dossiers réels.
 - Sinon, ne pas toucher le fichier.
 Étape 12 : confirmer explicitement que l'étape 8 complément a été traitée.
 Étape 13 : inclure `MISE_EN_PROD.md` dans le `git add`.
+Étapes 3, 4 et 5 (journal de session, demande VibeObs validée par l'utilisateur le 2026-11-13) : lire
+`_contexte/journal_session.md` et intégrer ses lignes à la synthèse (étape 3), à `signals.md` (étape 4) et
+à `contexte.md` (étape 5). Étape 13 : une fois le commit réussi, jamais avant, vider le journal (fichier
+conservé vide) ; le journal est gitignoré : pas d'inclusion au commit, et ne pas le signaler parmi
+les fichiers ignorés au bilan de l'étape 15.
 <!-- SPECIFICITES PROJET : FIN -->

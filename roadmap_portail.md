@@ -10,7 +10,7 @@ Objectif : regrouper sous `D:\ServOMorph\VertIA_v3\` tout le travail d'IA locale
 5. Public : l'utilisateur d'abord. VertIA est l'atelier ; les produits pour novices sont des dépôts séparés qui réutilisent ses briques.
 6. Service aux autres sessions : CLI `vertia_gen.py` (pas de MCP), client léger de l'API VertIA (localhost), passage par la file de jobs et le jeton GPU, sortie = chemin du fichier produit sur une ligne, codes de sortie explicites. Démarrage automatique du serveur VertIA si absent.
 7. Autonomie : validation par phase (checkpoint) ; seuils de sollicitation inchangés (téléchargement > 20 Go, < 100 Go libres sur D:, installation système, suppression de données, dépense).
-8. Modules cibles : chat, image, musique, vidéo, 3D, animation 3D, entraînement de LLM (avec utilisation des LLM créés), WorldModel.
+8. Modules cibles : chat, image, musique, vidéo, 3D, animation 3D, entraînement de LLM (avec utilisation des LLM créés), WorldModel, voix (TTS_Local : Chatterbox, Kokoro ; whisper), ajouté le 2026-11-14 et rattaché à la phase 5 (CreaZik utilise Chatterbox pour ses jingles).
 9. Musique : génération ACE-Step et système d'apprentissage de CreaZik_V3 basculés dans VertIA ; CreaZik_V3 devient client de VertIA via un contrat d'API versionné. Génération uniquement sur la machine de l'utilisateur (la version distribuée de CreaZik ne génère pas) : pas d'empaquetage moteur.
 10. Exception : VertIA est autorisé à modifier CreaZik_V3 pour le seul branchement à VertIA.
 11. Poids de modèles : déplacés vers `VertIA/models/`, l'original pointe dessus par jonction Windows (exception à la copie seule, limitée aux poids). Poids et checkpoints de creation_llm intouchés tant que l'entraînement tourne.
@@ -103,8 +103,9 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 5 — Musique et branchement CreaZik_V3 [TODO]
-- Migration d'ACE-Step et du système d'apprentissage de CreaZik_V3 (paramètres, entraînement, poids produits).
+## Phase 5 — Musique, voix et branchement CreaZik_V3 [TODO]
+- Module voix : migration de TTS_Local (Chatterbox, Kokoro) et de whisper selon les règles communes ; `vertia_gen.py voice`.
+- Migration d'ACE-Step et du système d'apprentissage de CreaZik_V3. Précision de l'inventaire : ce système est un calcul de préférences sur les votes de la webradio, pas un entraînement ; le contrat d'API précise où vit ce calcul (décision de phase 2).
 - `vertia_gen.py music` et API musique versionnée.
 - Modification de CreaZik_V3 (exception décision 10) pour qu'il génère via VertIA ; aucune autre écriture dans CreaZik_V3.
 - Tests : génération identique avant/après, entraînement reproductible, CreaZik_V3 fonctionnel via VertIA.
