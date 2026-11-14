@@ -146,8 +146,17 @@ def bornes_duree(minutes, longue):
     return max(1, min(minutes, plafond))
 
 
+def ordre_urgences():
+    return read_json("urgences.json", {}).get("ordre", [])
+
+
+def priorite(session, defaut):
+    ordre = ordre_urgences()
+    return ordre.index(session) + 1 if session in ordre else defaut
+
+
 def file_triee(queue):
-    return sorted(queue, key=lambda q: (q["priority"], q["ts"]))
+    return sorted(queue, key=lambda q: (priorite(q["session"], q["priority"]), q["ts"]))
 
 
 def file_vivante(queue):
@@ -178,6 +187,8 @@ def tenter(a, session):
             "interruptible": not a.non_interruptible, "priority": a.priority,
             "ts": ancien["ts"] if ancien else now(), "seen": now(),
         }
+        a.priority = priorite(session, a.priority)
+        demande["priority"] = a.priority
         queue_triee = file_triee(queue + [demande])
         rang = [q["session"] for q in queue_triee].index(session)
         if pause_utilisateur():
@@ -188,7 +199,7 @@ def tenter(a, session):
         if actif or rang > 0:
             write_json("queue.json", queue_triee)
             if actif and lock.get("long") and lock.get("interruptible") and (
-                not a.long or a.priority < lock.get("priority", PRIORITE_TACHE_LONGUE)
+                not a.long or a.priority < priorite(lock["holder"], lock.get("priority", PRIORITE_TACHE_LONGUE))
             ):
                 if not pause_flag(lock["holder"]).exists():
                     pause_flag(lock["holder"]).write_text(f"demande de {session}\n", encoding="utf-8")
@@ -316,6 +327,30 @@ def cmd_unhold(a):
     return 0
 
 
+def cmd_urgences(a):
+    if a.reset:
+        with Mutex():
+            supprimer(STATE / "urgences.json")
+            journal("URGENCES supprimees")
+        print("URGENCES supprimees : priorites demandees par les sessions")
+        return 0
+    if not a.sessions:
+        print("URGENCES " + (" > ".join(ordre_urgences()) or "aucune"))
+        return 0
+    ordre = []
+    for s in a.sessions:
+        n = nom_valide(s)
+        if n is None:
+            return 8
+        if n not in ordre:
+            ordre.append(n)
+    with Mutex():
+        write_json("urgences.json", {"ordre": ordre, "date": iso(now())})
+        journal("URGENCES " + " > ".join(ordre))
+    print("URGENCES " + " > ".join(ordre))
+    return 0
+
+
 def cmd_baseline(a):
     used = vram_used_mib()
     if used is None:
@@ -338,7 +373,8 @@ def rapport():
         lignes.append(f"Detenteur : {lock['holder']} ({etat}, jusqu'a {iso(lock['expires'])}, long={lock['long']}, interruptible={lock['interruptible']})")
     else:
         lignes.append("Detenteur : personne")
-    lignes.append("File : " + (", ".join(f"{q['session']}(p{q['priority']})" for q in queue) or "vide"))
+    lignes.append("File : " + (", ".join(f"{q['session']}(p{priorite(q['session'], q['priority'])})" for q in queue) or "vide"))
+    lignes.append("Urgences : " + (" > ".join(ordre_urgences()) or "aucune"))
     lignes.append(f"Pause utilisateur : {'oui' if pause_utilisateur() else 'non'}")
     lignes.append(f"VRAM utilisee : {vram_used_mib()} MiB ; base {baseline_mib()} MiB ; seuil libre {seuil_libre_mib()} MiB")
     pauses = sorted(p.name for p in STATE.glob("pause_*.flag"))
@@ -379,6 +415,10 @@ def main(argv=None):
     bl = sub.add_parser("baseline")
     bl.add_argument("--marge", type=int, default=MARGE_DEFAUT_MIB)
     bl.set_defaults(fn=cmd_baseline)
+    ur = sub.add_parser("urgences")
+    ur.add_argument("sessions", nargs="*")
+    ur.add_argument("--reset", action="store_true")
+    ur.set_defaults(fn=cmd_urgences)
     sub.add_parser("hold").set_defaults(fn=cmd_hold)
     sub.add_parser("unhold").set_defaults(fn=cmd_unhold)
     st = sub.add_parser("status")

@@ -201,6 +201,26 @@ def test_pause_utilisateur(lock):
     assert run(lock, "acquire", "llm", "--long") == 0
 
 
+def test_urgences_ordonnent_la_file(lock):
+    assert run(lock, "urgences", "haut", "bas") == 0
+    assert run(lock, "acquire", "a") == 0
+    assert run(lock, "acquire", "bas", "--priority", "1") == 2
+    assert run(lock, "acquire", "haut", "--priority", "9") == 2
+    assert run(lock, "release", "a") == 0
+    assert run(lock, "acquire", "bas", "--priority", "1") == 2
+    assert run(lock, "acquire", "haut", "--priority", "9") == 0
+
+
+def test_urgences_pause_et_reset(lock):
+    assert run(lock, "urgences", "video", "llm") == 0
+    assert run(lock, "acquire", "llm", "--long", "--priority", "9") == 0
+    assert run(lock, "acquire", "video", "--long", "--priority", "9") == 2
+    assert run(lock, "should-pause", "llm") == 0
+    assert run(lock, "urgences", "inconnue") == 8
+    assert run(lock, "urgences", "--reset") == 0
+    assert lock.ordre_urgences() == []
+
+
 @pytest.fixture
 def depot(tmp_path):
     d = tmp_path / "depot"
