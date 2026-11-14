@@ -16,7 +16,7 @@ Source : scripts de mesure (tailles par `robocopy /L`, état git, venvs, poids >
 | `D:\ServOMorph\LTX-Video` | 81,6 Go | dont `.cache` 74,7 et `.venv` 5,7 |
 | `D:\ServOMorph\creation_llm` | 74,0 Go | 33 fichiers > 100 Mo, checkpoints et jeux de données binaires |
 | `D:\ServOMorph\ComfyUI-Qwen` | 54,8 Go | 11 poids (qwen3vl_8b 16,3 ; sdxl_lightning 6,5 ; umt5_xxl 6,3) |
-| `D:\ServOMorph\ACE-Step-1.5` | 52,5 Go | checkpoints 10,7 ; `output` 34,6 (musiques générées) ; `.venv` 7,2 |
+| `D:\ServOMorph\ACE-Step-1.5` | 52,5 Go | checkpoints 10,7 ; `output` 34,6 (vidé le 2026-11-14, voir décision 3) ; `.venv` 7,2 |
 | `D:\OllamaModels` | 46,8 Go | 13 modèles : gemma3 (1b, 4b), gemma4 (12b, 12b-32k, e4b), llama3.2 3b, llava 7b, nomic-embed-text, qwen2.5 7b, qwen2.5-coder 7b, qwen2.5vl, qwen3.5, Flux_AI |
 | `D:\ServOMorph\Flux` | 31,5 Go | `models_cache` FLUX.1-dev |
 | `D:\ServOMorph\IA_Locales` | 30,0 Go | `Hunyuan3D2_WinPortable` 26,8 |
@@ -58,14 +58,15 @@ Colonnes : module cible du portail, devenir proposé. « moteur » = installatio
 | Module | Éléments | Proposition |
 |---|---|---|
 | Image | ComfyUI-Qwen, ComfyUI-SANA, Flux, Comparatif-Image, `D:\Dev` (z_image, Qwen3-4B) | moteurs (ComfyUI) + poids vers `models/` ; Flux : code éventuel + dédoublonnage ; Comparatif-Image : archive |
-| Musique | ACE-Step-1.5, CreaZik_V3, crea_zik, `D:\AI\Musique` (heartlib, musicgen), TTS_Local | ACE-Step : moteur ; CreaZik_V3 : code (phase 5) ; crea_zik et heartlib : à qualifier (anciennes versions ?) ; TTS_Local : hors modules listés, décision requise |
+| Musique | ACE-Step-1.5, CreaZik_V3, crea_zik, `D:\AI\Musique` (heartlib, musicgen), TTS_Local | ACE-Step : moteur ; CreaZik_V3 : code (phase 5) ; crea_zik et heartlib : à qualifier (anciennes versions ?) ; TTS_Local : module voix (décision 2) |
 | Vidéo | creation_videos, LTX-Video, WanGP, MimicMotion, Stop_Motion_IA | creation_videos : code ; WanGP et LTX : moteurs ; MimicMotion : à qualifier (animation ?) |
 | Chat | IA_V7, IA_V6, IA_Life, IA-TSA, Addict_IA, robert-ia, JarviX, LocalArenaAI | à qualifier un par un : portage déjà prévu pour IA_V7 ; les autres semblent des applications distinctes |
 | 3D | creation_3d, TripoSR, stable-fast-3d, Hunyuan3D2 (IA_Locales), UniRig | creation_3d : code ; les autres : moteurs |
 | Animation 3D | kimodo, UniRig | à qualifier avec creation_3d |
 | WorldModel | WorldModel, poids oasis, diamond, Matrix-Game | code + poids |
 | LLM | creation_llm, Fine_Tuning, Llama-3-8B, Mistral-7B, `D:\OllamaModels`, datasets | creation_llm en dernier ; Fine_Tuning (dernière activité 2025-12) à qualifier ; Ollama : un seul dossier de modèles |
-| Hors périmètre probable | Caveman (dépôt tiers JuliusBrussee), whisper (outil de transcription), Labo, Recherches_IA, BD_IA_V2, Jeux_Codes_par_IA_Locales_Ollama | à ne pas migrer sauf avis contraire ; whisper et TTS posent la question d'un module « voix » |
+| Voix | TTS_Local (chatterbox, kokoro), whisper | module voix retenu (phase 5) |
+| Hors périmètre probable | Caveman (dépôt tiers JuliusBrussee), Labo, Recherches_IA, BD_IA_V2, Jeux_Codes_par_IA_Locales_Ollama | à ne pas migrer sauf avis contraire |
 
 ## Contrôles complémentaires (2026-11-14)
 
@@ -100,4 +101,4 @@ Hors recherche : fichiers de configuration JSON, chemins en notation autre (`/d/
 1. Confirmer ou corriger la colonne « module / proposition » projet par projet, notamment les « à qualifier ».
 2. ~~TTS_Local, whisper~~ : module voix retenu le 2026-11-14 (phase 5).
 3. ~~`ACE-Step-1.5\output`~~ : réglé le 2026-11-14. CreaZik_V3 copie ses WAV hors de ce dossier (`ace_worker.py`) et ne le relit jamais ; il supprime lui-même ses WAV après conversion en MP3. Sur instruction de l'utilisateur (« supprime si CreaZik ne les utilise pas »), les 1 121 WAV (37,17 Go) ont été supprimés, liste conservée dans le scratchpad de session, dossier `creazik` vide conservé.
-4. Les dépôts avec travail non poussé : pousser, archiver ou abandonner, avant toute suppression en phase 12.
+4. Les dépôts avec travail non poussé : pousser, archiver ou abandonner, avant toute suppression en phase 12. Reporté par l'utilisateur le 2026-11-14 (« on voit ça plus tard »).
