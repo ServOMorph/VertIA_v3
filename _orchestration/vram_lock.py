@@ -14,7 +14,7 @@ from pathlib import Path
 
 ORCH_DIR = Path(os.environ.get("VERTIA_ORCH_DIR", Path(__file__).resolve().parent))
 STATE = ORCH_DIR / "state"
-SESSIONS = {"creation_3d", "worldmodel", "creation_llm", "creation_videos", "vertia"}
+SESSIONS = {"creation_3d", "worldmodel", "creation_llm", "creation_videos", "vertia", "vibeobs", "securite", "xmage", "site_internet_v3", "moulin_du_sud", "agent_trader_f8"}
 MARGE_DEFAUT_MIB = 1000
 BASELINE_DEFAUT_MIB = 1200
 DUREE_MAX_MIN = 45
