@@ -27,3 +27,6 @@ _orchestration/state/
 _orchestration/etat.md
 .tmp_*/
 _contexte/journal_session.md
+
+modules/*/.pytest_cache/
+modules/*/.test-tmp/

@@ -1,0 +1,63 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Atelier — Éditeur d'images local</title>
+  <link rel="stylesheet" href="/css/atelier.css">
+  <script type="module" src="/js/app.js"></script>
+</head>
+<body>
+  <header>
+    <h1>Atelier</h1>
+    <nav aria-label="Fichier">
+      <button id="nouveau" title="Créer un document">Nouveau document</button>
+      <button id="importer" title="Importer PNG, JPEG ou WebP">Importer une image</button>
+      <button id="ouvrir" title="Ouvrir un projet">Ouvrir</button>
+      <button id="enregistrer" title="Enregistrer (Ctrl+S)">Enregistrer</button>
+      <button id="exporter" title="Exporter à la résolution du document">Exporter PNG</button>
+    </nav>
+    <nav aria-label="Historique">
+      <button id="annuler" title="Annuler (Ctrl+Z)">Annuler</button>
+      <button id="retablir" title="Rétablir (Ctrl+Y)">Rétablir</button>
+    </nav>
+    <nav aria-label="Zoom">
+      <button id="zoom-moins" aria-label="Réduire le zoom" title="Réduire le zoom">−</button>
+      <button id="zoom-plus" aria-label="Augmenter le zoom" title="Augmenter le zoom">+</button>
+      <button id="ajuster" title="Ajuster à l'écran">Ajuster</button>
+      <button id="zoom-cent" title="Afficher à 100 %">100 %</button>
+    </nav>
+  </header>
+  <main>
+    <aside class="gauche" aria-label="Outils et options">
+      <h2>Outils</h2><div id="outils"></div>
+      <h2>Options</h2><div id="options"></div>
+      <label>Couleur <input id="couleur" type="color" value="#000000" title="Couleur courante"></label>
+      <label>Alpha <input id="alpha" type="range" min="0" max="100" value="100" title="Opacité de la couleur"></label>
+    </aside>
+    <section id="zone" tabindex="0" aria-label="Zone de travail, déposer une image pour l'importer">
+      <div class="surface"><canvas id="affichage" aria-label="Document composé"></canvas></div>
+    </section>
+    <aside class="droite" aria-label="Calques et palette"><h2>Calques</h2><div id="calques"></div><section id="palette" aria-label="Palette"></section></aside>
+  </main>
+  <footer><span id="statut"></span><span id="coordonnees">x — · y —</span>
+    <span id="message" role="status" aria-live="polite">Importez une image ou créez un document.</span></footer>
+  <input id="fichier" type="file" accept="image/png,image/jpeg,image/webp" multiple hidden>
+  <dialog id="nouveau-dialogue">
+    <form id="nouveau-form" method="dialog">
+      <h2>Nouveau document</h2>
+      <label>Largeur (px) <input id="largeur" type="number" min="1" max="16384" step="1" value="1200" required></label>
+      <label>Hauteur (px) <input id="hauteur" type="number" min="1" max="16384" step="1" value="800" required></label>
+      <p>Fond blanc, résolution d'origine conservée.</p>
+      <button value="annuler" formnovalidate>Annuler</button><button value="creer">Créer</button>
+    </form>
+  </dialog>
+  <dialog id="ouvrir-dialogue">
+    <form method="dialog"><h2>Ouvrir un projet</h2>
+      <p data-vide hidden>Aucun projet enregistré.</p>
+      <label>Projet <select aria-label="Projet enregistré"></select></label>
+      <button value="annuler">Annuler</button><button value="ouvrir" data-ouvrir>Ouvrir</button>
+    </form>
+  </dialog>
+</body>
+</html>

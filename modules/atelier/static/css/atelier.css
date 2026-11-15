@@ -1,0 +1,40 @@
+:root { color-scheme: light; font: 14px/1.45 system-ui, sans-serif; color: #202934; background: #eef0f2; --accent: #2558a5; }
+* { box-sizing: border-box; }
+body { margin: 0; height: 100vh; display: flex; flex-direction: column; overflow: hidden; }
+header { padding: 12px 16px; background: #fff; border-bottom: 1px solid #bcc3cc; display: flex; align-items: center; flex-wrap: wrap; gap: 12px; }
+h1 { font-size: 21px; margin: 0 12px 0 0; color: var(--accent); }
+h2 { font-size: 14px; margin: 0 0 12px; }
+nav { display: flex; gap: 5px; flex-wrap: wrap; }
+button, select, input, textarea { font: inherit; }
+button { padding: 6px 9px; background: #fff; color: #202934; border: 1px solid #a8b1bd; border-radius: 4px; cursor: pointer; }
+button:hover:enabled { background: #e6edf9; border-color: var(--accent); }
+button:disabled { opacity: .5; cursor: default; }
+button[aria-pressed="true"] { background: var(--accent); border-color: var(--accent); color: white; }
+:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+main { flex: 1; min-height: 0; display: grid; grid-template-columns: 190px minmax(0, 1fr) 265px; }
+aside { padding: 16px 12px; background: #f9fafb; overflow: auto; }
+.gauche { border-right: 1px solid #bcc3cc; }
+.droite { border-left: 1px solid #bcc3cc; }
+#outils { display: grid; margin-bottom: 24px; }
+#options { font-size: 13px; color: #445164; }
+label { display: flex; align-items: center; flex-wrap: wrap; gap: 6px; margin: 10px 0; }
+input[type="range"] { min-width: 70px; width: 120px; accent-color: var(--accent); }
+input[type="number"] { width: 110px; }
+input, select { padding: 4px; max-width: 100%; }
+textarea { width: 100%; min-height: 90px; resize: vertical; }
+#zone { overflow: auto; background: #cbd0d6; touch-action: none; overscroll-behavior: contain; }
+.surface { min-width: 100%; min-height: 100%; width: max-content; display: flex; padding: 32px; align-items: center; justify-content: center; }
+canvas { display: block; flex: none; box-shadow: 0 2px 12px #0003; background-color: #fff;
+  background-image: conic-gradient(#e3e3e3 25%, transparent 0 50%, #e3e3e3 0 75%, transparent 0); background-size: 16px 16px; }
+.calque { padding: 10px; margin-bottom: 10px; border: 1px solid #bbc3ce; border-radius: 5px; display: flex; flex-wrap: wrap; gap: 5px; }
+.calque .selection { flex: 1 1 100%; text-align: left; overflow-wrap: anywhere; }
+.calque label { margin: 2px 0; }
+#palette { border-top: 1px solid #bcc3cc; margin-top: 18px; padding-top: 16px; }
+#palette h3 { font-size: 13px; }
+.pastilles { display: flex; flex-wrap: wrap; gap: 6px; margin: 12px 0; }
+.pastille { width: 28px; height: 28px; border: 1px solid #657080; }
+footer { padding: 8px 16px; border-top: 1px solid #bcc3cc; background: #fff; display: flex; flex-wrap: wrap; gap: 20px; font-size: 12px; }
+#message { flex: 1; min-width: 180px; }
+dialog { border: 1px solid #a8b1bd; border-radius: 8px; max-width: 480px; padding: 24px; }
+dialog::backdrop { background: #15203066; }
+@media (max-width: 900px) { main { grid-template-columns: 135px minmax(0, 1fr) 210px; } aside { padding: 10px 8px; } header { gap: 6px; padding: 8px; } }

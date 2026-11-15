@@ -101,6 +101,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 - `vertia_gen.py image` opérationnel ; ligne d'usage ajoutée au CLAUDE.md de VertIA, proposée aux autres sessions par message.
 - Procédure de migration écrite dans `_docs/` pour les phases suivantes.
 - Bilan de dette : décider s'il faut une phase de refacto avant la phase 5.
+- Atelier (éditeur d'image type Canva + Photoshop, demande utilisateur du 2026-11-15) : la v1 autonome, faite avant la phase 3 pour la demande de jean-luc-dariol, devient un module du portail (registre, import `inbox/`, retouche IA par masque via la file GPU).
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.

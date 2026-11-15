@@ -132,3 +132,14 @@ Validation réservée à l'utilisateur ; aucune génération GPU ni aucun serveu
 5. Test A (texte → vidéo) : 960×544, 49 images, 24 fps, 20 steps, CFG 5. Prompt : « a red fox walking through a snowy forest at sunrise, cinematic ».
 6. Test B (image → vidéo) : charger une image Qwen existante (`D:\ServOMorph\ComfyUI-Qwen\output\`) sur `start_image`, mêmes réglages.
 7. Me donner pour chaque test : temps total, plantage éventuel, note de qualité de 1 à 5 (fluidité, déformations, respect du prompt).
+
+## Atelier v1
+Tests automatisés (pytest serveur, Node sur images synthétiques) et contrôle HTTP réalisés ; aucun test navigateur. Lancer `python run_atelier.py` (port 4320).
+1. Import d'un scan : importer un vrai scan de mandala (3000 px ou plus) par bouton puis par glisser-déposer, et un scan du modèle colorié (PNG, JPEG, WebP). Vérifier l'ajustement à l'écran, le zoom (molette, +/-, ajuster, 100 %), le défilement, puis les calques : visibilité, ordre, opacité, renommage, suppression.
+2. Pot de peinture sur le mandala : remplir plusieurs zones. Vérifier l'arrêt au trait, l'absence de liseré blanc, le crayon conservé (calque « Couleurs » en multiplication), le seuil automatique puis manuel, la fermeture des trous 0 à 3 px, la tolérance, la source calque actif/visibles, le mode direct décoché, la réactivité et le curseur d'attente.
+3. Palette depuis une image : extraire 2, 8 et 24 couleurs du modèle colorié, avec et sans filtre papier/trait ; pastilles au clic et au clavier ; pipette (calque actif, image composée, Alt+clic avec le pot) ; couleurs récentes après rechargement de la page.
+4. Pinceau et gomme : taille, dureté, opacité non cumulée dans un même trait, aperçu du curseur, calque déplacé.
+5. Texte et formes : créer texte, rectangle, ellipse, ligne (Maj pour carré/cercle/45°), sélectionner, déplacer, redimensionner aux poignées (Maj : proportions), modifier les propriétés, double-clic pour éditer un texte, Suppr.
+6. Annuler/rétablir : Ctrl+Z, Ctrl+Y, Ctrl+Maj+Z sur au moins 30 pas mêlant calques, remplissages, pinceau et éléments ; raccourcis ignorés pendant la saisie de texte.
+7. Export PNG : taille identique au scan d'origine, couleurs, trait et éléments présents.
+8. Enregistrement et réouverture : Ctrl+S (nom demandé la première fois), fermer, rouvrir par « Ouvrir » ; calques, éléments, calque « Couleurs » lié et palette restaurés.

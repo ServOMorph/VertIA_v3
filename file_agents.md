@@ -23,6 +23,7 @@ Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude 
 - Test vidéo n°1 Wan 2.2 TI2V-5B (`tests_manuels.md`).
 
 ## Terminé
+- 2026-11-15 · Codex (workspace-write, 3 runs) · Atelier v1 (modules/atelier, run_atelier.py) : serveur FastAPI + projets dans outputs/atelier, calques, import, export, historique, pot de peinture Otsu/dilatation/multiplication en Worker, pipette, palette k-means, pinceau, gomme, texte et formes. 24 tests pytest et 29 tests Node verts, contrôle HTTP réel (port de test 4327) réussi ; navigateur non testé (`tests_manuels.md`).
 - 2026-11-13 · Codex · correction des 4 défauts de la revue (orphelins après mort du parent, busy() après relance annulée, active de l'arbitre après démarrage raté, libération Ollama injoignable) ; 6 tests de régression, 240 tests verts. Aucun moteur lancé.
 - 2026-11-13 · Codex (read-only) · revue du code non commité des phases 1 à 8 : 4 défauts IMPORTANT, aucun BLOQUANT.
 - 2026-11-07 · agent chat_codex (délégation explicite utilisateur) · zone de chat inspirée de Codex, copie exacte des messages utilisateur/assistant y compris Markdown et flux Unicode, header synchronisé, formulaire mobile accessible ; test dédié et test UI principal réussis, captures bureau/mobile contrôlées.
