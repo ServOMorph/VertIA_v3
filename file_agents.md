@@ -3,6 +3,7 @@
 Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude intègre et commite seul.
 
 ## En cours
+- Codex : phase 3 accueil livré partiellement ; adaptation de registry.py et du mock ui_chat.cjs nécessaire hors périmètre (brief 20261115_210634_209_p3_accueil_a824bbd6).
 
 ## Ensuite (séquentiel)
 

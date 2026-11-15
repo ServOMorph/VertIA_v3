@@ -6,6 +6,7 @@ import { initTools } from "./actions.js";
 
 import { initSetup } from "./setup.js";
 import { initOllama } from "./ollama.js";
+import { initAccueil } from "./accueil.js";
 
 function setServerState(ok) {
   const badge = document.getElementById("etat-serveur");
@@ -14,6 +15,7 @@ function setServerState(ok) {
 }
 
 async function main() {
+  initAccueil();
   let chat;
   const ollama = initOllama(() => chat?.refreshModels());
   ollama.reconnect();

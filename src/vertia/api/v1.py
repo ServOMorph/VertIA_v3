@@ -48,6 +48,26 @@ async def capacites(request: Request):
     return service(request).capacites()
 
 
+@router.get('/modules')
+async def modules(request: Request):
+    registre = request.app.state.services.modules
+    diagnostics = registre.sante()
+    activites = [
+        ('image', 'Image'), ('musique', 'Musique'), ('voix', 'Voix'),
+        ('video', 'Vidéo'), ('chat', 'Discussion'), ('3d', 'Modélisation 3D'),
+        ('animation_3d', 'Animation 3D'), ('worldmodel', 'WorldModel'),
+        ('llm', 'LLM'), ('outil', 'Outils'),
+    ]
+    return {'activites': [
+        {'activite': activite, 'titre': titre, 'modules': [
+            {'nom': module.nom, 'titre': module.titre, 'version': module.version,
+             'capacites': module.capacites, 'lien': module.lien,
+             'sante': diagnostics[module.nom]}
+            for module in registre.par_activite(activite)
+        ]} for activite, titre in activites
+    ], 'erreurs': registre.erreurs}
+
+
 @router.post('/demandes', status_code=202)
 async def creer(body: Demande, request: Request):
     try:

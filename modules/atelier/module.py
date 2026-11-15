@@ -8,6 +8,7 @@ class Module:
     activite: str = "image"
     titre: str = "Atelier"
     version: str = "0.1.0"
+    lien = "http://127.0.0.1:4320"
     capacites: list = field(default_factory=lambda: ["image.editer"])
     moteurs: dict = field(default_factory=dict)
     outils: dict = field(default_factory=dict)

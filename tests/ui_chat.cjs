@@ -54,6 +54,7 @@ async function main() {
       let data = {};
       if (url.pathname.startsWith("/api")) {
         if (apiPath === '/ollama/etat') data = ollamaState;
+        else if (apiPath === '/v1/modules') data = { activites: [{ activite: 'chat', titre: 'Discussion', modules: [] }], erreurs: [] };
         else if (apiPath === "/installation" && method === "GET") data = { configuration: setupConfig, accueil_termine: welcomeDone, redemarrage_requis: setupPending };
         else if (apiPath === "/installation" && method === "PUT") { setupConfig = body; setupPending = true; data = { redemarrage_requis: true }; }
         else if (apiPath === "/installation/terminer") {

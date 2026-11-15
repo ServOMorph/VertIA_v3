@@ -1,0 +1,14 @@
+body[data-vue="accueil"] .app-layout,
+body[data-vue="discussion"] #accueil { display: none; }
+
+.accueil { overflow-y: auto; min-height: 0; padding: clamp(1rem, 4vw, 4rem); }
+.accueil h1 { font-size: clamp(1.5rem, 3vw, 2.5rem); }
+.accueil-grille { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 16rem), 1fr)); gap: var(--gap); margin-top: 1.5rem; }
+.accueil-activite { border: 1px solid var(--line); border-radius: var(--radius); background: var(--card-bg); padding: 1.25rem; min-width: 0; }
+.accueil-activite h2 { margin-bottom: 1rem; }
+.accueil-tuile { display: block; width: 100%; text-align: left; color: var(--text); font: inherit; text-decoration: none; border: 1px solid var(--line); border-radius: var(--radius-sm); background: var(--surface); padding: 1rem; margin-top: .5rem; overflow-wrap: anywhere; }
+.accueil-tuile strong, .accueil-tuile span { display: block; }
+.accueil-tuile span { color: var(--muted); font-size: .8125rem; }
+.accueil-tuile[aria-disabled="true"] { color: var(--muted); cursor: default; }
+a.accueil-tuile:hover, button.accueil-tuile:not([aria-disabled="true"]):hover { border-color: var(--accent); background: var(--soft); }
+#accueil-erreurs { font-size: .8125rem; overflow-wrap: anywhere; }

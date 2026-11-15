@@ -40,6 +40,7 @@ class Module:
     besoins: dict[str, MemoryNeeds] = field(default_factory=dict)
     poids: list[str] = field(default_factory=list)
     sante: Callable[[], dict] = dict
+    lien: str | None = None
 
     def __post_init__(self):
         if not isinstance(self.nom, str) or not self.nom.isidentifier() or keyword.iskeyword(self.nom):

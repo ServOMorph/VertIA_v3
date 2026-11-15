@@ -11,8 +11,9 @@
   <link rel="stylesheet" href="/static/css/tokens.css?v={{ version }}">
   <link rel="stylesheet" href="/static/css/app.css?v={{ version }}">
   <link rel="stylesheet" href="/static/css/chat.css?v={{ version }}">
+  <link rel="stylesheet" href="/static/css/accueil.css?v={{ version }}">
 </head>
-<body>
+<body data-vue="accueil">
   <header class="topbar">
     <div class="brand">
       <img src="/static/img/logo.webp" alt="" class="brand__logo" width="36" height="36">
@@ -21,6 +22,7 @@
       <span class="pulse" id="etat-ollama" role="status" aria-live="polite" title="Service Ollama et modèles chargés">Ollama : vérification…</span>
     </div>
     <nav class="panel-toggles" aria-label="Afficher ou masquer les panneaux" id="panel-toggles">
+      <button type="button" class="toggle" id="ouvrir-accueil" aria-pressed="true">Accueil</button>
       <button type="button" class="toggle" id="ouvrir-installation">Accueil et réglages</button>
       <button type="button" class="toggle" data-toggle="chat" aria-pressed="true">Discussion</button>
       <button type="button" class="toggle" data-toggle="fichiers" aria-pressed="true">Fichiers</button>
@@ -29,6 +31,15 @@
     </nav>
   </header>
 
+  <section id="accueil" class="accueil" aria-labelledby="accueil-titre">
+    <p class="eyebrow">VertIA</p>
+    <h1 id="accueil-titre" tabindex="-1">Que souhaitez-vous créer ?</h1>
+    <p class="muted">Choisissez une activité ou retrouvez vos discussions.</p>
+    <button type="button" class="btn" id="accueil-discussion">Ouvrir Discussion</button>
+    <p id="accueil-statut" class="muted" role="status">Chargement des activités…</p>
+    <div id="accueil-activites" class="accueil-grille"></div>
+    <ul id="accueil-erreurs" class="muted" aria-label="Diagnostics du registre"></ul>
+  </section>
   <div class="app-layout">
     <aside class="navigation" aria-labelledby="navigation-titre">
       <h2 id="navigation-titre" class="visually-hidden">Discussions et projets</h2>

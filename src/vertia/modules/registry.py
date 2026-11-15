@@ -35,7 +35,7 @@ class RegistreModules:
                     module = Module(**value)
                 else:
                     module = Module(**{field.name: getattr(value, field.name)
-                                       for field in fields(Module)})
+                                       for field in fields(Module) if hasattr(value, field.name)})
                 if module.nom in self._modules:
                     raise ValueError(f'Nom de module déjà déclaré : {module.nom}.')
                 self._modules[module.nom] = module
