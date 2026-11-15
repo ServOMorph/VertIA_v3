@@ -255,6 +255,21 @@ def cmd_acquire(a):
         time.sleep(intervalle)
 
 
+def lancer_verif_reprise(session):
+    try:
+        declarees = json.loads((Path(__file__).resolve().parent / "reprise.json").read_text(encoding="utf-8"))
+    except (OSError, ValueError):
+        return
+    if session not in declarees or os.environ.get("VERTIA_SANS_VERIF_REPRISE"):
+        return
+    subprocess.Popen(
+        [sys.executable, str(Path(__file__).resolve().parent / "verif_reprise.py"), session],
+        stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+        creationflags=0x00000008 | 0x00000200 if os.name == "nt" else 0,
+    )
+    journal(f"VERIF_REPRISE lancee session={session}")
+
+
 def cmd_release(a):
     session = nom_valide(a.session)
     if session is None:
@@ -264,10 +279,13 @@ def cmd_release(a):
         if not lock or lock["holder"] != session:
             print("REFUS pas detenteur")
             return 6
+        en_pause = pause_flag(session).exists()
         supprimer(STATE / "lock.json")
         supprimer(pause_flag(session))
         used = vram_used_mib()
         journal(f"LIBERE session={session} used={used}")
+        if en_pause:
+            lancer_verif_reprise(session)
         if used is None or used > seuil_libre_mib():
             print(f"LIBERE_MAIS_VRAM_NON_LIBEREE used={used}MiB seuil={seuil_libre_mib()}MiB")
             return 5
@@ -410,6 +428,12 @@ def cmd_status(a):
         print(json.dumps(etat_json(), ensure_ascii=False))
         return 0
     texte = rapport()
+    try:
+        alertes = (STATE / "alertes.log").read_text(encoding="utf-8").splitlines()[-3:]
+    except OSError:
+        alertes = []
+    if alertes:
+        texte += "\nAlertes reprise (3 dernieres) :\n" + "\n".join(alertes)
     print(texte)
     if a.write:
         (ORCH_DIR / "etat.md").write_text(texte + "\n", encoding="utf-8")
