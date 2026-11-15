@@ -26,6 +26,8 @@ CONFIG = HERE / "reprise.json"
 SORTIE = STATE / "reprise_sortie.log"
 PAS = re.compile(r"^step (\d+)")
 DETACHED = 0x00000008 | 0x00000200
+DELAI_RELANCE = 900.0
+PAUSE_RELANCE = 10.0
 
 
 def lire(nom, defaut):
@@ -114,10 +116,24 @@ def verifier(session, attente_max, delai_pas, delai_libre, pause=10.0):
     return echec(session, f"pas de reprise en {attente_max} s")
 
 
-def echec(session, motif):
+def echec(session, motif, delai_relance=None):
+    delai_relance = DELAI_RELANCE if delai_relance is None else delai_relance
     journal(f"REPRISE_KO {session} : {motif} ; relance reprise_auto", alerte=True)
+    position = taille_sortie()
     relancer()
-    return 1
+    fin = time.time() + delai_relance
+    while time.time() < fin:
+        pas = dernier_pas(position)
+        if pas is not None:
+            journal(f"REPRISE_OK_APRES_RELANCE {session} pas={pas}")
+            return 1
+        if hold_actif():
+            journal(f"VERIF_REPRISE {session} arretee : pause utilisateur active")
+            return 1
+        time.sleep(PAUSE_RELANCE)
+    journal(f"ESCALADE_REPRISE {session} : toujours pas d'entrainement {delai_relance:.0f} s apres la relance ; "
+            "probleme majeur, solliciter l'utilisateur", alerte=True)
+    return 2
 
 
 def main():
