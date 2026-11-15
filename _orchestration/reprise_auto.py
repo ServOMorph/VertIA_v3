@@ -1,11 +1,12 @@
 """Reprise automatique des tâches GPU après un redémarrage de la machine.
 
-python reprise_auto.py [--delay S] [--dry-run]
+python reprise_auto.py [--delay S] [--dry-run] [--apres-pause]
 
 Pour chaque session déclarée dans reprise.json : si elle détient le jeton et
 qu'aucun processus ne correspond, le jeton périmé est libéré puis la commande
 de reprise est relancée en arrière-plan. Aucune action si la pause utilisateur
-(hold) est active.
+(hold) est active. Avec --apres-pause (lancé par vram_lock unhold), une session
+déclarée sans processus actif est relancée même si elle a rendu son jeton.
 """
 import argparse
 import json
@@ -60,7 +61,7 @@ def lancer(conf):
     )
 
 
-def reprendre(config, actif=processus_actif, liberer_fn=liberer, lancer_fn=lancer, dry_run=False):
+def reprendre(config, actif=processus_actif, liberer_fn=liberer, lancer_fn=lancer, dry_run=False, apres_pause=False):
     if (STATE / "hold.json").exists():
         journal("hold actif : aucune reprise")
         return []
@@ -68,14 +69,16 @@ def reprendre(config, actif=processus_actif, liberer_fn=liberer, lancer_fn=lance
     holder = verrou.get("holder")
     relances = []
     for session, conf in config.items():
-        if holder != session:
+        if holder != session and not apres_pause:
             continue
         if actif(conf["match"]):
             journal(f"{session} : processus deja actif")
             continue
-        journal(f"{session} : jeton perime, reprise{' (dry-run)' if dry_run else ''}")
+        motif = "jeton perime" if holder == session else "fin de pause utilisateur"
+        journal(f"{session} : {motif}, reprise{' (dry-run)' if dry_run else ''}")
         if not dry_run:
-            liberer_fn(session)
+            if holder == session:
+                liberer_fn(session)
             lancer_fn(conf)
         relances.append(session)
     if holder and holder not in config and not any(actif(c["match"]) for c in config.values()):
@@ -87,11 +90,12 @@ def main(argv=None):
     p = argparse.ArgumentParser()
     p.add_argument("--delay", type=int, default=0)
     p.add_argument("--dry-run", action="store_true")
+    p.add_argument("--apres-pause", action="store_true")
     a = p.parse_args(argv)
     if a.delay:
         time.sleep(a.delay)
     config = lire(CONFIG, {})
-    relances = reprendre(config, dry_run=a.dry_run)
+    relances = reprendre(config, dry_run=a.dry_run, apres_pause=a.apres_pause)
     print("reprises :", ", ".join(relances) if relances else "aucune")
     return 0
 

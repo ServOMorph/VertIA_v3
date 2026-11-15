@@ -60,3 +60,17 @@ def test_dry_run(tmp_path, monkeypatch):
     liste, lib, lan = appels()
     r = mod.reprendre(CONF, actif=lambda m: False, liberer_fn=lib, lancer_fn=lan, dry_run=True)
     assert r == ["creation_llm"] and liste == []
+
+
+def test_apres_pause_relance_sans_jeton(tmp_path, monkeypatch):
+    preparer(tmp_path, monkeypatch)
+    liste, lib, lan = appels()
+    assert mod.reprendre(CONF, actif=lambda m: False, liberer_fn=lib, lancer_fn=lan, apres_pause=True) == ["creation_llm"]
+    assert liste == [("lancer", "run_369m.py")]
+
+
+def test_apres_pause_rien_si_processus_actif(tmp_path, monkeypatch):
+    preparer(tmp_path, monkeypatch, holder="creation_videos")
+    liste, lib, lan = appels()
+    assert mod.reprendre(CONF, actif=lambda m: True, liberer_fn=lib, lancer_fn=lan, apres_pause=True) == []
+    assert liste == []

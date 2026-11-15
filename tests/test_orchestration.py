@@ -22,6 +22,7 @@ def lock(tmp_path, monkeypatch):
     monkeypatch.setattr(m, "STATE", tmp_path / "state")
     monkeypatch.setenv("VERTIA_FAKE_VRAM_MIB", "700")
     monkeypatch.setenv("VERTIA_POLL_S", "0.05")
+    monkeypatch.setenv("VERTIA_SANS_REPRISE", "1")
     monkeypatch.setattr(m, "SESSIONS", {"a", "b", "llm", "video", "x", "bas", "haut"})
     return m
 

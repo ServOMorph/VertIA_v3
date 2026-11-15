@@ -324,6 +324,13 @@ def cmd_unhold(a):
         supprimer(STATE / "hold.json")
         journal("PAUSE_UTILISATEUR fin")
     print("PAUSE_UTILISATEUR levee")
+    if not os.environ.get("VERTIA_SANS_REPRISE"):
+        subprocess.Popen(
+            [sys.executable, str(Path(__file__).resolve().parent / "reprise_auto.py"), "--apres-pause"],
+            stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+            creationflags=0x00000008 | 0x00000200 if os.name == "nt" else 0,
+        )
+        print("REPRISE lancee pour les taches declarees dans reprise.json")
     return 0
 
 
