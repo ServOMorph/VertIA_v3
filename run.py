@@ -48,6 +48,7 @@ def main() -> None:
     parser = argparse.ArgumentParser(description="Lancer VertIA")
     parser.add_argument("--no-browser", action="store_true", help="ne pas ouvrir le navigateur")
     parser.add_argument("--no-reload", action="store_true", help="désactiver le rechargement auto")
+    parser.add_argument("--headless", action="store_true", help="sans navigateur ni rechargement auto")
     args = parser.parse_args()
 
     settings = Settings.from_env()
@@ -60,7 +61,7 @@ def main() -> None:
             file=sys.stderr,
         )
         raise SystemExit(1)
-    if not args.no_browser:
+    if not (args.no_browser or args.headless):
         threading.Thread(
             target=open_when_ready, args=(settings.url, settings.host, settings.port), daemon=True
         ).start()
@@ -70,7 +71,7 @@ def main() -> None:
         factory=True,
         host=settings.host,
         port=settings.port,
-        reload=not args.no_reload,
+        reload=not (args.no_reload or args.headless),
         reload_dirs=[str(SRC)],
         reload_includes=["*.py", "*.html", "*.css", "*.js"],
         app_dir=str(SRC),

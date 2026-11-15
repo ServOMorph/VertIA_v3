@@ -10,6 +10,10 @@ from fastapi.staticfiles import StaticFiles
 
 from vertia import __version__
 from vertia.config import Settings
+from vertia.chemins import resoudre_chemins
+from vertia.modules.registry import RegistreModules
+from vertia.demandes import DemandesService
+from vertia.api.v1 import router as api_v1
 from vertia.core.db import Database
 from vertia.core.events import EventBus
 from vertia.chat.repository import ChatRepository
@@ -49,6 +53,8 @@ class Services:
     files: FileStore
     ollama_service: OllamaService
     ollama_preload: OllamaPreload
+    modules: RegistreModules
+    demandes: DemandesService
 
     async def watch_resources(self):
         while True:
@@ -90,9 +96,13 @@ def build_services(settings: Settings, overrides: dict | None = None) -> Service
         tools.register(tool)
     actions_service = Orchestrator(db, chat_service.repository, tools, jobs, events, file_store)
     chat_service.orchestrator = actions_service
+    chemins = (overrides or {}).get('chemins') or resoudre_chemins()
+    modules = (overrides or {}).get('modules') or RegistreModules()
+    demandes = DemandesService(db, jobs, modules, settings, chemins)
     return Services(settings=settings, db=db, events=events, ollama=ollama, chat=chat_service,
                     monitor=monitor, arbiter=arbiter, jobs=jobs, tools=tools, actions=actions_service, files=file_store,
-                    ollama_service=ollama_service, ollama_preload=ollama_preload)
+                    ollama_service=ollama_service, ollama_preload=ollama_preload,
+                    modules=modules, demandes=demandes)
 
 
 def create_app(settings: Settings | None = None, overrides: dict | None = None) -> FastAPI:
@@ -114,6 +124,7 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
                 await services.ollama_preload.close()
                 await services.chat.close()
                 await services.jobs.close()
+                await services.demandes.close()
                 services.actions.ephemeral.clear()
                 services.files.ephemeral.clear()
                 for engine in services.arbiter.engines.values():
@@ -140,4 +151,5 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
     app.include_router(resources.router, prefix="/api")
     app.include_router(actions.router, prefix="/api")
     app.include_router(files.router, prefix="/api")
+    app.include_router(api_v1)
     return app

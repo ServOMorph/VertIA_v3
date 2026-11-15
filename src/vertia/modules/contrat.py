@@ -3,8 +3,8 @@ from __future__ import annotations
 import keyword
 import re
 from dataclasses import dataclass, field
-from pathlib import PurePosixPath, PureWindowsPath
-from typing import Callable
+from pathlib import Path, PurePosixPath, PureWindowsPath
+from typing import Awaitable, Callable, Protocol
 
 from vertia.engines.base import Engine, MemoryNeeds
 from vertia.tools.base import Tool
@@ -17,6 +17,15 @@ _SEMVER = re.compile(
     rf'{_NUMBER}\.{_NUMBER}\.{_NUMBER}(?:-{_PRE}(?:\.{_PRE})*)?'
     r'(?:\+[0-9A-Za-z-]+(?:\.[0-9A-Za-z-]+)*)?'
 )
+
+
+class OutilCapacite(Protocol):
+    capacite: str
+    moteur: str | None
+
+    def valider(self, params: dict) -> dict: ...
+
+    def executer(self, params: dict, dossier: Path) -> list[Path] | Awaitable[list[Path]]: ...
 
 
 @dataclass(frozen=True)
@@ -48,7 +57,11 @@ class Module:
             raise ValueError('Capacité invalide (domaine.verbe attendu).')
         for factories in (self.moteurs, self.outils):
             if not isinstance(factories, dict) or any(
-                not isinstance(name, str) or not callable(factory) for name, factory in factories.items()
+                not isinstance(name, str) or not (callable(factory) or (
+                    factories is self.outils and isinstance(getattr(factory, 'capacite', None), str)
+                    and callable(getattr(factory, 'valider', None))
+                    and callable(getattr(factory, 'executer', None))))
+                for name, factory in factories.items()
             ):
                 raise ValueError('Fabriques de module invalides.')
         if not isinstance(self.besoins, dict) or any(

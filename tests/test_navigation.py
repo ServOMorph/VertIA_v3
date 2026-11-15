@@ -50,9 +50,10 @@ def test_navigation_rejects_invalid_changes_atomically(client):
 def test_navigation_migrates_existing_database(tmp_path):
     db = Database(tmp_path / 'old.db')
     with db.session() as conn:
-        for migration in MIGRATIONS[:-1]:
+        navigation = next(i for i, m in enumerate(MIGRATIONS) if 'ADD COLUMN epingle' in m)
+        for migration in MIGRATIONS[:navigation]:
             conn.executescript(migration)
-        conn.execute(f'PRAGMA user_version = {len(MIGRATIONS) - 1}')
+        conn.execute(f'PRAGMA user_version = {navigation}')
         conn.execute("INSERT INTO dossiers VALUES ('f', 'Ancien', 'Instructions')")
         conn.execute("INSERT INTO conversations (id, dossier_id, titre, modele) VALUES ('c', 'f', 'Conservé', 'fake')")
     db.initialize()

@@ -71,6 +71,31 @@ MIGRATIONS: list[str] = [
     ALTER TABLE conversations ADD COLUMN epingle INTEGER NOT NULL DEFAULT 0;
     ALTER TABLE conversations ADD COLUMN position INTEGER NOT NULL DEFAULT 0;
     """,
+    """
+    CREATE TABLE demandes (
+        id TEXT PRIMARY KEY, session TEXT NOT NULL, capacite TEXT NOT NULL,
+        params TEXT NOT NULL, critere TEXT NOT NULL DEFAULT '', essais_max INTEGER NOT NULL,
+        etat TEXT NOT NULL DEFAULT 'attente', analyse_requise INTEGER NOT NULL DEFAULT 0,
+        motif_code TEXT NOT NULL DEFAULT '', erreur TEXT NOT NULL DEFAULT '',
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        updated TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    CREATE INDEX demandes_session ON demandes(session, capacite);
+    CREATE TABLE essais (
+        demande_id TEXT NOT NULL REFERENCES demandes(id), numero INTEGER NOT NULL,
+        job_id TEXT, etat TEXT NOT NULL DEFAULT 'attente', params TEXT NOT NULL,
+        motif TEXT NOT NULL DEFAULT '', chemins TEXT NOT NULL DEFAULT '[]',
+        module TEXT NOT NULL, version TEXT NOT NULL, duree REAL NOT NULL DEFAULT 0,
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        PRIMARY KEY(demande_id, numero)
+    );
+    CREATE TABLE retours (
+        id INTEGER PRIMARY KEY AUTOINCREMENT, demande_id TEXT NOT NULL,
+        numero INTEGER NOT NULL, verdict TEXT NOT NULL, motif TEXT NOT NULL DEFAULT '',
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP,
+        FOREIGN KEY(demande_id, numero) REFERENCES essais(demande_id, numero)
+    );
+    """,
 ]
 
 
