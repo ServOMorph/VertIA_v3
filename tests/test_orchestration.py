@@ -222,6 +222,17 @@ def test_urgences_pause_et_reset(lock):
     assert lock.ordre_urgences() == []
 
 
+def test_status_json_attente_et_note(lock, capsys):
+    assert run(lock, "acquire", "a", "--note", "image test") == 0
+    assert run(lock, "acquire", "b", "--note", "x" * 300) == 2
+    capsys.readouterr()
+    assert run(lock, "status", "--json") == 0
+    import json
+    d = json.loads(capsys.readouterr().out)
+    assert d["detenteur"]["session"] == "a" and d["detenteur"]["note"] == "image test"
+    assert d["attente"][0]["session"] == "b" and len(d["attente"][0]["note"]) == 140
+
+
 @pytest.fixture
 def depot(tmp_path):
     d = tmp_path / "depot"

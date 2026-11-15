@@ -185,6 +185,7 @@ def tenter(a, session):
         demande = {
             "session": session, "gb": a.gb, "minutes": a.minutes, "long": a.long,
             "interruptible": not a.non_interruptible, "priority": a.priority,
+            "note": (a.note or (ancien or {}).get("note", ""))[:140],
             "ts": ancien["ts"] if ancien else now(), "seen": now(),
         }
         a.priority = priorite(session, a.priority)
@@ -222,6 +223,7 @@ def tenter(a, session):
         minutes = bornes_duree(a.minutes, a.long)
         lock = {
             "holder": session, "gb": a.gb, "long": a.long, "priority": a.priority,
+            "note": demande["note"],
             "interruptible": not a.non_interruptible, "started": now(),
             "expires": now() + minutes * 60,
         }
@@ -389,8 +391,24 @@ def rapport():
     return "\n".join(lignes)
 
 
+def etat_json():
+    lock = read_json("lock.json", None)
+    actif = lock is not None and lock["expires"] > now()
+    queue = file_triee(file_vivante(read_json("queue.json", [])))
+    return {
+        "date": iso(now()), "pause_utilisateur": pause_utilisateur(), "vram_mib": vram_used_mib(),
+        "detenteur": {"session": lock["holder"], "gb": lock.get("gb"), "long": lock.get("long"),
+                      "jusqua": iso(lock["expires"]), "note": lock.get("note", "")} if actif else None,
+        "attente": [{"session": q["session"], "rang": k + 1, "gb": q.get("gb"), "long": q.get("long"),
+                     "depuis": iso(q["ts"]), "note": q.get("note", "")} for k, q in enumerate(queue)],
+    }
+
+
 def cmd_status(a):
     STATE.mkdir(parents=True, exist_ok=True)
+    if a.json:
+        print(json.dumps(etat_json(), ensure_ascii=False))
+        return 0
     texte = rapport()
     print(texte)
     if a.write:
@@ -408,6 +426,7 @@ def main(argv=None):
     ac.add_argument("--long", action="store_true")
     ac.add_argument("--non-interruptible", action="store_true")
     ac.add_argument("--priority", type=int, default=5)
+    ac.add_argument("--note", default="")
     ac.add_argument("--wait", action="store_true")
     ac.add_argument("--timeout", type=float, default=240)
     ac.set_defaults(fn=cmd_acquire)
@@ -430,6 +449,7 @@ def main(argv=None):
     sub.add_parser("unhold").set_defaults(fn=cmd_unhold)
     st = sub.add_parser("status")
     st.add_argument("--write", action="store_true")
+    st.add_argument("--json", action="store_true")
     st.set_defaults(fn=cmd_status)
     a = p.parse_args(argv)
     return a.fn(a)
