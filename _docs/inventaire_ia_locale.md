@@ -57,7 +57,7 @@ Colonnes : module cible du portail, devenir proposé. « moteur » = installatio
 
 | Module | Éléments | Proposition |
 |---|---|---|
-| Image | ComfyUI-Qwen, ComfyUI-SANA, Flux, Comparatif-Image, `D:\Dev` (z_image, Qwen3-4B) | moteurs (ComfyUI) + poids vers `models/` ; Flux : code éventuel + dédoublonnage ; Comparatif-Image : archive |
+| Image | ComfyUI-Qwen, ComfyUI-SANA, Flux, Comparatif-Image, `D:\Dev` (z_image, Qwen3-4B) | moteurs (ComfyUI) + poids vers `models/` ; Flux : code éventuel + dédoublonnage ; Comparatif-Image : code, banc d'essai réutilisable (décision du 2026-11-15) |
 | Musique | ACE-Step-1.5, CreaZik_V3, crea_zik, `D:\AI\Musique` (heartlib, musicgen), TTS_Local | ACE-Step : moteur ; CreaZik_V3 : code (phase 5) ; crea_zik et heartlib : à qualifier (anciennes versions ?) ; TTS_Local : module voix (décision 2) |
 | Vidéo | creation_videos, LTX-Video, WanGP, MimicMotion, Stop_Motion_IA | creation_videos : code ; WanGP et LTX : moteurs ; MimicMotion : à qualifier (animation ?) |
 | Chat | IA_V7, IA_V6, IA_Life, IA-TSA, Addict_IA, robert-ia, JarviX, LocalArenaAI | à qualifier un par un : portage déjà prévu pour IA_V7 ; les autres semblent des applications distinctes |
@@ -102,3 +102,4 @@ Hors recherche : fichiers de configuration JSON, chemins en notation autre (`/d/
 2. ~~TTS_Local, whisper~~ : module voix retenu le 2026-11-14 (phase 5).
 3. ~~`ACE-Step-1.5\output`~~ : réglé le 2026-11-14. CreaZik_V3 copie ses WAV hors de ce dossier (`ace_worker.py`) et ne le relit jamais ; il supprime lui-même ses WAV après conversion en MP3. Sur instruction de l'utilisateur (« supprime si CreaZik ne les utilise pas »), les 1 121 WAV (37,17 Go) ont été supprimés, liste conservée dans le scratchpad de session, dossier `creazik` vide conservé.
 4. Les dépôts avec travail non poussé : pousser, archiver ou abandonner, avant toute suppression en phase 12. Reporté par l'utilisateur le 2026-11-14 (« on voit ça plus tard »).
+5. Classement validé par l'utilisateur le 2026-11-15 (artefact de validation) : tous les modules « D'accord ». Comparatif-Image : conservé comme code du portail, banc d'essai de 10 prompts à rejouer sur tout nouveau générateur d'image.
