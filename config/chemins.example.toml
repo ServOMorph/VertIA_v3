@@ -1,0 +1,11 @@
+# Copier vers chemins.toml (hors git). Les chemins relatifs partent de la racine du dépôt.
+# Pour un chemin Windows absolu, utiliser des apostrophes TOML pour préserver les antislashs.
+[moteurs]
+comfyui = "engines/comfyui"
+acestep = "engines/acestep"
+
+[dossiers]
+models = "models"
+outputs = "outputs"
+outbox = "outbox"
+inbox = "inbox"
