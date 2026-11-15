@@ -1,5 +1,7 @@
 # Architecture VertIA_v3
 
+Architecture cible du portail (consolidation, validée le 2026-11-15) : `_docs/architecture_portail.md`. Elle prime sur l'arborescence ci-dessous à partir de la phase 3 de `roadmap_portail.md`.
+
 ## Principes
 - Une IA = un module branchable (`Engine` + un ou plusieurs `Tool`). Le cœur ne connaît aucune IA en dur.
 - GPU exclusif : un seul moteur lourd chargé à la fois, arbitré par `GpuArbiter` ; tout travail GPU passe par la file de jobs.
