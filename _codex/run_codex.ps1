@@ -3,6 +3,8 @@ param(
     [Parameter(Mandatory = $true)][ValidatePattern('^[A-Za-z0-9][A-Za-z0-9_-]*$')][string]$Name,
     [string]$Root = (Split-Path -Parent $PSScriptRoot),
     [ValidateSet('read-only', 'workspace-write')][string]$Sandbox = 'workspace-write',
+    [ValidatePattern('^[A-Za-z0-9][A-Za-z0-9._:-]*$')][string]$Model = 'gpt-6.1-sol',
+    [ValidateSet('minimal', 'low', 'medium', 'high', 'xhigh')][string]$Effort = 'medium',
     [switch]$DryRun
 )
 
@@ -34,7 +36,7 @@ if (-not $cx) {
     if ($DryRun) { $cx = 'codex' }
     else { throw 'Codex introuvable : installer l''application Codex ou ajouter Codex CLI au PATH.' }
 }
-$arguments = @('exec', '--sandbox', $Sandbox, '-C', $Root, '-o', $report, $message)
+$arguments = @('exec', '--sandbox', $Sandbox, '-m', $Model, '-c', "model_reasoning_effort=$Effort", '-C', $Root, '-o', $report, $message)
 if ($DryRun) {
     $quoted = @($cx) + $arguments | ForEach-Object { "'" + $_.Replace("'", "''") + "'" }
     Write-Output ('& ' + ($quoted -join ' ') + " *> '$($log.Replace("'", "''"))'")
