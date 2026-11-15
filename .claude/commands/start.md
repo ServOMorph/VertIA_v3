@@ -86,4 +86,5 @@ Lire `.claude/zones.md` pour obtenir la table des alias → dossiers réels.
      position physique de cette zone (toujours en fin de fichier). -->
 Étape 3 (journal de session) : si `_contexte/journal_session.md` n'est pas vide, une session précédente
 n'a pas été close : l'afficher et le signaler.
+Étape 3 (notes à faire) : si `_contexte/notes_a_faire.md` contient des notes, les afficher avec leur échéance ; une note dont l'échéance est atteinte est à traiter ou à proposer en priorité.
 <!-- SPECIFICITES PROJET : FIN -->
