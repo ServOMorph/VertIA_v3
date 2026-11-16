@@ -75,6 +75,14 @@ class GpuArbiter:
             self._execution = asyncio.current_task()
             self._erreur_verrou = None
             try:
+                # Le jeton passe avant la garde mémoire : la pause d'un entraînement libère sa VRAM et sa RAM.
+                if self.verrou and (self.active != engine or not self.verrou.detenu):
+                    contexte = getattr(operation, '__dict__', {}).get('contexte_gpu')
+                    note = contexte.get(note_demande, '') if contexte is not None else note_demande.get()
+                    await self.verrou.acquerir(note=f'portail : {engine}' + (f' ; {note}' if note else ''),
+                                               gb=max(1, math.ceil(vram / 1024)) if (vram := getattr(memory, 'vram_mb', None)) else 8)
+                    if self._prolongation is None:
+                        self._prolongation = asyncio.create_task(self._prolonger())
                 # Libérer aussi les modèles présents avant le démarrage de VertIA.
                 for name, adapter in self.engines.items():
                     if name != engine:
@@ -87,13 +95,6 @@ class GpuArbiter:
                     await self.guard.check(needs, reuse=lambda state: reuse(memory_request, state))
                 else:
                     await self.guard.check(needs)
-                if self.verrou and (self.active != engine or not self.verrou.detenu):
-                    contexte = getattr(operation, '__dict__', {}).get('contexte_gpu')
-                    note = contexte.get(note_demande, '') if contexte is not None else note_demande.get()
-                    await self.verrou.acquerir(note=f'portail : {engine}' + (f' ; {note}' if note else ''),
-                                               gb=max(1, math.ceil((getattr(memory, 'vram_mb', None) or 0) / 1024)))
-                    if self._prolongation is None:
-                        self._prolongation = asyncio.create_task(self._prolonger())
                 self.active = None
                 await self.engines[engine].start()
                 self.active = engine

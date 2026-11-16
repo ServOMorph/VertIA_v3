@@ -356,3 +356,22 @@ def test_prechargement_ollama_coupe_par_variable(monkeypatch):
     assert Settings.from_env().preload_ollama is True
     monkeypatch.setenv('VERTIA_PRELOAD_OLLAMA', '0')
     assert Settings.from_env().preload_ollama is False
+
+
+@pytest.mark.asyncio
+async def test_jeton_pris_avant_la_garde_memoire(processus):
+    verrou = VerrouGpu(attente_s=60)
+    ordre = []
+
+    async def garde(*args, **kwargs):
+        ordre.append(('garde', verrou.detenu))
+
+    moteur = SimpleNamespace(memory=MemoryNeeds(vram_mb=4096), start=AsyncMock(), free=AsyncMock())
+    arbiter = GpuArbiter({'gpu': moteur}, SimpleNamespace(check=garde), idle_seconds=1, verrou=verrou)
+
+    async def travail():
+        return 'ok'
+
+    assert await arbiter.execute('gpu', travail) == 'ok'
+    assert ordre == [('garde', True)]
+    await arbiter.close()
