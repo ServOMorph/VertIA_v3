@@ -140,7 +140,7 @@ def main():
     p = argparse.ArgumentParser()
     p.add_argument("session")
     p.add_argument("--attente-max", type=float, default=6 * 3600)
-    p.add_argument("--delai-pas", type=float, default=600)
+    p.add_argument("--delai-pas", type=float, default=1200)
     p.add_argument("--delai-libre", type=float, default=300)
     a = p.parse_args()
     try:
