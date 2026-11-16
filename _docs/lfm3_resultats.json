@@ -1,0 +1,267 @@
+{
+ "lfm3_1.7b": {
+  "vram_mib": 2297,
+  "essais": [
+   {
+    "prompt": "titre",
+    "texte": "",
+    "reflexion": "We need to generate a title (titre) for the user's message. The user asks: \"Donne un titre de conversation de 5 mots maximum pour ce message d'utilisateur, sans guillemets : « Peux-tu m'expliquer comment mettre en place une sauvegarde automatique de mes photos sur un disque externe ? »\"\n\nInterpretation: They want a title (like a heading) for the conversation, up to 5 words, without quotes. The user's message is about asking how to set up automatic backup of photos on an external drive.\n\nSo we need to produce a short phrase (max 5 words) that serves as a title for this query. Something like \"Backup Photos Automatically\" (3 words). Or \"Automated Photo Backup Setup\". That's 4 words? Let's count: \"Automated Photo Backup Setup\" = 4 words? Actually \"Automated\" (1) \"Photo\" (2) \"Backup\" (3) \"Setup\" (4). Yes. But maybe better: \"How to back up photos automatically\". That's 5 words? Let's count: \"How\"(1) \"to\"(2) \"back\"(3) \"up\"(4) \"photos\"(5) \"automatically\"(6) - that's 6. So not.\n\nWe need exactly or at most 5 words. The user says \"de 5 mots maximum\". So up to 5 words inclusive. Let's pick a concise title: \"Automated Photo Backup\" (3 words). Or \"Set Up Photo Backup\" (4 words). But maybe they want something like \"Backup photos automatically on external drive\". That is many words.\n\nBetter: \"Automatic photo backup setup\" = 4 words? Count: Automatic(1) photo(2) backup(3) setup(4). Yes. Or \"Photo backup automation guide\" (4). But we need to reflect the request: how to set up automatic backup ",
+    "duree_s": 10.56,
+    "tokens": 1500,
+    "tps": 143.1,
+    "prompt_tps": 841.3
+   },
+   {
+    "prompt": "resume",
+    "texte": "VertIA est un portail centralisant la génération d'images, de musique, de voix, de vidéo et d'un chat, en choisissant automatiquement le moteur adapté au GPU limité à 8 Go de mémoire. Les autres projets les utilisent via une ligne de commande, car seul un modèle lourd peut tourner simultanément sur cette carte.",
+    "reflexion": "We need to summarize the given text in two sentences. The text is about \"VertIA\" being a unique portal for local AI. It groups image generation, music, voice, video, and a chat. The portal decides which engine uses the GPU because the card only has 8 GB memory and one heavy model can run at a time. Other projects call them by command line.\n\nWe need to produce two sentences summarizing this. Let's craft:\n\nSentence 1: VertIA is a single platform that aggregates image, music, voice, video generation and chat, handling local AI models on the GPU.\n\nSentence 2: Because the GPU only has 8 GB of memory, it must choose which heavy model runs at once; other projects refer to these tools via command-line interfaces.\n\nThat's two sentences. Ensure clarity. Let's write in French as original is French. The user wrote in French. So answer in French.\n\nThus:\n\n\"VertIA est un portail centralisant la génération d'images, de musique, de voix, de vidéo et d'un chat, en sélectionnant automatiquement le moteur adapté au GPU limité à 8 Go de mémoire.\" \"Les autres projets les utilisent via une ligne de commande, car seul un modèle lourd peut tourner simultanément sur cette carte.\"\n\nCheck: Two sentences. Yes.\n\nLet's output exactly that.",
+    "duree_s": 2.54,
+    "tokens": 361,
+    "tps": 144.5,
+    "prompt_tps": 2789.0
+   },
+   {
+    "prompt": "json",
+    "texte": "{\n  \"nom\": \"Mme Camille Roux\",\n  \"ville\": \"Lyon\",\n  \"date\": \"12 mars 2026\",\n  \"montant\": 1249.90\n}",
+    "reflexion": "We need to extract JSON strict with keys: nom, ville, date, montant from the given text: \"Facture émise à Lyon le 12 mars 2026 pour Mme Camille Roux, montant total 1 249,90 euros.\"\n\nInterpretation:\n- \"Facture émise à Lyon\" -> city is Lyon.\n- Date: 12 mars 2026.\n- Nom: Mme Camille Roux (the client name).\n- Montant: 1 249,90 euros.\n\nSo JSON object with keys: nom, ville, date, montant.\n\nWe need to output strict JSON without any commentary. So just the JSON.\n\nLet's parse:\n\nText: « Facture émise à Lyon le 12 mars 2026 pour Mme Camille Roux, montant total 1 249,90 euros. »\n\n- \"à Lyon\" -> ville = Lyon.\n- \"le 12 mars 2026\" -> date = 12 mars 2026 (or format? Usually keep as given: \"12 mars 2026\". Could be day month year. We'll output exactly as in text.)\n- \"pour Mme Camille Roux\" -> nom = Mme Camille Roux.\n- \"montant total 1 249,90 euros.\" -> montant = 1249.90? But note the comma is decimal separator (European). So 1 249,90 -> 1249.90 or 1249,90? In JSON numbers we can use either but typical representation: 1249.90. However \"euros\" indicates currency. We'll just output as number without currency symbol.\n\nThus:\n\n{\n  \"nom\": \"Mme Camille Roux\",\n  \"ville\": \"Lyon\",\n  \"date\": \"12 mars 2026\",\n  \"montant\": 1249.90\n}\n\nBut need to check: The text says \"Facture émise à Lyon le 12 mars 2026 pour Mme Camille Roux, montant total 1 249,90 euros.\" So the amount is 1 249,90 euros. In French formatting, space as thousands separator and comma decimal. So it's 1249.90 euros. We'll output as number: 1249.",
+    "duree_s": 5.18,
+    "tokens": 752,
+    "tps": 145.9,
+    "prompt_tps": 2152.7
+   },
+   {
+    "prompt": "outil",
+    "texte": "musique_ace",
+    "reflexion": "We need to parse the user's request. The user says: \"Tu disposes de trois outils : image_qwen (créer ou modifier une image), musique_ace (créer un morceau), video_wan (créer une vidéo). Réponds uniquement par le nom de l'outil adapté à cette demande : « Fais-moi un jingle joyeux de 20 secondes pour ma boulangerie. »\"\n\nTranslation: I have three tools: image_qwen (create or modify an image), musique_ace (create a piece of music), video_wan (create a video). Answer only by the name of the tool suitable for this request: \"Make me a happy 20-second jingle for my bakery.\"\n\nThe request is to create a jingle, which is a short musical piece. That corresponds to \"musique_ace\" (create a music piece). So we need to output just the name of the tool: \"musique_ace\". The instruction says: \"Réponds uniquement par le nom de l'outil adapté à cette demande\" - answer only by the name of the tool.\n\nThus final answer: musique_ace.",
+    "duree_s": 1.88,
+    "tokens": 257,
+    "tps": 139.2,
+    "prompt_tps": 2772.8
+   },
+   {
+    "prompt": "prompt_image",
+    "texte": "An old fishing cottage perched on the ocean’s shore at dawn, its weathered wooden walls and thatched roof bathed in the first golden rays of light, rendered in a delicate watercolor style with soft pastel washes and gentle, flowing brushstrokes.",
+    "reflexion": "We need to rewrite the given French prompt into a single detailed descriptive sentence for an image generation model. The original: \"une vieille maison de pêcheur au bord de la mer, au lever du soleil, style aquarelle\". Translation: \"an old fisherman's house by the sea, at sunrise, watercolor style.\" We need to produce one sentence in English that is detailed and descriptive for an image generation model. So we just output a single sentence.\n\nLet's craft: \"An aged fishing cottage perched on the shore of the ocean at dawn, rendered in a soft watercolor style with gentle pastel hues and delicate brushstrokes.\" That seems good. But maybe more detail: \"a weathered fisherman's house by the sea at sunrise, depicted in an aquarelle (watercolor) style with luminous light and subtle reflections.\" Let's make it one sentence.\n\nWe need to ensure it's a single sentence, not multiple sentences. So something like:\n\n\"An old fishing house stands on the seashore at sunrise, its weathered wooden walls and thatched roof bathed in golden morning light, illustrated in an ethereal watercolor style with soft pastel tones and flowing brushstrokes.\" That's one sentence.\n\nCheck: It mentions \"old fisherman's house\" (maison de pêcheur) - maybe \"fisherman's cottage\". At the edge of the sea. At sunrise. Style aquarelle (watercolor). So we have all elements.\n\nLet's craft a polished version:\n\n\"A weathered fishing cottage perched on the ocean's shore at dawn, its wooden structure and thatched roof illuminated",
+    "duree_s": 3.13,
+    "tokens": 450,
+    "tps": 144.9,
+    "prompt_tps": 2106.2
+   },
+   {
+    "prompt": "connaissance",
+    "texte": "",
+    "reflexion": "We need to answer the question: \"Quelle est la capitale de l'Australie et en quelle année Canberra a-t-elle été désignée capitale ?\" (What is the capital of Australia and in what year was Canberra designated as the capital? Short answer.)\n\nThe capital of Australia is Canberra. It became the capital in 1913? Let's recall: The Australian Capital Territory was established, and Canberra was chosen as the new capital site in 1908, but officially it became the capital on 9 May 1927? Or maybe earlier. I need to verify.\n\nHistorical facts: Before Canberra, Sydney and Melbourne were capitals. In 1901, the Commonwealth Parliament moved to Melbourne. The decision to build a new capital was made in 1908 by the federal government. The site of Canberra was selected as the location for the new capital. The official designation might have been on 9 May 1923? Let's check.\n\nActually, I recall that Canberra was named after the \"Canberra\" area and it became the capital on 12 April 1911? Hmm.\n\nLet me think: The Australian Capital Territory (ACT) was established by the Commonwealth Constitution Act 1908. The decision to build a new capital city was made in 1908, but construction started later. The official designation as the capital might have been when the federal government moved the parliament there. I need accurate year.\n\nBetter to search memory: In 1913, the Australian Electoral Commission? Not sure.\n\nLet's reason: Many sources say that Canberra became the capital on 9 May 1927 (or 1 January 1",
+    "duree_s": 10.45,
+    "tokens": 1500,
+    "tps": 144.3,
+    "prompt_tps": 1215.7
+   },
+   {
+    "prompt": "raisonnement",
+    "texte": "**",
+    "reflexion": "We need to parse the problem: \"Un train part à 14h20 et arrive à 17h05. Un second part à 15h10 et met 15 minutes de moins. À quelle heure arrive le second ? Donne le calcul puis la réponse.\"\n\nInterpretation: There is a first train that departs at 14:20 and arrives at 17:05. So its travel time from departure to arrival is the difference between those times. Then there is a second train that departs at 15:10 and takes 15 minutes less than the first train (i.e., its travel time is 15 minutes shorter). We need to find the arrival time of the second train.\n\nThus compute travel time for first train: from 14:20 to 17:05. Let's calculate: 14:20 to 15:20 = 60 min; 15:20 to 16:20 = another 60 min (total 120 min); 16:20 to 17:05 = 45 min. So total = 120 + 45 = 165 minutes? Wait, check: Actually from 14:20 to 17:05 is 2 hours and 45 minutes? Let's compute precisely: 14:20 to 15:20 = 60 min; 15:20 to 16:20 = 60 min (total 120); 16:20 to 17:00 = 40 min; 17:00 to 17:05 = 5 min. So total = 120 + 40 + 5 = 165 minutes. Yes, that's correct: 2 hours 45 minutes = 165 minutes.\n\nAlternatively compute difference in hours and minutes: 14:20 to 17:05 is (17 - 14) = 3 hours, but subtract the minutes? Actually from 14:20 to 15:20 is 1 hour; 15:20 to 16:20 is another hour; 16:20 to 17:05 is 45 min. So total = 2 hours + 45 min = 165 min.\n\nThus first train travel time = 165 minutes.\n\nSecond train takes 15 minutes less, so its travel time = 165 - 15 = 150 minutes.\n\nDeparture of second train at 15:10. Add 15",
+    "duree_s": 10.49,
+    "tokens": 1500,
+    "tps": 143.4,
+    "prompt_tps": 1829.1
+   },
+   {
+    "prompt": "consigne",
+    "texte": "1. La pluie tombe doucement sur la ville.  \n2. Les rues deviennent glissantes sous les gouttes.  \n3. L'odeur de la pluie me réconforte.",
+    "reflexion": "We need to write exactly three sentences in French, each with fewer than ten words. The topic is \"la pluie\" (rain). Number them 1, 2, 3.\n\nLet's craft three short sentences about rain, each under 10 words.\n\nSentence 1: \"La pluie tombe doucement sur la ville.\" Count words: La(1) pluie(2) tombe(3) doucement(4) sur(5) la(6) ville(7). That's 7 words. Good.\n\nSentence 2: \"Les rues deviennent glissantes sous les gouttes.\" Count: Les(1) rues(2) deviennent(3) glissantes(4) sous(5) les(6) gouttes(7). 7 words.\n\nSentence 3: \"Je préfère l'odeur de la pluie après le choc.\" Count: Je(1) préfère(2) l'odeur(3) de(4) la(5) pluie(6) après(7) le(8) choc(9). That's 9 words. Under ten? Yes, 9 < 10.\n\nBut maybe \"choc\" is odd; perhaps \"après le choc\" meaning after the storm. Could also say \"Je aime l'odeur de la pluie.\" Let's check: \"Je aime l'odeur de la pluie.\" Count: Je(1) aime(2) l'odeur(3) de(4) la(5) pluie(6). That's 6 words. Simpler.\n\nBut we need three distinct sentences about rain. Let's pick:\n\n1. \"La pluie tombe doucement sur la ville.\" (7)\n2. \"Les rues deviennent glissantes sous les gouttes.\" (7)\n3. \"Je aime l'odeur de la pluie après le choc.\" (9) - but maybe better: \"L'odeur de la pluie me réconforte.\" Count: L'odeur(1) de(2) la(3) pluie(4) me(5) réconforte(6). That's 6 words. But \"me réconforte\" is fine.\n\nLet's decide on three clear sentences:\n\nOption A:\n1. La pluie tombe doucement sur la ville.\n2. Les rues deviennent glissantes sous les gouttes.\n3. L'odeur de la pluie me réconforte.\n\nChec",
+    "duree_s": 6.39,
+    "tokens": 910,
+    "tps": 143.7,
+    "prompt_tps": 807.7
+   }
+  ]
+ },
+ "gemma4:12b": {
+  "vram_mib": 7339,
+  "essais": [
+   {
+    "prompt": "titre",
+    "texte": "Sauvegarde automatique des photos",
+    "duree_s": 94.46,
+    "tokens": 6,
+    "tps": 9.7,
+    "prompt_tps": 53.8
+   },
+   {
+    "prompt": "resume",
+    "texte": "VertIA est un portail unifié permettant de générer des images, de la musique, des voix, des vidéos et d'utiliser un chat via une interface unique. Il optimise l'utilisation d'un GPU limité en gérant intelligemment le passage d'un modèle à l'autre selon les demandes reçues par ligne de commande.",
+    "duree_s": 7.49,
+    "tokens": 71,
+    "tps": 11.4,
+    "prompt_tps": 200.6
+   },
+   {
+    "prompt": "json",
+    "texte": "```json\n{\n  \"nom\": \"Camille Roux\",\n  \"ville\": \"Lyon\",\n  \"date\": \"12 mars 2026\",\n  \"montant\": \"1 249,90 euros\"\n}\n```",
+    "duree_s": 6.45,
+    "tokens": 59,
+    "tps": 11.0,
+    "prompt_tps": 151.0
+   },
+   {
+    "prompt": "outil",
+    "texte": "musique_ace",
+    "duree_s": 1.45,
+    "tokens": 5,
+    "tps": 14.3,
+    "prompt_tps": 178.7
+   },
+   {
+    "prompt": "prompt_image",
+    "texte": "A detailed watercolor painting of an old fisherman's cottage nestled by the seashore at sunrise, featuring soft pastel hues, expressive brushstrokes, and a dreamy atmosphere.",
+    "duree_s": 3.92,
+    "tokens": 33,
+    "tps": 11.6,
+    "prompt_tps": 131.7
+   },
+   {
+    "prompt": "connaissance",
+    "texte": "La capitale de l'Australie est **Canberra**. Elle a été désignée capitale en **1913** (bien que sa construction ait commencé peu après).",
+    "duree_s": 4.15,
+    "tokens": 36,
+    "tps": 11.7,
+    "prompt_tps": 84.6
+   },
+   {
+    "prompt": "raisonnement",
+    "texte": "Voici le raisonnement pour trouver l'heure d'arrivée du second train :\n\n**Calcul :**\n\n1.  **Durée du premier trajet :**\n    De 14h20 à 17h05, il s'écoule :\n    *   De 14h20 à 16h20 = 2 heures\n    *   De 16h20 à 17h00 = 40 minutes\n    *   De 17h00 à 17h05 = 5 minutes\n    *   Total : **2 heures et 45 minutes**.\n\n2.  **Durée du second trajet :**\n    Le second train met 15 minutes de moins que le premier :\n    *   2h 45min - 15 min = **2 heures et 30 minutes**.\n\n3.  **Heure d'arrivée du second train :**\n    Il part à 15h10 et voyage pendant 2h30 :\n    *   15h10 + 2 heures = 17h10\n    *   17h10 + 30 minutes = **17h40**.\n\n**Réponse :**\nLe second train arrive à **17h40**.",
+    "duree_s": 30.26,
+    "tokens": 288,
+    "tps": 9.9,
+    "prompt_tps": 133.7
+   },
+   {
+    "prompt": "consigne",
+    "texte": "1. La pluie tombe doucement.\n2. Les gouttes mouillent le sol.\n3. J'aime l'odeur de la pluie.",
+    "duree_s": 3.9,
+    "tokens": 33,
+    "tps": 11.7,
+    "prompt_tps": 94.9
+   }
+  ]
+ },
+ "lfm3_vl_2b": {
+  "vram_mib": 2936,
+  "essais": [
+   {
+    "prompt": "description",
+    "texte": "Cette image montre une petite voiture compacte de couleur argentée, photographiée ou rendue en 3D sous un angle de trois quarts avant, avec ses phares, sa calandre et ses jantes visibles. L'ensemble est présenté sur un fond uni de couleur claire, la plaque d'immatriculation étant laissée vide.",
+    "duree_s": 2.47,
+    "tokens": 209,
+    "tps": 147.4,
+    "prompt_tps": 1083.1
+   },
+   {
+    "prompt": "ocr",
+    "texte": "Facture n° 2026-118\nClient : Camille Roux, Lyon\nDate : 12 mars 2026\nPapier A4 x 3 : 18,00 €\nTotal TTC : 1 249,90 €",
+    "duree_s": 0.87,
+    "tokens": 113,
+    "tps": 148.6,
+    "prompt_tps": 4022.7
+   }
+  ]
+ },
+ "qwen2.5vl:latest": {
+  "vram_mib": 7651,
+  "essais": [
+   {
+    "prompt": "description",
+    "texte": "L'image montre une voiture compacte de couleur argent, avec un design moderne et des lignes élégantes. Elle est équipée d'une antenne sur le toit et présente des phares avant ronds caractéristiques.",
+    "duree_s": 64.58,
+    "tokens": 50,
+    "tps": 48.5,
+    "prompt_tps": 518.9
+   },
+   {
+    "prompt": "ocr",
+    "texte": "Facture n° 2026-118\nClient : Camille Roux, Lyon\nDate : 12 mars 2026\nPapier A4 x 3 : 18,00 €\nTotal TTC : 1 249,90 €",
+    "duree_s": 2.63,
+    "tokens": 66,
+    "tps": 51.2,
+    "prompt_tps": 1039.0
+   }
+  ]
+ },
+ "lfm3_1.7b_sans_reflexion": {
+  "vram_mib": 2313,
+  "essais": [
+   {
+    "prompt": "titre",
+    "texte": "Sauvegarder photos automatiquement  \nAutomation sauvegardes photos  \nDisque externe sauvegarder photos  \nPhotos backup externe automatique  \nAutomatiser sauvegarde photos disque externe",
+    "reflexion": "",
+    "duree_s": 0.34,
+    "tokens": 42,
+    "tps": 145.1,
+    "prompt_tps": 1013.3
+   },
+   {
+    "prompt": "resume",
+    "texte": "VertIA est un portail pour l'IA locale qui regroupe plusieurs modèles (génération d'images, musique, voix, vidéo) et inclut un chatbot, en choisissant automatiquement le moteur GPU adapté à la contrainte mémoire limitée de 8 Go. Les autres projets utilisent des commandes en ligne de commande pour accéder aux mêmes modèles.",
+    "reflexion": "",
+    "duree_s": 0.66,
+    "tokens": 80,
+    "tps": 135.2,
+    "prompt_tps": 1468.4
+   },
+   {
+    "prompt": "json",
+    "texte": "{\n  \"nom\": \"Mme Camille Roux\",\n  \"ville\": \"Lyon\",\n  \"date\": \"12 mars 2026\",\n  \"montant\": 1249.90\n}",
+    "reflexion": "",
+    "duree_s": 0.38,
+    "tokens": 44,
+    "tps": 131.1,
+    "prompt_tps": 1514.4
+   },
+   {
+    "prompt": "outil",
+    "texte": "musique_ace</think>musique_ace",
+    "reflexion": "",
+    "duree_s": 0.12,
+    "tokens": 10,
+    "tps": 124.2,
+    "prompt_tps": 2150.9
+   },
+   {
+    "prompt": "prompt_image",
+    "texte": "An old fisherman's house by the sea at sunrise, painted in a detailed watercolor style.</think>An old fisherman's house by the sea at sunrise, rendered in a detailed watercolor painting style.",
+    "reflexion": "",
+    "duree_s": 0.34,
+    "tokens": 43,
+    "tps": 140.3,
+    "prompt_tps": 1813.9
+   },
+   {
+    "prompt": "connaissance",
+    "texte": "La capitale de l'Australie est **Canberra**. Elle a été désignée capitale en **1908** (officiellement en 1913, mais le choix fut annoncé en 1908). \n\nRéponse courte :  \n- Capitale : Canberra  \n- Année de désignation : 1908 (annoncée) / 1913 (formellement).",
+    "reflexion": "",
+    "duree_s": 0.58,
+    "tokens": 80,
+    "tps": 145.9,
+    "prompt_tps": 1041.0
+   },
+   {
+    "prompt": "raisonnement",
+    "texte": "**Calcul du temps de trajet du premier train**\n\n- Départ : 14 h 20  \n- Arrivée : 17 h 05  \n\nDurée = (17 h 05 – 14 h 20)  \n\n1. De 14 h 20 à 15 h = 1 h 40  \n2. De 15 h à 17 h = 2 h  \n\nTotal = 1 h 40 + 2 h = **3 h 40**\n\nLe premier train met donc **3 h 40** pour parcourir la distance.\n\n---\n\n**Temps de trajet du second train**\n\nOn nous dit qu'il met « 15 minutes de moins » que le premier.  \nDonc temps du second = 3 h 40 – 0 h 15 min  \n\nConvertir 3 h 40 en minutes :  \n- 3 h = 180 min  \n- + 40 min = 220 min  \n\nSoustraire 15 min : 220 min – 15 min = **205 min**  \n\nMaintenant, convertir 205 min en heures et minutes :\n\n- 205 ÷ 60 = 3 h avec un reste de 25 min (car 3 × 60 = 180 ; 205 – 180 = 25)\n\nDonc le temps du second train est **3 h 25**.\n\n---\n\n**Départ du second train**\n\n- Départ : 15 h 10  \n\nAjouter son temps de trajet :\n\n- 15 h 10 + 3 h 25 = ?\n\nAdditionner les heures : 15 h + 3 h = **18 h**  \nAjouter les minutes : 10 min + 25 min = **35 min**\n\nRésultat : **18 h 35**.\n\n---\n\n**Réponse**\n\nLe second train arrive à **18 h 35**.",
+    "reflexion": "",
+    "duree_s": 3.01,
+    "tokens": 423,
+    "tps": 141.9,
+    "prompt_tps": 1887.0
+   },
+   {
+    "prompt": "consigne",
+    "texte": "1. La pluie tombe doucement sur les toits.  \n2. Les rues reflètent des miroirs argentés.  \n3. Le parfum de la pluie réveille mes pensées.",
+    "reflexion": "",
+    "duree_s": 0.37,
+    "tokens": 49,
+    "tps": 142.9,
+    "prompt_tps": 1478.9
+   }
+  ]
+ }
+}

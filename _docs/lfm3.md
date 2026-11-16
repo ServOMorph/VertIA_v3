@@ -1,6 +1,6 @@
 # LFM3 (Liquid AI) : état des lieux pour VertIA
 
-Recherche du 2026-11-16 (sources web citées en fin de document). Les chiffres sont ceux des fiches Hugging Face et de l'annonce du fournisseur ; ils n'ont pas été mesurés sur cette machine. Aucun test d'exécution n'a encore eu lieu (voir « Blocage »).
+Recherche du 2026-11-16 (sources web citées en fin de document). Les chiffres sont ceux des fiches Hugging Face et de l'annonce du fournisseur ; ils n'ont pas été mesurés sur cette machine. Les mesures locales (texte et vision) sont dans « Mesures sur cette machine » ; voix et vidéo ne sont pas testées.
 
 ## La famille
 LFM3 est sortie le 2026-10-27 : six modèles open-weight d'environ 2 milliards de paramètres, issus d'une base commune (LFM3-1.7B-Base, 22 000 milliards de tokens).
@@ -34,8 +34,36 @@ LFM Open License v1.0 : usage commercial réservé aux entités de moins de 10 m
 - Poids téléchargés dans `models/llamacpp/lfm3/` (non versionné) : texte Q4_K_M, VL Q4_K_M + mmproj Q8_0, Audio Q4_K_M + mmproj Q4_K_M, Omni Q4_K_M + mmproj Q4_K_M (environ 5,1 Go en tout).
 - Le plan de comparaison avec gemma4:12b (mêmes consignes en français, vitesse en tokens par seconde, VRAM, qualité jugée sur grille) passe par le verrou GPU (session `vertia`, priorité sur creation_llm).
 
-## Blocage
-Pour exécuter ces GGUF il faut un moteur récent : soit les binaires llama.cpp (release b12427, archive CUDA 13.5 Windows x64 du dépôt officiel ggml-org/llama.cpp, à décompresser dans `engines/llamacpp/`, non versionné), soit la mise à jour d'Ollama (installation système). Le téléchargement des binaires a été refusé par le contrôle d'autorisation de la session ; l'accord de l'utilisateur donne le feu vert pour les poids, pas pour un programme exécutable. Décision demandée à l'utilisateur.
+## Mesures sur cette machine (RTX 4060 8 Go, 2026-11-16)
+Moteur : llama.cpp b12427 (CUDA 13.5), installé dans `engines/llamacpp/` avec l'accord de l'utilisateur ; poids dans `models/llamacpp/lfm3/`. Script : `outils/comparer_lfm3.py`, résultats bruts : `_docs/lfm3_resultats.json`. GPU pris par la session vertia via `vram_lock.py`, libéré à chaque fois ; creation_llm repart après chaque libération (voir journal du verrou).
+
+### Texte : LFM3-1.7B (Q4_K_M) contre gemma4:12b (Ollama), 8 consignes en français
+| | LFM3-1.7B | gemma4:12b |
+|---|---|---|
+| VRAM | 2,3 Go | 7,3 Go |
+| Vitesse de génération | environ 140 jetons/s | environ 11 jetons/s |
+| Première réponse | immédiate | 94 s (chargement du modèle) |
+
+Qualité (lecture manuelle, 8 consignes) :
+- gemma4:12b : correct partout (titre en 4 mots, JSON propre, choix d'outil, capitale de l'Australie avec 1913, consigne de trois phrases) ; le raisonnement chiffré (trains) est long et n'a pas été relu jusqu'au bout.
+- LFM3-1.7B avec réflexion (comportement par défaut) : réfléchit en anglais avant de répondre ; correct sur résumé, JSON, choix d'outil, réécriture de prompt image et consigne ; **3 consignes sur 8 sans réponse après 1 500 jetons** (titre, connaissance, raisonnement : la réflexion boucle).
+- LFM3-1.7B sans réflexion (`enable_thinking=false`) : réponses en 0,1 à 0,7 s, mais moins fiables : le titre ignore la limite de 5 mots (liste cinq propositions), balise `</think>` visible dans deux réponses, date de désignation de Canberra erronée (1908), calcul de trajet faux (3 h 40 au lieu de 2 h 45).
+- Lecture : LFM3-1.7B convient aux tâches courtes et cadrées (résumé, extraction, choix d'outil, réécriture) ; il ne remplace pas gemma4:12b comme modèle de discussion (connaissances et arithmétique faibles, réflexion instable). Échantillon de 8 consignes, une seule passe : indicatif.
+
+### Vision : LFM3-VL-2B (Q4_K_M + mmproj Q8_0) contre qwen2.5vl (Ollama)
+| | LFM3-VL-2B | qwen2.5vl |
+|---|---|---|
+| VRAM | 2,9 Go | 7,7 Go |
+| Vitesse | environ 148 jetons/s | environ 50 jetons/s |
+| OCR d'une facture française (5 lignes, accents, €) | parfait | parfait |
+| Description de la voiture 3D | détaillée, plausible | plus courte (une antenne est citée ; l'image n'a pas été relue pour la contrôler) |
+
+Un seul cas d'image et un seul d'OCR : indicatif.
+
+### Non testé
+- **Voix** (Audio-2B, Omni-2B) : les poids sont téléchargés, mais la build llama.cpp ne contient pas de serveur vocal LFM3 identifié ; transcription et synthèse en français restent à tester (piste : serveur vocal du dépôt Liquid AI ou Transformers avec `trust_remote_code`, à relire avant exécution).
+- **Vidéo** (VL-2B, Omni-2B) : ffmpeg est présent, aucun clip de test n'a été passé.
+- Ollama : non utilisé pour LFM3 (version installée 0.31.2, prise en charge non confirmée).
 
 ## Sources
 - Annonce : https://www.liquid.ai/blog/lfm3
