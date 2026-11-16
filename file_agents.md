@@ -3,6 +3,7 @@
 Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude intègre et commite seul.
 
 ## En cours
+- Codex : phase 4 retouche portail livrée, image.retoucher avec ou sans masque, validation inbox et recomposition préservant les pixels hors bord adouci, moteur Comfy partagé ; 501 tests complets réussis sans serveur ni GPU (brief 20261116_152849_934_p4_retouche_portail_48fe4b52).
 - Codex : phase 4 verrou GPU livrée, jeton vertia avant démarrage, réutilisation/prolongation et libération, refus API contextualisés ; 27 tests dédiés et 422 tests complets réussis, nettoyage des temporaires refusé par politique (brief 20261116_112212_261_p4_verrou_72894574).
 - Codex : phase 4 poids livrée, déplacement simulé par défaut, SHA-256, jonctions Windows, journal et retour arrière ; 41 tests ciblés réussis (brief 20261116_004127_725_p4_poids_1a4eb964).
 - Codex : phase 4 image livrée, image.generer et alias CLI ; 354 tests réussis, nettoyage des temporaires bloqué par politique (brief 20261116_003013_542_p4_image_174956c2).

@@ -40,6 +40,19 @@ def build_graph(p):
     return graph
 
 
+def build_graph_retouche(p):
+    graph = build_graph(dict(p, largeur=256, hauteur=256, references=[], mode='t2i'))
+    graph['5'] = {'class_type': 'LoadImage', 'inputs': {'image': p['source']}}
+    graph['6'] = {'class_type': 'VAEEncode', 'inputs': {'pixels': ['5', 0], 'vae': ['3', 0]}}
+    latent = ['6', 0]
+    if p.get('masque'):
+        graph['7'] = {'class_type': 'LoadImageMask', 'inputs': {'image': p['masque'], 'channel': 'red'}}
+        graph['8'] = {'class_type': 'SetLatentNoiseMask', 'inputs': {'samples': latent, 'mask': ['7', 0]}}
+        latent = ['8', 0]
+    graph['9']['inputs'].update(latent_image=latent, denoise=p['force'])
+    return graph
+
+
 class ComfyQwenEngine(ProcessOwner):
     memory = MemoryNeeds(ram_mb=17000, note='Minimum du seul encodeur ; consommation totale et VRAM à mesurer.')
 

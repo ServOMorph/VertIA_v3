@@ -2,6 +2,7 @@ from vertia.chemins import resoudre_chemins
 from vertia.modules.contrat import Module
 
 from .outil import OutilImage
+from .outil_retouche import OutilRetouche
 
 POIDS = [
     'comfy/unet/qwen-image-2.1-Q4_K_M.gguf',
@@ -19,5 +20,6 @@ def sante():
 
 
 MODULE = Module(nom='image', activite='image', titre='Image', version='0.1.0',
-                capacites=['image.generer'], outils={'generer': OutilImage},
+                capacites=['image.generer', 'image.retoucher'],
+                outils={'generer': OutilImage, 'retoucher': OutilRetouche},
                 moteurs={}, besoins={}, poids=POIDS, sante=sante)

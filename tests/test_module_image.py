@@ -145,3 +145,12 @@ def test_construire_fabriques_compatibles(tmp_path):
 
     with pytest.raises(TypeError, match='Erreur interne'):
         construire(erreur_interne, settings, chemins, moteurs)
+
+
+def test_capacite_retouche_partage_moteur(image_api):
+    client, moteur, app = image_api
+    outils = app.state.services.demandes.outils
+    assert outils['image.retoucher'][0].adapter is outils['image.generer'][0].adapter is moteur
+    assert outils['image.retoucher'][1] is outils['image.generer'][1]
+    assert any(c['capacite'] == 'image.retoucher' for c in client.get('/api/v1/capacites').json())
+    assert not moteur.appels and not moteur.demarrages

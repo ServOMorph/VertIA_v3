@@ -107,15 +107,21 @@ export function installerProjet(ctx, dialogue) {
       if (!choix) return;
       const etat = await deserialiser(await api(`/api/projets/${encodeURIComponent(choix)}`));
       if (!confirm('Remplacer le document actuel par ce projet ?')) return;
+      ctx.reinitialiserRetouche?.();
       ctx.document.restaurer(etat); ctx.historique.vider(); ctx.vue.ajuster(); nom = choix;
       ctx.message(`Projet « ${nom} » ouvert`);
     }
   };
 }
 
-export async function exporterPNG(doc) {
+export function composerPNG(doc) {
   const canvas = document.createElement('canvas'); canvas.width = doc.largeur; canvas.height = doc.hauteur;
   composer(canvas.getContext('2d'), doc);
+  return canvas;
+}
+
+export async function exporterPNG(doc) {
+  const canvas = composerPNG(doc);
   const blob = await new Promise(resolve => canvas.toBlob(resolve, 'image/png'));
   if (!blob) throw new Error('Export PNG impossible');
   const url = URL.createObjectURL(blob), lien = document.createElement('a');

@@ -9,6 +9,7 @@ import pinceau from './outils/pinceau.js';
 import gomme from './outils/gomme.js';
 import texte from './outils/texte.js';
 import forme from './outils/forme.js';
+import retouche from './outils/retouche.js';
 import pot from './outils/pot.js';
 import pipette from './outils/pipette.js';
 import { installerPalette } from './palette.js';
@@ -24,9 +25,11 @@ const historique = new Historique(() => {
 const vue = new Vue(doc, $('zone'), $('affichage'), $('statut'));
 const ctx = { document: doc, historique, vue, couleur: [0, 0, 0, 1],
   get calqueActif() { return doc.calqueActif; }, notifier: () => doc.notifier(), message };
-// Extension IA : inscrire ici de futurs outils via enregistrerOutil(outil).
-// Ils recevront le même ctx et fourniront leurs actions à l'historique ;
-// tout futur calcul GPU devra passer par les jobs du portail, hors de ce socle.
+ctx.verrouillerRetouche = actif => {
+  ctx.occupe = actif;
+  for (const id of ['calques', 'palette']) $(id).inert = actif;
+};
+ctx.reinitialiserRetouche = () => retouche.reinitialiser();
 enregistrerOutil(selection);
 enregistrerOutil(pinceau);
 enregistrerOutil(gomme);
@@ -34,6 +37,7 @@ enregistrerOutil(pot);
 enregistrerOutil(pipette);
 enregistrerOutil(texte);
 enregistrerOutil(forme);
+enregistrerOutil(retouche);
 installerPalette(ctx, $('palette'), $('couleur'), $('alpha'));
 let outil = null, pointeur = null;
 const boutons = new Map();
@@ -97,6 +101,7 @@ $('nouveau-form').addEventListener('submit', e => {
   if (!confirm('Créer un nouveau document ? Le document actuel sera remplacé.')) { e.preventDefault(); return; }
   const fond = creerRaster(largeur, hauteur, 'Fond blanc');
   fond.ctx2d.fillStyle = '#fff'; fond.ctx2d.fillRect(0, 0, largeur, hauteur);
+  ctx.reinitialiserRetouche();
   doc.restaurer({ largeur, hauteur, calques: [fond], actifId: fond.id, vierge: false });
   historique.vider(); projets.reinitialiser(); vue.ajuster(); message('Nouveau document');
 });
@@ -133,7 +138,10 @@ for (const type of ['pointerup', 'pointercancel', 'lostpointercapture']) {
   });
 }
 document.addEventListener('keydown', e => {
-  if (ctx.occupe) { e.preventDefault(); return; }
+  if (ctx.occupe) {
+    if (e.key === 'Tab' || $('options').contains(e.target)) return;
+    e.preventDefault(); return;
+  }
   const touche = e.key.toLowerCase();
   if (e.ctrlKey || e.metaKey) {
     if (['z', 'y', 's'].includes(touche)) e.preventDefault();
