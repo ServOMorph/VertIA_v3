@@ -60,7 +60,7 @@ Règles communes aux phases de migration (4 à 11) :
 - Tests de non-régression : le module produit dans VertIA le même résultat que le projet d'origine.
 - Ancien dossier conservé ; session correspondante fermée après validation.
 
-## Phase 1 — Inventaire D: et C: (lecture seule) [TODO]
+## Phase 1 — Inventaire D: et C: (lecture seule) [FAIT]
 - Projets d'IA locale : rôle, état (actif / abandonné), taille, dépôt git (propre, non poussé), venv et version Python, dépendances.
 - Modèles et caches (HuggingFace, Ollama, ComfyUI...) sur D: et C: : taille, doublons.
 - Chemins absolus en dur (scripts, config, tâche Windows `VertIA_reprise_auto`, CLAUDE.md).
@@ -72,7 +72,7 @@ Règles communes aux phases de migration (4 à 11) :
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 2 — Architecture cible [TODO]
+## Phase 2 — Architecture cible [FAIT]
 - Arborescence définitive, contrat de module (déclaration, capacités, besoins VRAM, adaptateur), `models/` partagé et jonctions, config des chemins.
 - Contrat CLI / API versionné (commandes, codes de sortie, timeout, démarrage automatique).
 - Boucle demande / génération / retour (décision utilisateur du 2026-11-15, version hybride) : demande avec critère de réussite et nombre d'essais maximal ; livraison dans `outbox/<session>/` (jamais d'écriture dans le dossier d'une session) ; retour de la session (valide / à refaire + motif) ; analyse des frictions par VertIA seulement pour un type de demande nouveau ou après 2 échecs ; journal de chaque demande, essai et retour, pour améliorer les zones et les sessions.
@@ -83,10 +83,10 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 3 — Socle, CLI et accueil UI [TODO]
+## Phase 3 — Socle, CLI et accueil UI [FAIT]
 - Paramètres `-Model` et `-Effort` dans `_codex/run_codex.ps1` (défaut : `gpt-6.1-sol`, `medium`).
 - Benchmark des agents : un même jeu de briefs VertIA (revue read-only, code simple, code délicat) soumis aux modèles OpenCode disponibles, Ollama locaux compris, et à Codex en `medium` / `high` ; critères : tests verts, qualité du diff, respect du brief, durée. Résultat et choix par type de tâche dans `_docs/benchmark_agents.md`.
-- Pour les modèles Ollama locaux : creation_llm interrompu proprement (checkpoint sauvegardé, jeton GPU libéré) avant le benchmark, puis relancé uniquement sur ordre écrit de l'utilisateur, pas automatiquement à la fin du benchmark.
+- Pour les modèles Ollama locaux (décision utilisateur du 2026-11-15, remplace « relancé sur ordre écrit ») : toute demande GPU passe avant l'entraînement de creation_llm, qui tourne quand rien d'autre n'est à faire ; le benchmark local a pris le jeton `vertia` et creation_llm a repris seul, contrôlé par `_orchestration/verif_reprise.py`. Fait le 2026-11-16 : synthèse dans `_docs/benchmark_agents.md`.
 - Dossiers, `.gitignore` (engines, models, outputs), registre de modules, résolution des chemins par config.
 - `vertia_gen.py` : soumission de job, démarrage automatique du serveur, attente, sortie sur une ligne.
 - Boucle demande / retour dans `vertia_gen.py` : `outbox/<session>/`, commande de retour, plafond d'essais, journal ; tests (succès au premier essai, refus puis succès, plafond atteint).
@@ -96,12 +96,15 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 4 — Image (pilote) [TODO]
+## Phase 4 — Image (pilote) [FAIT]
 - Migration du moteur image (ComfyUI / Qwen) selon les règles communes.
 - `vertia_gen.py image` opérationnel ; ligne d'usage ajoutée au CLAUDE.md de VertIA, proposée aux autres sessions par message.
 - Procédure de migration écrite dans `_docs/` pour les phases suivantes.
 - Bilan de dette : décider s'il faut une phase de refacto avant la phase 5.
 - Atelier (éditeur d'image type Canva + Photoshop, demande utilisateur du 2026-11-15) : la v1 autonome, faite avant la phase 3 pour la demande de jean-luc-dariol, devient un module du portail (registre, import `inbox/`, retouche IA par masque via la file GPU).
+- Faits le 2026-11-16 : module `modules/image` (`image.generer`, `image.retoucher`), poids ComfyUI-Qwen déplacés vers `models/comfy/` avec jonctions (54 Go, `outils/deplacer_poids.py`), verrou GPU pris par le portail, essais réels (génération identique pixel pour pixel à la référence ; retouche par masque : hors masque identique), procédure `_docs/migration_module.md`, ligne d'usage dans `CLAUDE.md`.
+- Bilan de dette : pas de phase de refacto dédiée avant la phase 5. À absorber : moteur Qwen sans besoin VRAM déclaré (jeton demandé à 8 Go par défaut), module image sans page propre dans l'UI (tuile d'accueil seulement).
+- Reporté : diffusion de la ligne d'usage aux autres sessions (utilisateur, 2026-11-16 : une seule fois quand musique et voix seront dans le portail) ; contrôles manuels de l'interface Atelier (`tests_manuels.md`, 9 à 11).
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.

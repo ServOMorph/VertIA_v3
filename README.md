@@ -2,13 +2,17 @@
 
 Studio d'intelligence artificielle **100 % locale**, pensé pour les personnes qui débutent. On discute avec un assistant qui prépare les demandes (images, musiques, vidéos), on valide, et tout tourne sur son propre ordinateur.
 
-## État actuel (v0.1.0)
+## État actuel (v0.3.0)
+- Portail (consolidation des projets d'IA locale, `roadmap_portail.md`, phases 1 à 4 faites) : modules découverts dans `modules/`, écran d'accueil par activité, API versionnée `/api/v1`, commande `vertia_gen.py <capacité>` pour les autres sessions (le portail démarre seul et prend le jeton GPU `vertia`), boucle demande / essai / retour avec livraison dans `outbox/`. Capacités disponibles : `image.generer` (texte vers image) et `image.retoucher` (retouche par masque depuis `inbox/`) ; `python vertia_gen.py capacites` donne la liste à jour.
+- Atelier (`modules/atelier/`, `python run_atelier.py`, port 4320) : éditeur d'image local type Canva et Photoshop (calques, remplissage de scans, palette, pinceau, texte, formes, export PNG, projets) avec outil Retouche IA par masque ; interface à valider dans un navigateur (`tests_manuels.md`).
+- Orchestration GPU entre sessions (`_orchestration/`) : jeton VRAM, reprise automatique et vérifiée de l'entraînement de creation_llm.
+- Fondations v0.1.0 ci-dessous.
 - Fondations : serveur FastAPI, interface à panneaux affichables/masquables (Discussion, Fichiers, Mémoire, Outils) avec préférences mémorisées, canal d'événements temps réel.
 - Chat : client Ollama async, dossiers et instructions, conversations et titres automatiques issus du premier message, mode éphémère en mémoire, streaming Markdown, livrables à copier/télécharger, file de messages et Stop.
 - Contexte : fenêtre par paires, garde de dépassement et calibrage par `prompt_eval_count`. Les résumés des échanges écartés sont calculés lorsque la file est vide ; une nouvelle demande les interrompt. Un résumé peut donc être différé jusqu'à une période d'inactivité.
 - Ressources : RAM via psutil, VRAM via nvidia-smi, VRAM par PID via les compteurs Windows, modèles Ollama chargés. Le panneau Mémoire présente les jauges, déchargements ciblés et tâches GPU avec priorités, progression et annulation.
 - Les réponses, résumés et générations d’images, de musique et de vidéo passent par la file SQLite et un arbitre GPU partagé. Les adaptateurs utilisent les installations ComfyUI et ACE-Step existantes. Les tests utilisent des moteurs simulés ; les validations réelles restent à effectuer.
-- Images : routage léger, proposition JSON par le LLM, carte à modifier/valider/annuler, progression et aperçu du résultat. Aucun job image n’est créé avant validation. Édition avec une à trois images générées jointes ; inpaint indisponible sans éditeur de masque.
+- Images : routage léger, proposition JSON par le LLM, carte à modifier/valider/annuler, progression et aperçu du résultat. Aucun job image n’est créé avant validation. Édition avec une à trois images générées jointes ; la retouche par masque passe par l'Atelier (`image.retoucher`).
 - Musique : préparation des paroles/caption par le Chat, carte modifiable, instrumental ou chant français/anglais, génération ACE-Step en MP3, lecteur et galerie. La qualité musicale et les performances attendent une validation réelle.
 - Vidéo : Wan 2.2 TI2V-5B GGUF, texte ou image jointe vers MP4 muet court, carte modifiable et galerie ; performances et qualité à mesurer sur la machine.
 - Fichiers : copie locale des nouveaux résultats, catalogue par conversation, aperçu image/audio/vidéo, ouverture, téléchargement, dossier Windows et pièces jointes par bouton ou glisser-déposer. Les lecteurs sont testés avec des données simulées.

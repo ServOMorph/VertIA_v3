@@ -1,0 +1,163 @@
+<title>Urgences GPU</title>
+<meta name="claude:viewport-fit-sides" content="cover">
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Space+Grotesk:wght@500;700&display=swap">
+<style>
+/* Liste ordonnable plein écran mobile : rang à gauche, flèches à droite, barre d'enregistrement en bas */
+:root{
+  --bg:#f2f4f1;--surface:#ffffff;--fg:#1c2520;--muted:#5c6a61;--line:#d5dcd3;
+  --accent:#2f7a4f;--accent-soft:#e0eee4;--warn:#a5621a;--warn-soft:#f5e9d8;
+  --display:"Space Grotesk",system-ui,sans-serif;--body:"Inter",system-ui,sans-serif;
+}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){
+  --bg:#131915;--surface:#1b231e;--fg:#e3eae4;--muted:#99a79d;--line:#2e3932;
+  --accent:#5fbf86;--accent-soft:#1e3929;--warn:#e0a35a;--warn-soft:#392b19;color-scheme:dark}}
+:root[data-theme="dark"]{
+  --bg:#131915;--surface:#1b231e;--fg:#e3eae4;--muted:#99a79d;--line:#2e3932;
+  --accent:#5fbf86;--accent-soft:#1e3929;--warn:#e0a35a;--warn-soft:#392b19;color-scheme:dark}
+html,body{height:100%}
+body{background:var(--bg);color:var(--fg);font-family:var(--body);font-size:16px;line-height:1.5}
+.wrap{max-width:560px;margin:0 auto;min-height:100%;display:flex;flex-direction:column;gap:14px;box-sizing:border-box;
+  padding-block:16px;padding-left:max(16px,env(safe-area-inset-left,0px));padding-right:max(16px,env(safe-area-inset-right,0px))}
+h1{font-family:var(--display);font-size:1.7rem;line-height:1.1;margin:0;text-wrap:balance}
+.sub{margin:0;color:var(--muted);font-size:.92rem}
+.etat{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;font-size:.88rem;display:flex;flex-direction:column;gap:2px}
+.etat b{font-weight:600}
+.badge{align-self:flex-start;font-size:.8rem;font-weight:600;padding:3px 10px;border-radius:999px}
+.badge.ok{background:var(--accent-soft);color:var(--accent)}
+.badge.wait{background:var(--warn-soft);color:var(--warn)}
+ol{list-style:none;margin:0;padding:0;display:flex;flex-direction:column;gap:6px}
+li{display:grid;grid-template-columns:2.2em 1fr auto;align-items:center;gap:10px;background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:8px 8px 8px 12px;transition:transform .15s}
+li.moved{border-color:var(--accent)}
+.rang{font-family:var(--display);font-weight:700;font-size:1.2rem;color:var(--muted);font-variant-numeric:tabular-nums}
+li:first-child .rang{color:var(--accent)}
+.nom{min-width:0}
+.nom span{display:block;font-weight:600;overflow-wrap:anywhere}
+.nom small{color:var(--muted);font-size:.8rem}
+.btns{display:flex;gap:4px}
+.btns button{font:inherit;width:42px;height:42px;border-radius:8px;border:1px solid var(--line);background:var(--bg);color:var(--fg);cursor:pointer;font-size:1.05rem}
+.btns button:disabled{opacity:.3;cursor:default}
+nav{position:sticky;bottom:0;background:var(--bg);display:flex;flex-direction:column;gap:6px;padding-block:8px calc(8px + env(safe-area-inset-bottom,0px))}
+nav button{font:inherit;font-weight:600;padding:14px;border-radius:10px;border:1px solid var(--accent);background:var(--accent);color:var(--bg);cursor:pointer}
+nav button:disabled{opacity:.45;cursor:default}
+.status{margin:0;font-size:.85rem;color:var(--muted);min-height:1.3em;text-align:center}
+button:focus-visible{outline:2px solid var(--accent);outline-offset:2px}
+.h2{font-family:var(--display);font-size:1.1rem;margin:6px 0 0}
+.att{display:flex;flex-direction:column;gap:6px}
+.dem{background:var(--surface);border:1px solid var(--line);border-radius:10px;padding:10px 12px;display:flex;flex-direction:column;gap:2px}
+.dem b{font-weight:600}.dem small{color:var(--muted)}
+.toggle{font:inherit;font-size:.8rem;color:var(--accent);background:none;border:0;padding:2px 0;cursor:pointer;text-align:left}
+.panel{grid-column:1 / -1;border-top:1px solid var(--line);padding-top:8px;display:flex;flex-direction:column;gap:6px;min-width:0}
+.ev{display:grid;grid-template-columns:auto 1fr;gap:2px 10px;font-size:.85rem}
+.ev time{color:var(--muted);font-variant-numeric:tabular-nums;white-space:nowrap}
+.ev span{min-width:0;overflow-wrap:anywhere}
+.ev.jeton span{color:var(--accent);font-weight:600}
+.ev.refus span,.ev.pause span{color:var(--warn)}
+.vide{font-size:.85rem;color:var(--muted);margin:0}
+@media (prefers-reduced-motion:reduce){li{transition:none}}
+</style>
+
+<div class="wrap">
+  <h1>Urgences GPU</h1>
+  <p class="sub">De la plus urgente (1) à la moins urgente. Le rang remplace la priorité demandée par la session : une tâche longue de rang plus bas est mise en pause pour une plus urgente.</p>
+  <div class="etat" id="etat"><span>Chargement de l'état…</span></div>
+  <section class="att" id="att"></section>
+  <h2 class="h2">Ordre d'urgence</h2>
+  <ol id="liste"></ol>
+  <nav>
+    <button id="save" type="button" disabled>Enregistrer l'ordre</button>
+    <p class="status" id="status"></p>
+  </nav>
+</div>
+
+<script>
+const INFO = {
+  vertia:"portail, orchestration", creation_llm:"pré-entraînement long", creation_videos:"génération vidéo",
+  creation_3d:"modèles 3D", worldmodel:"world models", vibeobs:"kit, délégation Ollama",
+  securite:"session Sécurité", xmage:"session XMage", site_internet_v3:"Site Internet v3",
+  moulin_du_sud:"Moulin du Sud", agent_trader_f8:"agent-trader-f8"
+};
+let ordre = [], applique = null, etat = null, db = null, modifie = false, origine = [];
+let attente = null;
+const $ = s => document.querySelector(s);
+const esc = s => String(s).replace(/[&<>"]/g, c => ({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]));
+const status = t => $("#status").textContent = t;
+
+function memeOrdre(a,b){ return a && b && a.length===b.length && a.every((x,k)=>x===b[k]); }
+
+function renderEtat(){
+  const parts = [];
+  if(etat) parts.push(`<span><b>Maintenant</b> (${esc(etat.date||"")}) : ${esc(etat.texte||"")}</span>`);
+  if(!ordre.length) parts.push(`<span>Aucun ordre enregistré pour l'instant.</span>`);
+  else if(applique && memeOrdre(applique.ordre, ordre) && !modifie)
+    parts.push(`<span class="badge ok">Appliqué au verrou VRAM le ${esc(applique.date||"")}</span>`);
+  else parts.push(`<span class="badge wait">Pas encore appliqué : dis « applique urgences » à VertIA</span>`);
+  $("#etat").innerHTML = parts.join("");
+}
+
+function renderAttente(){
+  const el = $("#att");
+  if(!attente){ el.innerHTML = '<h2 class="h2">Demandes en attente</h2><p class="vide">Pas encore chargé.</p>'; return; }
+  const h = attente.detenteur ? `<div class="dem"><b>${esc(attente.detenteur.session)} utilise la VRAM</b><small>${esc(attente.detenteur.note||"Pas de description")} · ${attente.detenteur.gb||"?"} Go${attente.detenteur.long?", tâche longue":""} · jusqu'au ${esc(attente.detenteur.jusqua)}</small></div>` : `<div class="dem"><b>Personne n'utilise la VRAM</b></div>`;
+  const l = attente.attente.length ? attente.attente.map(q=>`<div class="dem"><b>${q.rang}. ${esc(q.session)}</b><small>${esc(q.note||"Pas de description")} · ${q.gb||"?"} Go${q.long?", tâche longue":""} · depuis ${esc(q.depuis)}</small></div>`).join("") : '<p class="vide">Aucune demande en attente.</p>';
+  el.innerHTML = `<h2 class="h2">Demandes en attente</h2>${h}${l}<p class="vide">Mis à jour le ${esc(attente.date)} (sur demande à VertIA).</p>`;
+}
+
+function render(bouge){
+  renderAttente();
+  $("#liste").innerHTML = ordre.map((s,k)=>`
+    <li class="${s===bouge?"moved":""}">
+      <span class="rang">${k+1}</span>
+      <span class="nom"><span>${esc(s)}</span><small>${esc(INFO[s]||"")}</small></span>
+      <span class="btns">
+        <button type="button" data-a="top" data-k="${k}" aria-label="Mettre ${esc(s)} en premier" ${k===0?"disabled":""}>⤒</button>
+        <button type="button" data-a="up" data-k="${k}" aria-label="Monter ${esc(s)}" ${k===0?"disabled":""}>↑</button>
+        <button type="button" data-a="down" data-k="${k}" aria-label="Descendre ${esc(s)}" ${k===ordre.length-1?"disabled":""}>↓</button>
+      </span>
+    </li>`).join("");
+  $("#save").disabled = !db || !modifie;
+  renderEtat();
+}
+
+$("#liste").addEventListener("click", e=>{
+  const b = e.target.closest("button[data-a]"); if(!b) return;
+  const k = +b.dataset.k, s = ordre[k];
+  ordre.splice(k,1);
+  const cible = b.dataset.a==="top" ? 0 : b.dataset.a==="up" ? k-1 : k+1;
+  ordre.splice(cible,0,s);
+  modifie = !memeOrdre(ordre, origine);
+  status(modifie ? "Ordre modifié, pas encore enregistré." : "");
+  render(s);
+  const n = document.querySelector(`button[data-a="${b.dataset.a}"][data-k="${cible}"]`);
+  if(n && !n.disabled) n.focus();
+});
+
+$("#save").addEventListener("click", async ()=>{
+  if(!db) return;
+  $("#save").disabled = true; status("Enregistrement…");
+  try{
+    await db.doc("config/urgences").set({ordre:[...ordre], maj:new Date().toISOString()});
+    origine = [...ordre]; modifie = false;
+    status("Enregistré. Dis « applique urgences » à VertIA pour l'appliquer au verrou.");
+  }catch(e){ status("Échec de l'enregistrement ("+(e&&e.code||"erreur")+"). Réessaie."); $("#save").disabled=false; }
+  renderEtat();
+});
+
+render();
+(async()=>{
+  try{ db = await window.claude?.use("db"); }catch(e){ db = null; }
+  if(!db){ $("#etat").innerHTML = "<span>Enregistrement indisponible : ouvre la page connecté à claude.ai.</span>"; return; }
+  let recu = false;
+  const t = setTimeout(()=>{ if(!recu) status("L'état met du temps à arriver…"); }, 10000);
+  db.collection("config").onSnapshot(snap=>{
+    recu = true; clearTimeout(t);
+    snap.docs.forEach(d=>{
+      const v = d.data(); if(!v) return;
+      if(d.id==="urgences" && Array.isArray(v.ordre) && !modifie){ ordre=[...v.ordre]; origine=[...v.ordre]; }
+      if(d.id==="applique") applique = v;
+      if(d.id==="etat") etat = v;
+      if(d.id==="attente") attente = v;
+    });
+    render();
+  }, err=>status("Lecture impossible ("+(err&&err.code||"erreur")+")."));
+})();
+</script>

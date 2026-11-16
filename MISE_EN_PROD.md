@@ -91,6 +91,24 @@ Les autres réglages restent dans `.env` :
 
 La base SQLite est `data/vertia.db` par défaut. Les nouveaux médias persistants sont copiés dans `outputs/<conversation>/`. Les moteurs conservent aussi leurs propres résultats. Le mode éphémère garde échanges et copies VertIA en mémoire jusqu’à l’arrêt ; il n’efface pas les sorties des moteurs externes. Télécharger ce qui doit être conservé avant l’arrêt.
 
+## Portail, Atelier et ligne de commande (v0.3.0)
+
+- **Chemins** : `config/chemins.toml` (ignoré par Git, modèle `config/chemins.example.toml`) donne les dossiers des moteurs (`[moteurs] comfyui, acestep`) et des données (`[dossiers] models, outputs, outbox, inbox, data`) ; sans fichier, les défauts sont `engines/`, `models/`, `outputs/`, `outbox/`, `inbox/` sous la racine. Priorité : défauts, `chemins.toml`, `.env`, `.vertia-local.json`.
+- **Poids ComfyUI** : les dossiers `unet`, `text_encoders`, `vae` et `checkpoints` de ComfyUI-Qwen ont été déplacés vers `models/comfy/` avec une jonction Windows à l'ancien emplacement (`outils/deplacer_poids.py`, journal `models/_deplacements.jsonl`). Retour arrière : `python outils/deplacer_poids.py retour <id> --appliquer`.
+- **Commande pour les autres sessions** : `python vertia_gen.py <capacité> --session <nom> --prompt "..."` démarre seule le portail (`run.py --headless`, sans navigateur, sans préchargement Ollama), attend la livraison dans `outbox/` et affiche le chemin du fichier. `python vertia_gen.py capacites` liste les capacités ; codes de sortie dans `_docs/architecture_portail.md` (section 5).
+- **Verrou GPU** : le portail prend le jeton `vertia` de `_orchestration/vram_lock.py` avant tout moteur GPU et le rend après inactivité ; l'entraînement de creation_llm se met en pause puis reprend seul.
+- **Atelier** : `python run_atelier.py` (port 4320, `--sans-navigateur` possible), projets dans `outputs/atelier/`. Dépendances ajoutées à `requirements.txt` : `pillow`, `psutil`. La retouche IA dépose les images dans `inbox/` et lance `vertia_gen.py image.retoucher`.
+- **Nouvelles variables** :
+
+| Variables | Usage |
+|---|---|
+| `VERTIA_VERROU_GPU` | Verrou GPU du portail, actif par défaut ; `0` le coupe |
+| `VERTIA_VERROU_GPU_ATTENTE_S` | Attente maximale du jeton en secondes, défaut 600 |
+| `VERTIA_PRELOAD_OLLAMA` | Préchargement du modèle de chat au démarrage, actif par défaut ; coupé en mode `--headless` |
+| `ATELIER_PORT`, `ATELIER_INBOX`, `ATELIER_VERTIA_GEN` | Port de l'Atelier (4320), dossier de dépôt des images à retoucher, script de génération (tests) |
+
+- **Vérification** : `python vertia_gen.py capacites` (le portail démarre seul), puis une génération `image` courte ; relever que `vram_lock.py status` montre le jeton `vertia` pendant le travail et que creation_llm repart ensuite.
+
 ## Contrôle après installation
 
 Le seuil de 92 % reste appliqué au chargement d’un modèle. Pour un modèle Ollama déjà chargé avec exactement le contexte demandé (confirmé par `/api/ps`, un seul modèle GPU présent), le chat utilise une réserve libre de 512 Mio minimum et 3 % de la VRAM, plutôt que de refuser son occupation existante. Le contrôle RAM est conservé. Si cette réserve manque ou si les métadonnées ne permettent pas de vérifier la réutilisation, la requête est refusée avec une explication. Les allocations supplémentaires pendant le calcul restent dépendantes du modèle.
@@ -136,3 +154,6 @@ Pour retirer VertIA, arrêter son processus et retirer son dossier après sauveg
 6. Tester sur une machine Windows distincte : chemins avec espaces/accents, D: absent, droits limités, ports occupés, installation partielle, usage sans réseau après installation, arrêt forcé, disque plein, mise à jour et retour arrière.
 
 Ce plan ne constitue pas un installateur exécuté. Les validations matérielles et de redistribution doivent précéder une annonce de compatibilité ou une diffusion des moteurs.
+
+## Journal
+- 2026-11-16 v0.3.0 : portail (config/chemins.toml, vertia_gen.py, API v1, verrou GPU, modules image et Atelier), poids ComfyUI-Qwen déplacés vers `models/comfy/` avec jonctions, dépendances `pillow` et `psutil`, nouvelles variables d'environnement.

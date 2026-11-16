@@ -7,9 +7,9 @@ Studio d'IA 100 % locale pour novices : un chat orchestrateur pilote la généra
 Python 3.11+ / FastAPI / SQLite, front HTML/CSS/JS vanilla, Ollama, ComfyUI (API), ACE-Step (API), pytest + Playwright
 
 ## État actuel (réécrit intégralement à chaque /close)
-Dernier commit produit : v0.1.0, phase 0 Fondations ; le code des phases 1 à 8 (Codex) est dans l'arbre de travail, non revu ni commité.
-Orchestration (4 sessions IA locales) : mécanique commitée et poussée (jeton VRAM, contrôle pre-push, protocole v2, reprise auto) ; phase 2 de roadmap_orchestration.md en cours.
-creation_llm détient le jeton GPU pour ~14 jours de pré-entraînement.
+Portail v0.3.0 : phases 1 à 4 de `roadmap_portail.md` faites (socle, CLI `vertia_gen.py`, accueil, image générer et retoucher, Atelier) ; phase 5 (musique, voix, CreaZik_V3) à lancer.
+Le portail arbitre le GPU par le jeton `vertia` ; creation_llm (pré-entraînement) reprend seul, contrôle par `verif_reprise.py`.
+Un modèle Ollama chargé en « Forever » par un client inconnu a bloqué la reprise ; origine à trouver.
 
 ## Décisions structurantes (append only — 10 entrées max, 5 lignes max/entrée, archiver au-delà)
 - 2026-10-31 : Initialisation du protocole vibecoding.
@@ -18,3 +18,6 @@ creation_llm détient le jeton GPU pour ~14 jours de pré-entraînement.
 - 2026-11-01 : Un seul moteur lourd en VRAM à la fois (GpuArbiter), file de jobs persistée, carte d'action validée par l'utilisateur.
 - 2026-11-13 : Orchestration des sessions creation_3d/WorldModel/creation_llm/creation_videos par `_orchestration/protocole.md` (jeton par script, escalades directes à l'utilisateur) ; jamais d'écriture dans les autres sessions.
 - 2026-11-13 : Reprise auto des tâches GPU après redémarrage via `reprise_auto.py` + tâche Windows `VertIA_reprise_auto` ; pause Windows Update jusqu'au 2026-12-18.
+- 2026-11-16 : Toute demande GPU passe avant creation_llm (reprise seule) ; toute demande d'IA locale passe par `vertia_gen.py` (ligne dans CLAUDE.md, diffusion aux autres sessions après la phase 5).
+- 2026-11-16 : Délégation par type de tâche selon `_docs/benchmark_agents.md` ; relance du benchmark à l'apparition d'un modèle ou après deux échecs.
+- 2026-11-16 : Poids de modèles déplacés vers `models/` avec jonction ; LFM3 évalué, décision d'usage en attente.
