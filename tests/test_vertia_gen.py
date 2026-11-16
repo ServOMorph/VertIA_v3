@@ -100,6 +100,22 @@ def test_timeout_et_sans_attente(monkeypatch, capsys, sans_attente, code):
     assert not capsys.readouterr().out
 
 
+def test_delai_ponctuel_de_lecture_reessaye(monkeypatch, capsys):
+    requete = cli.Client.requete
+    echecs = []
+
+    def lent_une_fois(self, chemin, *args, **kwargs):
+        if chemin.startswith('/demandes/') and not echecs:
+            echecs.append(chemin)
+            raise TimeoutError('timed out')
+        return requete(self, chemin, *args, **kwargs)
+
+    monkeypatch.setattr(cli.Client, 'requete', lent_une_fois)
+    with faux_serveur() as (port, _):
+        assert appeler(monkeypatch, port, 'test.echo', '--session', 'vertia') == 0
+    assert echecs and capsys.readouterr().out == '/outbox/essai_1.txt\n'
+
+
 def test_absence_serveur_demarrage_simule_puis_code_9(monkeypatch, capsys):
     with socket.socket() as sock:
         sock.bind(('127.0.0.1', 0))

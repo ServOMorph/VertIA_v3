@@ -85,6 +85,9 @@ class Client:
             except (TimeoutError, URLError) as exc:
                 if time.monotonic() >= deadline:
                     raise ErreurCLI(5, 'Délai d’attente dépassé.') from exc
+                if isinstance(exc, TimeoutError) or isinstance(getattr(exc, 'reason', None), TimeoutError):
+                    time.sleep(1)
+                    continue
                 raise
             code = afficher_etat(etat)
             if code != 2:
