@@ -27,6 +27,7 @@ BENCH = ROOT / '_docs' / 'bench_agents'
 TMP = ROOT / '.tmp_bench'
 RESULTATS = BENCH / 'resultats.jsonl'
 VERROU = threading.Lock()
+DELAI_MAX = [None]
 
 BUGS_T1 = [
     ('repository.py', 'nouvelle = not conn.execute(', 'nouvelle = bool(conn.execute(',
@@ -150,7 +151,8 @@ def executer(agent, tache):
             sh(['git', '-C', str(wt), '-c', 'user.name=bench', '-c', 'user.email=bench@local', 'commit', '-a',
                 '-q', '-m', 'bugs plantes'], check=True)
         debut = time.perf_counter()
-        code, delai_depasse, sortie = lancer(agent, BENCH / t['brief'], wt, t['lecture_seule'], t['delai'])
+        code, delai_depasse, sortie = lancer(agent, BENCH / t['brief'], wt, t['lecture_seule'],
+                                             min(t['delai'], DELAI_MAX[0] or t['delai']))
         resultat.update(duree_s=round(time.perf_counter() - debut), code=code, delai_depasse=delai_depasse)
         fichiers, lignes = modifications(wt)
         hors = [f for f in fichiers if f not in t['autorises']]
@@ -187,7 +189,9 @@ def main():
     p.add_argument('--agents', nargs='+', required=True)
     p.add_argument('--tasks', nargs='+', default=['t1', 't2', 't3'])
     p.add_argument('--parallele', type=int, default=2)
+    p.add_argument('--delai-max', type=int, default=None, help='plafond en secondes du temps de l agent par tache')
     a = p.parse_args()
+    DELAI_MAX[0] = a.delai_max
     travaux = [(agent, tache) for agent in a.agents for tache in a.tasks]
     with ThreadPoolExecutor(max_workers=max(1, a.parallele)) as pool:
         list(pool.map(lambda x: executer(*x), travaux))

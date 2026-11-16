@@ -1,6 +1,6 @@
 # LFM3 (Liquid AI) : état des lieux pour VertIA
 
-Recherche du 2026-11-16 (sources web citées en fin de document). Les chiffres sont ceux des fiches Hugging Face et de l'annonce du fournisseur ; ils n'ont pas été mesurés sur cette machine. Les mesures locales (texte et vision) sont dans « Mesures sur cette machine » ; voix et vidéo ne sont pas testées.
+Recherche du 2026-11-16 (sources web citées en fin de document). Les chiffres sont ceux des fiches Hugging Face et de l'annonce du fournisseur ; ils n'ont pas été mesurés sur cette machine. Les mesures locales (texte et vision) sont dans « Mesures sur cette machine » ; voix et vidéo, testées seulement sur le processeur, sont dans la même section.
 
 ## La famille
 LFM3 est sortie le 2026-10-27 : six modèles open-weight d'environ 2 milliards de paramètres, issus d'une base commune (LFM3-1.7B-Base, 22 000 milliards de tokens).
@@ -60,10 +60,18 @@ Qualité (lecture manuelle, 8 consignes) :
 
 Un seul cas d'image et un seul d'OCR : indicatif.
 
-### Non testé
-- **Voix** (Audio-2B, Omni-2B) : les poids sont téléchargés, mais la build llama.cpp ne contient pas de serveur vocal LFM3 identifié ; transcription et synthèse en français restent à tester (piste : serveur vocal du dépôt Liquid AI ou Transformers avec `trust_remote_code`, à relire avant exécution).
-- **Vidéo** (VL-2B, Omni-2B) : ffmpeg est présent, aucun clip de test n'a été passé.
-- Ollama : non utilisé pour LFM3 (version installée 0.31.2, prise en charge non confirmée).
+### Voix et vidéo (testés sur le processeur, GPU occupé par une autre session)
+Outils : `llama-tts.exe` et `llama-cli.exe` de la build b12427 ; fichiers de test dans `outputs/lfm3_voix/` (non versionné).
+- **Synthèse vocale en français (Audio-2B)** : « Bonjour, ceci est un test de synthèse vocale en français pour le portail VertIA. » produit un fichier WAV de 5 s (24 kHz) en 22 s sur le processeur, voix `female`, `--tts-lang fr`. Je n'ai pas écouté le fichier (`outputs/lfm3_voix/tts_fr.wav`) : la qualité de la voix et de la prononciation reste à juger à l'oreille par l'utilisateur.
+- **Transcription en français (Audio-2B, ASR)** : le fichier précédent est retranscrit mot pour mot (seule différence : « Vertia » au lieu de « VertIA »), ce qui montre que la parole est intelligible pour une machine. Test sur une voix synthétique propre ; non testé sur une voix humaine, du bruit ou plusieurs locuteurs. Débit sur processeur : 25 jetons/s.
+- **Vidéo avec son (Omni-2B)** : clip de 5 s (image de la voiture 3D fixe + la phrase parlée ci-dessus). La partie image est correctement décrite en français ; **la partie son est fausse** : le modèle affirme qu'il n'y a aucune voix et décrit un bourdonnement de moteur, alors que la phrase est audible. Un seul test, avec une image fixe : indicatif, mais la compréhension de la bande sonore d'une vidéo ne doit pas être considérée comme acquise. Durée : 3 min 40 s sur processeur.
+- **Vidéo sans son (VL-2B)** : non testé séparément.
+
+### Verdict provisoire
+- Voix : Audio-2B est utilisable en français pour la synthèse et la transcription (à confirmer sur une voix humaine et à l'oreille) : candidat sérieux pour la brique voix de la phase 5, à comparer avec les autres options locales avant de choisir.
+- Texte : utilitaire rapide, pas modèle de discussion (voir plus haut).
+- Vision : OCR et description rapides et légers (2,9 Go) : bon candidat pour lire des scans ou des images dans le portail.
+- Vidéo : à ne pas retenir en l'état pour la compréhension du son.
 
 ## Sources
 - Annonce : https://www.liquid.ai/blog/lfm3
