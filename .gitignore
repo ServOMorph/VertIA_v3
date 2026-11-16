@@ -12,10 +12,10 @@ __pycache__/
 node_modules/
 data/
 outputs/
-engines/
-models/
-outbox/
-inbox/
+/engines/
+/models/
+/outbox/
+/inbox/
 config/chemins.toml
 *.log
 _codex/runs/
