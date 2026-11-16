@@ -172,7 +172,8 @@ def main(argv=None, *, lanceur=None):
             if not demande_id.isalnum():
                 raise ErreurCLI(10, 'Identifiant de demande invalide.')
         else:
-            demande_id = client.requete('/demandes', dict(session=args.session, capacite=args.action,
+            capacite = args.action if '.' in args.action else args.action + '.generer'
+            demande_id = client.requete('/demandes', dict(session=args.session, capacite=capacite,
                 params=params, critere=args.critere, essais_max=args.essais))['id']
         print('id=' + demande_id, file=sys.stderr)
         identifie = True

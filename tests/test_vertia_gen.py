@@ -17,6 +17,7 @@ import pytest
 import uvicorn
 
 from test_api_v1 import app_factice
+from test_module_image import image_api
 
 ROOT = Path(__file__).resolve().parents[1]
 spec = importlib.util.spec_from_file_location('vertia_gen', ROOT / 'vertia_gen.py')
@@ -232,3 +233,40 @@ def test_headless_sans_navigateur_ni_reload(monkeypatch):
     run.main()
     thread.assert_not_called()
     assert uvicorn_run.call_args.kwargs['reload'] is False
+
+
+def brancher_cli_en_memoire(monkeypatch, client):
+    def requete(self, chemin, body=None, timeout=5):
+        response = (client.get('/api/v1' + chemin) if body is None else
+                    client.post('/api/v1' + chemin, json=body))
+        if response.status_code >= 400:
+            raise cli.ErreurCLI(10 if response.status_code == 422 else 1, response.text)
+        return response.json()
+
+    monkeypatch.setattr(cli.Client, 'requete', requete)
+
+
+@pytest.mark.parametrize('capacite', ['image', 'image.generer'])
+def test_cli_image_livre_png(image_api, monkeypatch, capsys, capacite):
+    client, moteur, _ = image_api
+    brancher_cli_en_memoire(monkeypatch, client)
+    lanceur = Mock(side_effect=AssertionError('Lancement interdit'))
+    assert cli.main([capacite, '--session', 'vertia', '--prompt', 'paysage',
+                     '--param', 'largeur=768', 'hauteur=512', 'seed=123'], lanceur=lanceur) == 0
+    output = capsys.readouterr()
+    fichier = Path(output.out.strip())
+    assert fichier.name == 'essai_1.png' and 'outbox' in fichier.parts
+    assert fichier.read_bytes().startswith(b'\x89PNG\r\n\x1a\n')
+    assert output.err.startswith('id=')
+    assert len(moteur.appels) == 1
+    assert moteur.appels[0]['largeur'] == 768 and moteur.appels[0]['seed'] == 123
+    lanceur.assert_not_called()
+
+
+@pytest.mark.parametrize('param', ['largeur=257', 'mode=edit', 'seed=-1'])
+def test_cli_image_invalide_code_10(image_api, monkeypatch, capsys, param):
+    client, moteur, _ = image_api
+    brancher_cli_en_memoire(monkeypatch, client)
+    assert cli.main(['image', '--session', 'vertia', '--prompt', 'x', '--param', param]) == 10
+    assert not capsys.readouterr().out
+    assert not moteur.appels

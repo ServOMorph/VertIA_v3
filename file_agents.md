@@ -3,6 +3,8 @@
 Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude intègre et commite seul.
 
 ## En cours
+- Codex : phase 4 poids livrée, déplacement simulé par défaut, SHA-256, jonctions Windows, journal et retour arrière ; 41 tests ciblés réussis (brief 20261116_004127_725_p4_poids_1a4eb964).
+- Codex : phase 4 image livrée, image.generer et alias CLI ; 354 tests réussis, nettoyage des temporaires bloqué par politique (brief 20261116_003013_542_p4_image_174956c2).
 - Codex : phase 3 accueil livré partiellement ; adaptation de registry.py et du mock ui_chat.cjs nécessaire hors périmètre (brief 20261115_210634_209_p3_accueil_a824bbd6).
 
 ## Ensuite (séquentiel)

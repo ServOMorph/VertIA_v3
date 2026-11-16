@@ -23,10 +23,17 @@ def sessions_connues():
     raise ValueError('Liste des sessions introuvable.')
 
 
-def construire(factory, settings, chemins):
+def construire(factory, settings, chemins, moteurs=None):
     if not inspect.isclass(factory) and hasattr(factory, 'valider'):
         return factory
     signature = inspect.signature(factory)
+    if moteurs is not None:
+        try:
+            signature.bind(settings, chemins, moteurs)
+        except TypeError:
+            pass
+        else:
+            return factory(settings, chemins, moteurs)
     try:
         signature.bind(settings, chemins)
     except TypeError:
@@ -65,7 +72,7 @@ class DemandesService:
                         raise ValueError(f'Moteur déjà enregistré : {nom}.')
                     jobs.arbiter.engines[nom] = construire(factory, settings, chemins)
                 for factory in module.outils.values():
-                    outil = construire(factory, settings, chemins)
+                    outil = construire(factory, settings, chemins, jobs.arbiter.engines)
                     capacite = outil.capacite
                     if capacite not in module.capacites or registre.capacites().get(capacite) is not module:
                         raise ValueError('Capacité non déclarée ou en conflit.')
