@@ -15,6 +15,7 @@ from vertia.engines.ollama_service import OllamaService
 
 @pytest.fixture(autouse=True)
 def offline_comfy(monkeypatch):
+    monkeypatch.setenv('VERTIA_VERROU_GPU', '0')
     monkeypatch.setattr(OllamaService, 'start_background', lambda self: None)
     monkeypatch.setattr(ComfyQwenEngine, 'health', AsyncMock(return_value=False))
     monkeypatch.setattr(AceStepEngine, 'health', AsyncMock(return_value=False))

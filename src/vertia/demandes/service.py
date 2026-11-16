@@ -12,6 +12,7 @@ from vertia.chemins import ROOT
 from vertia.demandes.livraison import Livraison
 from vertia.demandes.repository import DemandesRepository
 from vertia.resources.monitor import MemoryRefused
+from vertia.gpu.verrou import GpuOccupe, contextualiser
 from vertia.tools.base import ParameterError
 
 
@@ -167,6 +168,7 @@ class DemandesService:
             self.repository.essai(demande_id, numero, etat='livre', chemins=chemins, duree=duree)
             self._etat(demande_id, 'livre')
 
+        contextualiser(operation, f"session {demande['session']} ; capacité {demande['capacite']}")
         try:
             job_id = self.jobs.submit('demande', outil.moteur or 'sans_gpu',
                                       payload={'demande_id': demande_id, 'numero': numero}, operation=operation)
@@ -185,7 +187,7 @@ class DemandesService:
                 self.repository.essai(demande_id, numero, etat='annule')
                 self._etat(demande_id, 'annule')
             except Exception as exc:
-                code = 'gpu_occupe' if isinstance(exc, MemoryRefused) else 'moteur'
+                code = 'gpu_occupe' if isinstance(exc, (MemoryRefused, GpuOccupe)) else 'moteur'
                 if getattr(exc, 'motif_code', None) == 'pause':
                     code = 'pause'
                 self.repository.essai(demande_id, numero, etat='echec')

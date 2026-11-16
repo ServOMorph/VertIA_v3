@@ -45,6 +45,9 @@ class Settings:
     ollama_executable: str = ''
     ollama_autostart: bool = True
     resident_vram_reserve_mb: int = 512
+    verrou_gpu: bool = True
+    preload_ollama: bool = True
+    verrou_gpu_attente_s: int = 600
 
     @classmethod
     def from_env(cls, **overrides: object) -> "Settings":
@@ -70,6 +73,9 @@ class Settings:
             ollama_executable=_env('VERTIA_OLLAMA_EXECUTABLE', ''),
             ollama_autostart=_env('VERTIA_OLLAMA_AUTOSTART', 'true').lower() not in {'0', 'false', 'no'},
             resident_vram_reserve_mb=max(128, int(_env('VERTIA_RESIDENT_VRAM_RESERVE_MB', '512'))),
+            preload_ollama=_env('VERTIA_PRELOAD_OLLAMA', 'true').lower() not in {'0', 'false', 'no'},
+            verrou_gpu=_env('VERTIA_VERROU_GPU', 'true').lower() not in {'0', 'false', 'no'},
+            verrou_gpu_attente_s=max(0, int(_env('VERTIA_VERROU_GPU_ATTENTE_S', '600'))),
         )
         config_path = Path(overrides.get("local_config", settings.local_config))
         if config_path.is_file():

@@ -2,6 +2,7 @@
 from __future__ import annotations
 
 import argparse
+import os
 import socket
 import sys
 import threading
@@ -51,6 +52,8 @@ def main() -> None:
     parser.add_argument("--headless", action="store_true", help="sans navigateur ni rechargement auto")
     args = parser.parse_args()
 
+    if args.headless:
+        os.environ.setdefault("VERTIA_PRELOAD_OLLAMA", "0")
     settings = Settings.from_env()
     if port_in_use(settings.host, settings.port):
         print(

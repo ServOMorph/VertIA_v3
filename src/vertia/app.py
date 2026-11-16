@@ -27,6 +27,7 @@ from vertia.engines.ollama_service import OllamaService
 from vertia.engines.ollama_preload import OllamaPreload
 from vertia.jobs.arbiter import GpuArbiter
 from vertia.jobs.queue import JobQueue
+from vertia.gpu import VerrouGpu
 from vertia.resources.monitor import MemoryGuard, ResourceMonitor
 from vertia.tools.registry import ToolRegistry
 from vertia.tools.image import ImageTool
@@ -80,8 +81,11 @@ def build_services(settings: Settings, overrides: dict | None = None) -> Service
     ace = (overrides or {}).get('engines', {}).get('ace') or AceStepEngine(settings.acestep_dir, settings.acestep_port)
     engines = {'ollama': OllamaEngine(ollama), 'comfy': comfy, 'ace': ace,
                **(overrides or {}).get('engines', {})}
+    verrou = (overrides or {}).get('verrou_gpu')
+    if verrou is None and settings.verrou_gpu:
+        verrou = VerrouGpu(settings.verrou_gpu_attente_s)
     arbiter = GpuArbiter(engines, MemoryGuard(monitor, settings.vram_limit_percent, settings.ram_limit_percent,
-                                          settings.resident_vram_reserve_mb), settings.engine_idle_seconds)
+                                          settings.resident_vram_reserve_mb), settings.engine_idle_seconds, verrou)
     jobs = JobQueue(db, arbiter, events)
     ollama_preload = OllamaPreload(ollama_service, ollama, jobs, settings.default_model)
     for kind, handler in (overrides or {}).get('job_handlers', {}).items():
@@ -112,7 +116,8 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
         services.ollama_service.start_background()
-        services.ollama_preload.start()
+        if settings.preload_ollama:
+            services.ollama_preload.start()
         services.jobs.start()
         watcher = asyncio.create_task(services.watch_resources())
         try:
@@ -122,16 +127,23 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
             await asyncio.gather(watcher, return_exceptions=True)
             try:
                 await services.ollama_preload.close()
-                await services.chat.close()
                 await services.jobs.close()
                 await services.demandes.close()
+                await services.arbiter.close()
+                await services.chat.close()
                 services.actions.ephemeral.clear()
                 services.files.ephemeral.clear()
                 for engine in services.arbiter.engines.values():
                     if hasattr(engine, 'close'):
                         await engine.close()
             finally:
-                await services.ollama_service.close()
+                try:
+                    await services.jobs.close()
+                finally:
+                    try:
+                        await services.arbiter.close()
+                    finally:
+                        await services.ollama_service.close()
 
     app = FastAPI(title="VertIA", version=__version__, lifespan=lifespan)
     app.state.services = services
