@@ -1,0 +1,58 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Musique · VertIA</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 960px; margin: auto; padding: 24px; line-height: 1.5; }
+    main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+    section { border: 1px solid #888; border-radius: 12px; padding: 20px; }
+    h1, h2 { line-height: 1.2; }
+    form, label { display: grid; gap: 6px; }
+    form { gap: 14px; }
+    input, select, textarea, button { font: inherit; padding: 8px; min-width: 0; }
+    textarea { resize: vertical; }
+    .reglages { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .case { display: flex; align-items: center; gap: 8px; }
+    button { cursor: pointer; }
+    audio { width: 100%; margin-top: 16px; }
+    [role="status"] { overflow-wrap: anywhere; min-height: 1.5em; }
+    :focus-visible { outline: 3px solid #758eff; outline-offset: 3px; }
+    [hidden] { display: none; }
+  </style>
+  <script type="module" src="/modules/musique/static/musique.js"></script>
+</head>
+<body>
+  <a href="/">Accueil VertIA</a>
+  <h1>Musique</h1>
+  <p>Création musicale locale avec ACE-Step 1.5. Les demandes passent par la file GPU de VertIA.</p>
+  <main>
+    <section aria-labelledby="generation-titre">
+      <h2 id="generation-titre">Créer un morceau</h2>
+      <form id="generation">
+        <label>Description<textarea name="prompt" required maxlength="1000" rows="4" placeholder="lofi piano, warm"></textarea></label>
+        <label>Paroles<textarea name="paroles" maxlength="8000" rows="6"></textarea></label>
+        <label class="case"><input type="checkbox" name="instrumental" checked>Instrumental</label>
+        <label>Langue<input name="langue" value="en" pattern="([a-z]{2}|unknown)" required></label>
+        <div class="reglages">
+          <label>Durée (secondes)<input type="number" name="duree" value="60" min="10" max="600" step="1" required></label>
+          <label>Graine<input type="number" name="seed" value="0" min="0" max="4294967295" step="1" required></label>
+          <label>Étapes<input type="number" name="etapes" value="8" min="1" max="100" step="1" required></label>
+          <label>BPM (facultatif)<input type="number" name="bpm" min="30" max="300" step="1"></label>
+        </div>
+        <label class="case"><input type="checkbox" name="lm">Activer le modèle de langage (LM)</label>
+        <button type="submit">Générer la musique</button>
+      </form>
+    </section>
+    <section aria-labelledby="resultat-titre">
+      <h2 id="resultat-titre">Résultat</h2>
+      <p id="generation-statut" role="status" aria-live="polite"></p>
+      <audio id="audio" controls hidden></audio>
+      <p><a id="audio-telecharger" hidden>Télécharger le WAV</a></p>
+      <p><a id="metadata-telecharger" hidden>Télécharger les métadonnées</a></p>
+    </section>
+  </main>
+</body>
+</html>

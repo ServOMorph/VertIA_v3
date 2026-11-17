@@ -158,6 +158,7 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
 
     app.mount("/static", StaticFiles(directory=PACKAGE_DIR / "static"), name="static")
     app.mount('/modules/voix/static', StaticFiles(directory=ROOT / 'modules/voix/static'), name='voix_static')
+    app.mount('/modules/musique/static', StaticFiles(directory=ROOT / 'modules/musique/static'), name='musique_static')
     app.include_router(pages.router)
     app.include_router(system.router, prefix="/api")
     app.include_router(setup.router, prefix="/api")

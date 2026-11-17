@@ -3,7 +3,7 @@ import os
 from pathlib import Path
 import sys
 
-sys.path.insert(0, str(Path(__file__).resolve().parent))
+sys.path.insert(0, str(Path(__file__).resolve().parents[3] / 'src/vertia/engines/travailleurs_protocole'))
 from protocole import initialiser, servir
 
 MODELES = {'tiny', 'base', 'small', 'medium', 'large-v3', 'large-v3-turbo'}

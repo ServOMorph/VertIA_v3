@@ -38,4 +38,4 @@ def servir(canal, traiter):
             ecrire(canal, {'ok': True, 'fichiers': fichiers})
         except Exception:
             traceback.print_exc(file=sys.stderr)
-            ecrire(canal, {'ok': False, 'erreur': 'Échec du traitement audio.'})
+            ecrire(canal, {'ok': False, 'erreur': 'Échec du traitement.'})

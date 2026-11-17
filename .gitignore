@@ -19,6 +19,7 @@ outputs/
 config/chemins.toml
 *.log
 _codex/runs/
+_codex/reference/
 .playwright-mcp/
 .tmp_tests/
 .tmp_tests_phase3/

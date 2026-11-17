@@ -128,7 +128,8 @@ async def fichier_demande(demande_id: str, index: int, request: Request):
         if (not stat.S_ISREG(infos.st_mode) or infos.st_nlink != 1
                 or not fichier.resolve(strict=True).is_relative_to(racine)):
             raise ValueError
-        mime = {'.wav': 'audio/wav', '.txt': 'text/plain; charset=utf-8',
+        mime = {'.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.flac': 'audio/flac',
+                '.txt': 'text/plain; charset=utf-8',
                 '.json': 'application/json', '.png': 'image/png'}.get(fichier.suffix.lower())
         if mime is None:
             raise ValueError
