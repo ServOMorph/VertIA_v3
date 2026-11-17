@@ -22,6 +22,8 @@ async def local_seulement(request: Request):
 router = APIRouter(prefix='/api/v1', dependencies=[Depends(local_seulement)])
 LIMITE_AUDIO = 200 * 1024**2
 EXTENSIONS_AUDIO = {'.wav', '.mp3', '.flac', '.ogg', '.m4a'}
+EXTENSIONS_IMAGE = {'.png', '.jpg', '.jpeg', '.webp'}
+LIMITE_IMAGE = 50 * 1024**2
 MULTIPART_DISPONIBLE = importlib.util.find_spec('python_multipart') is not None
 
 
@@ -130,7 +132,7 @@ async def fichier_demande(demande_id: str, index: int, request: Request):
             raise ValueError
         mime = {'.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.flac': 'audio/flac',
                 '.txt': 'text/plain; charset=utf-8',
-                '.json': 'application/json', '.png': 'image/png'}.get(fichier.suffix.lower())
+                '.json': 'application/json', '.png': 'image/png', '.mp4': 'video/mp4'}.get(fichier.suffix.lower())
         if mime is None:
             raise ValueError
         return FileResponse(fichier, media_type=mime)
@@ -160,18 +162,20 @@ async def televerser_audio(request: Request, extension: str = ''):
                 raise HTTPException(415, 'Type attendu : application/octet-stream.')
             suffixe = '.' + extension.lower().lstrip('.')
             blocs = request.stream
-        if suffixe not in EXTENSIONS_AUDIO:
-            raise HTTPException(422, 'Extension audio non prise en charge.')
+        if suffixe not in EXTENSIONS_AUDIO | EXTENSIONS_IMAGE:
+            raise HTTPException(422, 'Extension non prise en charge (audio ou image PNG, JPEG, WebP).')
+        image = suffixe in EXTENSIONS_IMAGE
+        limite = LIMITE_IMAGE if image else LIMITE_AUDIO
         inbox = request.app.state.services.chemins.inbox_dir
         inbox.mkdir(parents=True, exist_ok=True)
-        nom = 'voix_' + uuid4().hex + suffixe
+        nom = ('image_' if image else 'voix_') + uuid4().hex + suffixe
         cible = inbox / nom
         taille = 0
         with cible.open('xb') as sortie:
             async for bloc in blocs():
                 taille += len(bloc)
-                if taille > LIMITE_AUDIO:
-                    raise HTTPException(413, 'Audio supérieur à la taille autorisée.')
+                if taille > limite:
+                    raise HTTPException(413, 'Fichier supérieur à la taille autorisée.')
                 sortie.write(bloc)
         return {'nom': nom}
     except BaseException:

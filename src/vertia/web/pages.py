@@ -26,3 +26,8 @@ def voix():
 @router.get('/musique')
 def musique():
     return FileResponse(ROOT / 'modules/musique/static/musique.html', media_type='text/html')
+
+
+@router.get('/video')
+def video():
+    return FileResponse(ROOT / 'modules/video/static/video.html', media_type='text/html')

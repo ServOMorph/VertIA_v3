@@ -405,6 +405,20 @@ def test_televersement(voix_api, monkeypatch):
         assert client.post('/api/v1/inbox', files={'fichier': ('test.wav', b'x')}).status_code == 415
 
 
+def test_televersement_image(voix_api, monkeypatch):
+    client, app, contexte = voix_api
+    headers = {'Content-Type': 'application/octet-stream'}
+    response = client.post('/api/v1/inbox?extension=PNG', content=b'\x89PNG', headers=headers)
+    assert response.status_code == 200
+    nom = response.json()['nom']
+    assert nom.startswith('image_') and nom.endswith('.png')
+    assert (contexte.chemins.inbox_dir / nom).read_bytes() == b'\x89PNG'
+    monkeypatch.setattr(v1, 'LIMITE_IMAGE', 4)
+    assert client.post('/api/v1/inbox?extension=jpg', content=b'12345', headers=headers).status_code == 413
+    assert client.post('/api/v1/inbox?extension=webp', content=b'1234', headers=headers).status_code == 200
+    assert client.post('/api/v1/inbox?extension=gif', content=b'x', headers=headers).status_code == 422
+
+
 @pytest.mark.parametrize('args', [['voix', '--prompt', 'Bonjour'],
                                   ['voix.transcrire', '--param', 'source=source.wav']])
 def test_cli_voix_en_memoire(voix_api, monkeypatch, capsys, args):

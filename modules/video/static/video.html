@@ -1,0 +1,57 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Vidéo · VertIA</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 960px; margin: auto; padding: 24px; line-height: 1.5; }
+    main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+    section { border: 1px solid #888; border-radius: 12px; padding: 20px; }
+    h1, h2 { line-height: 1.2; }
+    form, label { display: grid; gap: 6px; }
+    form { gap: 14px; }
+    input, select, textarea, button { font: inherit; padding: 8px; min-width: 0; }
+    textarea { resize: vertical; }
+    .reglages { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button { cursor: pointer; }
+    video { width: 100%; margin-top: 16px; }
+    [role="status"] { overflow-wrap: anywhere; min-height: 1.5em; }
+    :focus-visible { outline: 3px solid #758eff; outline-offset: 3px; }
+    [hidden] { display: none; }
+  </style>
+  <script type="module" src="/modules/video/static/video.js"></script>
+</head>
+<body>
+  <a href="/">Accueil VertIA</a>
+  <h1>Vidéo</h1>
+  <p>Création vidéo locale avec Wan 2.1 14B via WanGP. Les demandes passent par la file GPU de VertIA.</p>
+  <p>Prévoir environ 1 h par clip de 81 images.</p>
+  <main>
+    <section aria-labelledby="generation-titre">
+      <h2 id="generation-titre">Créer un clip</h2>
+      <form id="generation">
+        <label>Description<textarea name="prompt" required maxlength="4000" rows="4"></textarea></label>
+        <label>Mode<select name="mode"><option value="t2v">Texte vers vidéo</option><option value="i2v">Image vers vidéo</option></select></label>
+        <label id="image-champ" hidden>Image initiale (PNG, JPEG ou WebP, 50 Mio maximum)<input type="file" name="image" accept=".png,.jpg,.jpeg,.webp" disabled></label>
+        <label>Négatif<textarea name="negatif" maxlength="2000" rows="3"></textarea></label>
+        <div class="reglages">
+          <label>Graine<input type="number" name="seed" value="0" min="0" max="2147483647" step="1" required></label>
+          <label>Nombre d’images<input type="number" name="images" value="81" min="17" max="81" step="4" required></label>
+          <label>Résolution<select name="resolution"><option value="832x480">832 × 480</option><option value="480x832">480 × 832</option></select></label>
+          <label>Étapes (facultatif)<input type="number" name="etapes" min="1" max="50" step="1"></label>
+        </div>
+        <button type="submit">Générer la vidéo</button>
+      </form>
+    </section>
+    <section aria-labelledby="resultat-titre">
+      <h2 id="resultat-titre">Résultat</h2>
+      <p id="generation-statut" role="status" aria-live="polite"></p>
+      <video id="video" controls hidden></video>
+      <p><a id="video-telecharger" hidden>Télécharger le MP4</a></p>
+      <p><a id="metadata-telecharger" hidden>Télécharger les métadonnées</a></p>
+    </section>
+  </main>
+</body>
+</html>
