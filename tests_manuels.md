@@ -158,3 +158,12 @@ Essais GPU réels faits par la CLI (kokoro, chatterbox, whisper, ACE-Step) ; pag
 Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées). Non essayé sur la radio elle-même.
 1. Lancer une génération de la rotation (ou une création d'auditeur) : la piste apparaît dans la playlist, MP3 et visualisation produits, lecture normale sur la radio.
 2. Vérifier que la première piste à froid tient dans le délai (900 s minimum) et que les suivantes prennent moins d'une minute.
+
+## Atelier dans le portail
+1. Redémarrer le portail (`run.py`), ouvrir `http://127.0.0.1:4310`, cliquer la tuile Atelier : l'éditeur s'ouvre dans le même onglet sous `/atelier/`.
+2. Ouvrir, modifier et enregistrer un projet existant de `outputs/atelier` ; le recharger : rien n'est perdu.
+3. Lancer une retouche IA par masque depuis l'Atelier : le résultat revient dans le calque.
+
+## Page /video
+1. Ouvrir `http://127.0.0.1:4310/video`, générer un clip texte vers vidéo de 17 images : lecture et téléchargement du MP4.
+2. Image vers vidéo : téléverser une image PNG, générer 17 images : le clip part de l'image.
