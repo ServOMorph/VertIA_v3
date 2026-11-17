@@ -10,7 +10,7 @@ from fastapi.staticfiles import StaticFiles
 
 from vertia import __version__
 from vertia.config import Settings
-from vertia.chemins import resoudre_chemins
+from vertia.chemins import ROOT, Chemins, resoudre_chemins
 from vertia.modules.registry import RegistreModules
 from vertia.demandes import DemandesService
 from vertia.api.v1 import router as api_v1
@@ -56,6 +56,7 @@ class Services:
     ollama_preload: OllamaPreload
     modules: RegistreModules
     demandes: DemandesService
+    chemins: Chemins
 
     async def watch_resources(self):
         while True:
@@ -106,7 +107,7 @@ def build_services(settings: Settings, overrides: dict | None = None) -> Service
     return Services(settings=settings, db=db, events=events, ollama=ollama, chat=chat_service,
                     monitor=monitor, arbiter=arbiter, jobs=jobs, tools=tools, actions=actions_service, files=file_store,
                     ollama_service=ollama_service, ollama_preload=ollama_preload,
-                    modules=modules, demandes=demandes)
+                    modules=modules, demandes=demandes, chemins=chemins)
 
 
 def create_app(settings: Settings | None = None, overrides: dict | None = None) -> FastAPI:
@@ -156,6 +157,7 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
         return response
 
     app.mount("/static", StaticFiles(directory=PACKAGE_DIR / "static"), name="static")
+    app.mount('/modules/voix/static', StaticFiles(directory=ROOT / 'modules/voix/static'), name='voix_static')
     app.include_router(pages.router)
     app.include_router(system.router, prefix="/api")
     app.include_router(setup.router, prefix="/api")

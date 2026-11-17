@@ -3,6 +3,7 @@
 Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude intègre et commite seul.
 
 ## En cours
+- Codex high : phase 5 module voix (moteur `voix` multiplexant travailleurs Chatterbox, Kokoro, Whisper ; `voix.generer`, `voix.transcrire` ; page `/voix`, téléversement inbox, service des fichiers livrés ; tests simulés) livrée ; 95 tests dédiés, suite complète verte après adaptation de `test_video.py` par Claude ; défaut corrigé par Claude : scripts travailleurs homonymes des bibliothèques, renommés `travailleur_<nom>.py` (brief 20261117_083904_738_p5_voix).
 - Codex : phase 4 retouche portail livrée, image.retoucher avec ou sans masque, validation inbox et recomposition préservant les pixels hors bord adouci, moteur Comfy partagé ; 501 tests complets réussis sans serveur ni GPU (brief 20261116_152849_934_p4_retouche_portail_48fe4b52).
 - Codex : phase 4 verrou GPU livrée, jeton vertia avant démarrage, réutilisation/prolongation et libération, refus API contextualisés ; 27 tests dédiés et 422 tests complets réussis, nettoyage des temporaires refusé par politique (brief 20261116_112212_261_p4_verrou_72894574).
 - Codex : phase 4 poids livrée, déplacement simulé par défaut, SHA-256, jonctions Windows, journal et retour arrière ; 41 tests ciblés réussis (brief 20261116_004127_725_p4_poids_1a4eb964).

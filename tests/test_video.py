@@ -81,7 +81,7 @@ def video_app(settings):
     planner.output = {'tool': 'video_wan', 'parameters': {'prompt': 'La mer en mouvement'}}
     app = create_app(settings, {'ollama': planner, 'monitor': FakeMonitor(), 'engines': {'comfy': comfy}})
     assert app.state.services.tools.get('video_wan').adapter.comfy is comfy
-    assert set(app.state.services.arbiter.engines) == {'ollama', 'comfy', 'ace'}
+    assert set(app.state.services.arbiter.engines) >= {'ollama', 'comfy', 'ace'}
     return app, planner, comfy
 
 

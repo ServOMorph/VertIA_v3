@@ -52,7 +52,7 @@ export function initAccueil() {
       for (const module of activity.modules) {
         let href;
         try {
-          const url = new URL(module.lien);
+          const url = new URL(module.lien, location.href);
           if (["http:", "https:"].includes(url.protocol)) href = url.href;
         } catch { /* Un module sans lien reste informatif. */ }
         const health = module.sante;

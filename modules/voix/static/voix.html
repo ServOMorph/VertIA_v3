@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Voix · VertIA</title>
+  <style>
+    :root { color-scheme: light dark; font-family: system-ui, sans-serif; }
+    body { max-width: 960px; margin: auto; padding: 24px; line-height: 1.5; }
+    main { display: grid; grid-template-columns: repeat(auto-fit, minmax(min(100%, 340px), 1fr)); gap: 24px; }
+    section { border: 1px solid #888; border-radius: 12px; padding: 20px; }
+    h1, h2 { line-height: 1.2; }
+    form, label { display: grid; gap: 6px; }
+    form { gap: 14px; }
+    input, select, textarea, button { font: inherit; padding: 8px; min-width: 0; }
+    textarea { resize: vertical; }
+    .reglages { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    button { cursor: pointer; }
+    audio { width: 100%; margin-top: 16px; }
+    pre { white-space: pre-wrap; overflow-wrap: anywhere; font: inherit; }
+    [role="status"] { overflow-wrap: anywhere; min-height: 1.5em; }
+    :focus-visible { outline: 3px solid #758eff; outline-offset: 3px; }
+    [hidden] { display: none; }
+  </style>
+  <script type="module" src="/modules/voix/static/voix.js"></script>
+</head>
+<body>
+  <a href="/">Accueil VertIA</a>
+  <h1>Voix</h1>
+  <p>Synthèse vocale et transcription locales. Les demandes passent par la file GPU de VertIA.</p>
+  <main>
+    <section aria-labelledby="synthese-titre">
+      <h2 id="synthese-titre">Synthèse vocale</h2>
+      <form id="synthese">
+        <label>Texte à prononcer<textarea name="prompt" required maxlength="2000" rows="5"></textarea></label>
+        <label>Moteur<select name="moteur"><option value="chatterbox">Chatterbox</option><option value="kokoro">Kokoro</option></select></label>
+        <label>Langue<select name="langue"><option value="fr">Français</option><option value="en">Anglais</option></select></label>
+        <label>Voix Kokoro<input name="voix" value="ff_siwis" pattern="[a-z]{2}_[a-z0-9]{1,30}" required aria-describedby="aide-voix"></label>
+        <small id="aide-voix">Par exemple ff_siwis en français, af_heart en anglais. Chatterbox utilise la référence audio installée.</small>
+        <div class="reglages">
+          <label>Exagération (Chatterbox)<input type="number" name="exageration" value="0.5" min="0.25" max="2" step="0.05" required></label>
+          <label>CFG (Chatterbox)<input type="number" name="cfg" value="0.3" min="0" max="1" step="0.05" required></label>
+          <label>Température (Chatterbox)<input type="number" name="temperature" value="0.7" min="0.05" max="2" step="0.05" required></label>
+          <label>Vitesse (Kokoro)<input type="number" name="vitesse" value="1" min="0.5" max="2" step="0.1" required></label>
+        </div>
+        <label>Graine<input type="number" name="seed" value="0" min="0" max="9007199254740991" step="1" required></label>
+        <button type="submit">Générer la voix</button>
+      </form>
+      <p id="synthese-statut" role="status" aria-live="polite"></p>
+      <audio id="audio" controls hidden></audio>
+      <a id="audio-telecharger" hidden>Télécharger le WAV</a>
+    </section>
+    <section aria-labelledby="transcription-titre">
+      <h2 id="transcription-titre">Transcription</h2>
+      <form id="transcription">
+        <label>Fichier audio (200 Mio maximum)<input type="file" name="fichier" accept=".wav,.mp3,.flac,.ogg,.m4a" required></label>
+        <label>Modèle<select name="modele">
+          <option value="large-v3-turbo">Large v3 turbo</option><option value="tiny">Tiny</option>
+          <option value="base">Base</option><option value="small">Small</option>
+          <option value="medium">Medium</option><option value="large-v3">Large v3</option>
+        </select></label>
+        <label>Langue<select name="langue"><option value="fr">Français</option><option value="en">Anglais</option><option value="auto">Détection automatique</option></select></label>
+        <button type="submit">Transcrire</button>
+      </form>
+      <p id="transcription-statut" role="status" aria-live="polite"></p>
+      <pre id="texte-transcrit"></pre>
+      <a id="texte-telecharger" hidden>Télécharger le texte</a>
+    </section>
+  </main>
+</body>
+</html>
