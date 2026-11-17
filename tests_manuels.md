@@ -146,3 +146,15 @@ Tests automatisés (pytest serveur, Node sur images synthétiques) et contrôle 
 9. Retouche IA : peindre un masque à plusieurs niveaux de zoom, régler sa taille, gommer, inverser et effacer ; vérifier la surimpression rouge, sans nouveau calque ni entrée d'historique. Masque vide ou texte vide : erreur et aucun envoi.
 10. Retouche IA : sur plusieurs calques (visibilité, déplacement, opacité et fusion), décrire la modification, régler la force puis lancer ; vérifier le suivi et le temps écoulé, les commandes protégées pendant l'attente, puis le calque supérieur « Retouche IA » à la résolution du document. Annuler/rétablir en un pas et exporter le PNG.
 11. Retouche IA : annuler pendant l'exécution, vérifier l'état annulé et le nettoyage des deux fichiers d'inbox ; relancer. Contrôler les messages GPU occupé, pause utilisateur et échec moteur. Fermer la page pendant l'attente : aucune interrogation supplémentaire ; le serveur termine et nettoie les entrées.
+
+## Portail phase 5 — pages /voix et /musique
+Essais GPU réels faits par la CLI (kokoro, chatterbox, whisper, ACE-Step) ; pages non testées dans un navigateur. Lancer `python run.py`, ouvrir l'accueil.
+1. Accueil : les cartes Voix et Musique ouvrent `/voix` et `/musique`.
+2. `/voix` : synthèse Kokoro puis Chatterbox (avec une voix de référence téléversée), écoute et téléchargement du WAV ; transcription d'un fichier audio téléversé, texte affiché.
+3. `/musique` : un instrumental de 30 s puis un morceau chanté avec paroles ; écoute, téléchargement, qualité de 1 à 5.
+4. Pendant une génération, `python _orchestration/vram_lock.py status` montre le jeton `vertia` ; creation_llm repart après 5 min d'inactivité.
+
+## CreaZik via VertIA en conditions réelles
+Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées). Non essayé sur la radio elle-même.
+1. Lancer une génération de la rotation (ou une création d'auditeur) : la piste apparaît dans la playlist, MP3 et visualisation produits, lecture normale sur la radio.
+2. Vérifier que la première piste à froid tient dans le délai (900 s minimum) et que les suivantes prennent moins d'une minute.

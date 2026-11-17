@@ -37,7 +37,7 @@ VertIA_v3/
 | `version` | version du module (semver), journalisée avec chaque essai |
 | `moteurs` | fabriques d'`Engine` (reçoivent `Settings` et chemins résolus) |
 | `outils` | fabriques de `Tool` ; chaque outil déclare ses `capacites` |
-| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `musique.generer`, `voix.dire`, `3d.depuis_image`... |
+| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `musique.generer`, `voix.generer`, `voix.transcrire`, `3d.depuis_image`... (alias CLI : `<activité>` seule = `<activité>.generer`) |
 | `besoins` | `MemoryNeeds` par moteur (VRAM, RAM, durée typique, interruptible oui/non) |
 | `poids` | liste des poids requis (chemin relatif sous `models/`), contrôlée au diagnostic |
 | `sante()` | diagnostic passif (fichiers présents, venv présent), jamais de chargement GPU |
@@ -69,6 +69,8 @@ Règles : un module ne connaît pas les autres ; le cœur ne connaît aucun modu
 | `GET /api/v1/demandes/{id}` | état : attente, actif, livre, valide, a_refaire, echec, plafond ; chemins livrés |
 | `POST /api/v1/demandes/{id}/retour` | `{verdict: valide|a_refaire, motif?}` ; `a_refaire` relance un essai |
 | `POST /api/v1/demandes/{id}/annuler` | annulation |
+| `GET /api/v1/demandes/{id}/fichiers/{index}` | fichier livré (outbox seulement, sans lien) |
+| `POST /api/v1/inbox?extension=wav` | dépôt audio brut (`application/octet-stream`, 200 Mio max) → `{nom}` utilisable en paramètre `reference`/`source` |
 Version : `version_api` dans `sante` ; changement incompatible = `/api/v2`, v1 conservée jusqu'à migration des clients (CreaZik_V3 compris).
 
 ### CLI `vertia_gen.py`
@@ -108,6 +110,7 @@ vertia_gen.py etat <id>      vertia_gen.py capacites
 ## 7. GPU : deux niveaux d'arbitrage
 - Dans VertIA : `GpuArbiter` (un moteur à la fois) + `JobQueue` (ordre des jobs).
 - Entre sessions : `vram_lock.py` reste la source unique tant qu'il existe des sessions hors VertIA. Le serveur VertIA prend le jeton `vertia` (note = session demandeuse et capacité) quand un job GPU démarre et le rend après inactivité (`engine_idle_seconds`). L'ordre d'urgence de l'utilisateur s'applique aux demandes de la file VertIA (rang de la session demandeuse).
+- Moteurs à travailleurs (`src/vertia/engines/travailleurs.py`, voix et musique) : un sous-processus par moteur dans son venv (`engines/<moteur>/.venv`), démarré à la première demande, un seul travailleur vivant à la fois, protocole JSON-lignes sur stdin/stdout (`travailleurs_protocole/protocole.py`), journal `data/logs/`. Besoins mesurés le 2026-11-17 : voix pic 5,7 Go total, ACE-Step 5,8 Go alloués.
 - Les tâches longues (entraînement creation_llm, phase 11) deviennent des jobs VertIA interruptibles avec point de reprise ; `vram_guard`/`reprise_auto` sont repris à ce moment-là.
 
 ## 8. Entrées utilisateur
@@ -115,6 +118,7 @@ vertia_gen.py etat <id>      vertia_gen.py capacites
 
 ## 9. CreaZik_V3
 Préférences calculées côté CreaZik (votes de la webradio, `regles_modeles.json`) ; VertIA reçoit des paramètres déjà résolus par `musique.generer` (API v1). VertIA reste générique et ne connaît pas la webradio **[décidé]**.
+Branchement (2026-11-17) : `CreaZik_V3/webradio/ace_worker.py` est un client de `vertia_gen.py musique --session creazik`, même ligne de commande et mêmes sorties (`playlist_results.json`, `.metadata.json`, manifeste) que l'ancien worker ; paroles ajustées côté CreaZik (`ajuster_paroles=false`), audio de référence découpé côté CreaZik puis déposé par `POST /api/v1/inbox`, demande close `valide` à la livraison. Délai minimum de la file radio porté à 900 s (premier appel à froid environ 6 min avec attente du jeton). Session `creazik` déclarée dans `vram_lock.py`.
 
 ## 10. Archivage des dépôts (avant suppression, phase 12)
 1. Prérequis : travail non poussé traité (décision 4 de l'inventaire : pousser, archiver ou abandonner).
