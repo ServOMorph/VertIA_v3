@@ -127,16 +127,22 @@ def test_annulation_arbre_et_conflit(retouche, tmp_path):
     marqueur = tmp_path / 'enfant.pid'
     script.write_text('import subprocess, sys, time, pathlib\n'
                       'p = subprocess.Popen([sys.executable, "-c", "import time; time.sleep(60)"])\n'
-                      f'pathlib.Path({str(marqueur)!r}).write_text(str(p.pid))\n'
+                      f'marqueur = pathlib.Path({str(marqueur)!r})\n'
+                      'temporaire = marqueur.with_suffix(".tmp")\n'
+                      'temporaire.write_text(str(p.pid))\n'
+                      'temporaire.replace(marqueur)\n'
                       'time.sleep(60)\n')
     identifiant = demarrer(client)
     assert client.post('/api/retouche', json=donnees()).status_code == 409
     assert client.get(f'/api/retouche/{identifiant}/resultat').status_code == 409
     limite = time.monotonic() + 5
-    while not marqueur.exists() and time.monotonic() < limite:
-        time.sleep(.01)
-    assert marqueur.exists()
-    pid = int(marqueur.read_text())
+    pid = None
+    while pid is None and time.monotonic() < limite:
+        try:
+            pid = int(marqueur.read_text())
+        except (FileNotFoundError, PermissionError, ValueError):
+            time.sleep(.01)
+    assert pid is not None
     assert client.delete(f'/api/retouche/{identifiant}').json()['etat'] == 'annule'
     assert not psutil.pid_exists(pid)
     assert attendre(client, identifiant)['etat'] == 'annule'

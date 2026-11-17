@@ -58,10 +58,10 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
       const interroger = async () => {
         minuterie = null;
         try {
-          const etat = await (await requete(`/api/retouche/${id}`)).json();
+          const etat = await (await requete(`api/retouche/${id}`)).json();
           if (courant !== generation) return;
           if (etat.etat === 'termine') {
-            const reponse = await requete(`/api/retouche/${id}/resultat`);
+            const reponse = await requete(`api/retouche/${id}/resultat`);
             const blob = await reponse.blob();
             if (courant !== generation) return;
             await resultat(blob, () => courant === generation);
@@ -75,7 +75,7 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
       };
       try {
         publier({ etat: 'attente', message: 'En attente' });
-        const reponse = await (await requete('/api/retouche', { method: 'POST',
+        const reponse = await (await requete('api/retouche', { method: 'POST',
           headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(donnees) })).json();
         if (courant !== generation) return;
         id = reponse.id; await interroger();
@@ -85,7 +85,7 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
     },
     async annuler() {
       if (!id) throw new Error('Attendez la prise en charge de la retouche');
-      await requete(`/api/retouche/${id}`, { method: 'DELETE' });
+      await requete(`api/retouche/${id}`, { method: 'DELETE' });
       arreter(); notifier({ etat: 'annule', message: 'Annulé', secondes: 0 });
     }
   };

@@ -8,6 +8,8 @@ from pathlib import Path
 from fastapi import FastAPI
 from fastapi.staticfiles import StaticFiles
 
+from modules.atelier.serveur import creer_app as creer_atelier
+
 from vertia import __version__
 from vertia.config import Settings
 from vertia.chemins import ROOT, Chemins, resoudre_chemins
@@ -113,6 +115,7 @@ def build_services(settings: Settings, overrides: dict | None = None) -> Service
 def create_app(settings: Settings | None = None, overrides: dict | None = None) -> FastAPI:
     settings = settings or Settings.from_env()
     services = build_services(settings, overrides)
+    atelier = creer_atelier()
 
     @asynccontextmanager
     async def lifespan(app: FastAPI):
@@ -122,7 +125,8 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
         services.jobs.start()
         watcher = asyncio.create_task(services.watch_resources())
         try:
-            yield
+            async with atelier.router.lifespan_context(atelier):
+                yield
         finally:
             watcher.cancel()
             await asyncio.gather(watcher, return_exceptions=True)
@@ -148,6 +152,7 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
 
     app = FastAPI(title="VertIA", version=__version__, lifespan=lifespan)
     app.state.services = services
+    app.mount('/atelier', atelier, name='atelier')
 
     @app.middleware('http')
     async def refresh_interface(request, call_next):

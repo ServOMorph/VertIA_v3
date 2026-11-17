@@ -1,8 +1,40 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
+import { readFile } from 'node:fs/promises';
+import { setImmediate } from 'node:timers/promises';
 import { DocumentAtelier, composer, enregistrerRendu } from '../static/js/document.js';
 import { Historique, MAX_PAS, instantaneRegion } from '../static/js/historique.js';
 import { serialiser, deserialiser } from '../static/js/projet.js';
+
+test('Accueil : Atelier dans le même onglet, autres tuiles inchangées', async t => {
+  const originaux = { document: globalThis.document, location: globalThis.location, apiAtelierTest: globalThis.apiAtelierTest };
+  t.after(() => Object.assign(globalThis, originaux));
+  const ids = new Map();
+  const element = tag => ({ tag, dataset: {}, children: [], append(...enfants) { this.children.push(...enfants); },
+    addEventListener() {}, setAttribute(nom, valeur) { this[nom] = valeur; } });
+  globalThis.document = { createElement: element, getElementById(id) {
+    if (!ids.has(id)) ids.set(id, element('div'));
+    return ids.get(id);
+  } };
+  globalThis.location = { href: 'http://portail.test:4310/' };
+  globalThis.apiAtelierTest = async () => ({ activites: [{ activite: 'image', titre: 'Image', modules: [
+    { nom: 'atelier', titre: 'Atelier', lien: '/atelier/', sante: { pret: true } },
+    { nom: 'musique', titre: 'Musique', lien: '/musique', sante: { pret: true } },
+    { nom: 'externe', titre: 'Externe', lien: 'https://exemple.test/', sante: { pret: true } }
+  ] }], erreurs: [] });
+  const source = (await readFile(new URL('../../../src/vertia/static/js/accueil.js', import.meta.url), 'utf8'))
+    .replace('import { api } from "./api.js";', 'const api = globalThis.apiAtelierTest;')
+    .replace('import { setPanel } from "./panels.js";', 'const setPanel = () => {};');
+  const { initAccueil } = await import(`data:text/javascript;base64,${Buffer.from(source).toString('base64')}`);
+  initAccueil(); await setImmediate();
+  const [atelier, musique, externe] = ids.get('accueil-activites').children[0].children.slice(1);
+  assert.equal(atelier.tag, 'a'); assert.equal(atelier.href, 'http://portail.test:4310/atelier/');
+  assert.equal(atelier.target, undefined); assert.equal(atelier['aria-label'], undefined);
+  for (const tuile of [musique, externe]) {
+    assert.equal(tuile.target, '_blank'); assert.equal(tuile.rel, 'noopener noreferrer');
+    assert.match(tuile['aria-label'], /nouvel onglet/);
+  }
+});
 
 test('Les changements de calques restent cohérents après annulation et nouvelle branche', () => {
   const doc = new DocumentAtelier(), historique = new Historique();

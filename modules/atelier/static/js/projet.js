@@ -88,12 +88,12 @@ export function installerProjet(ctx, dialogue) {
       const choix = nom ?? prompt('Nom du projet (1 à 80 caractères : lettres, chiffres, espaces, - ou _)');
       if (!choix) return;
       if (!/^[\p{L}\p{N}_ -]{1,80}$/u.test(choix) || !choix.trim()) throw new Error('Nom de projet invalide');
-      await api(`/api/projets/${encodeURIComponent(choix)}`, { method: 'POST',
+      await api(`api/projets/${encodeURIComponent(choix)}`, { method: 'POST',
         headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(serialiser(ctx.document)) });
       nom = choix; ctx.message(`Projet « ${nom} » enregistré`);
     },
     async ouvrir() {
-      const noms = await api('/api/projets');
+      const noms = await api('api/projets');
       const liste = dialogue.querySelector('select'); liste.replaceChildren();
       for (const nom of noms) {
         const option = document.createElement('option'); option.value = nom; option.textContent = nom; liste.append(option);
@@ -105,7 +105,7 @@ export function installerProjet(ctx, dialogue) {
         dialogue.returnValue = ''; dialogue.showModal();
       });
       if (!choix) return;
-      const etat = await deserialiser(await api(`/api/projets/${encodeURIComponent(choix)}`));
+      const etat = await deserialiser(await api(`api/projets/${encodeURIComponent(choix)}`));
       if (!confirm('Remplacer le document actuel par ce projet ?')) return;
       ctx.reinitialiserRetouche?.();
       ctx.document.restaurer(etat); ctx.historique.vider(); ctx.vue.ajuster(); nom = choix;

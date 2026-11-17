@@ -36,7 +36,7 @@ function scenario(etats) {
   const suivi = creerSuivi({
     fetcher: async (url, options) => {
       appels.push([url, options]);
-      return { ok: true, json: async () => url === '/api/retouche' ? { id: 'abc' } : etats.shift(), blob: async () => 'PNG' };
+      return { ok: true, json: async () => url === 'api/retouche' ? { id: 'abc' } : etats.shift(), blob: async () => 'PNG' };
     },
     programmer: (fn, delai) => { const id = ++compteur; minuteries.set(id, [fn, delai]); return id; },
     deprogrammer: id => minuteries.delete(id),
@@ -56,7 +56,7 @@ test('Envoi, interrogation espacée de 3 s, réception unique et fin des minuter
   await s.avancer(); await s.avancer();
   assert.deepEqual(s.resultats, ['PNG']); assert.equal(s.minuteries.size, 0);
   assert.equal(s.notifications.at(-1).etat, 'termine');
-  assert.deepEqual(s.appels.map(a => a[0]), ['/api/retouche', '/api/retouche/abc', '/api/retouche/abc', '/api/retouche/abc', '/api/retouche/abc/resultat']);
+  assert.deepEqual(s.appels.map(a => a[0]), ['api/retouche', 'api/retouche/abc', 'api/retouche/abc', 'api/retouche/abc', 'api/retouche/abc/resultat']);
 });
 
 test('Annulation et fermeture arrêtent les minuteries', async () => {
@@ -128,7 +128,7 @@ test('Outil complet : composition visible, masque gris à la taille native, réc
   const requetes = [];
   globalThis.fetch = async (url, options) => {
     requetes.push([url, options]);
-    return { ok: true, json: async () => url === '/api/retouche' ? { id: 'test' } : { etat: 'termine', message: 'Terminé' }, blob: async () => new Blob(['png']) };
+    return { ok: true, json: async () => url === 'api/retouche' ? { id: 'test' } : { etat: 'termine', message: 'Terminé' }, blob: async () => new Blob(['png']) };
   };
   const doc = new DocumentAtelier(), historique = new Historique(); doc.largeur = 7; doc.hauteur = 5;
   const calque = (id, visible) => ({ id, type: 'raster', canvas: id, visible, opacite: .5, fusion: 'multiply', x: 2, y: 1 });

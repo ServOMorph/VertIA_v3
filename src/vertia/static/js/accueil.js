@@ -60,9 +60,11 @@ export function initAccueil() {
           `Version ${module.version} · ${health.pret ? "Prêt" : "Indisponible"}${health.message || health.erreur ? ` · ${health.message || health.erreur}` : ""}`);
         if (href) {
           node.href = href;
-          node.target = "_blank";
-          node.rel = "noopener noreferrer";
-          node.setAttribute("aria-label", `${module.titre} (nouvel onglet)`);
+          if (module.nom !== "atelier") {
+            node.target = "_blank";
+            node.rel = "noopener noreferrer";
+            node.setAttribute("aria-label", `${module.titre} (nouvel onglet)`);
+          }
         } else node.tabIndex = 0;
         section.append(node);
       }

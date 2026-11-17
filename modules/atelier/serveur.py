@@ -137,11 +137,13 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
 
     @asynccontextmanager
     async def lifespan(app):
-        yield
-        for travail in list(travaux.values()):
-            await asyncio.to_thread(annuler_travail, travail)
-        if taches:
-            await asyncio.gather(*taches)
+        try:
+            yield
+        finally:
+            for travail in list(travaux.values()):
+                await asyncio.to_thread(annuler_travail, travail)
+            if taches:
+                await asyncio.gather(*taches)
 
     app = FastAPI(title="Atelier", lifespan=lifespan)
     racine = dossier.resolve()

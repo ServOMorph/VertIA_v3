@@ -4,7 +4,7 @@ Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude 
 
 ## En cours
 - Codex high : phase 6 module vidéo (WanGP Wan 2.1 14B t2v/i2v en travailleur, `video.generer`, page `/video`, tests simulés) livré, 784 tests ; inbox étendu aux images par Claude (785 tests) ; essai réel en attente du déplacement des poids (brief p6_video, 2026-11-17 23:59).
-- Codex high : Atelier intégré au portail sous `/atelier/` en cours (brief p6_atelier, demande utilisateur du 2026-11-17).
+- Codex high : Atelier intégré au portail sous `/atelier/` (montage, cycle de vie, chemins relatifs, tuile dans le même onglet) livré ; 792 tests verts chez Claude (délais du bac à sable Codex sur test_chat/test_demandes non reproduits) (brief p6_atelier, 2026-11-18).
 - Codex high : phase 5 module musique (moteur à travailleurs générique extrait de la voix, travailleur ACE-Step porté de CreaZik, `musique.generer`, page `/musique`, tests simulés) livrée ; 705 tests (encodage du test corrigé par Claude) ; non-régression GPU : écart VertIA/référence égal au non-déterminisme propre d'ACE-Step (45 et 42 dB) (brief p5_musique, 2026-11-17 13:23).
 - Codex high : phase 5 module voix (moteur `voix` multiplexant travailleurs Chatterbox, Kokoro, Whisper ; `voix.generer`, `voix.transcrire` ; page `/voix`, téléversement inbox, service des fichiers livrés ; tests simulés) livrée ; 95 tests dédiés, suite complète verte après adaptation de `test_video.py` par Claude ; défaut corrigé par Claude : scripts travailleurs homonymes des bibliothèques, renommés `travailleur_<nom>.py` (brief 20261117_083904_738_p5_voix).
 - Codex : phase 4 retouche portail livrée, image.retoucher avec ou sans masque, validation inbox et recomposition préservant les pixels hors bord adouci, moteur Comfy partagé ; 501 tests complets réussis sans serveur ni GPU (brief 20261116_152849_934_p4_retouche_portail_48fe4b52).
@@ -14,7 +14,6 @@ Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude 
 - Codex : phase 3 accueil livré partiellement ; adaptation de registry.py et du mock ui_chat.cjs nécessaire hors périmètre (brief 20261115_210634_209_p3_accueil_a824bbd6).
 
 ## Ensuite (séquentiel)
-- Codex high : Atelier intégré au portail sous `/atelier/` (montage, cycle de vie, chemins relatifs, tuile d'accueil), après p6_video car `src/vertia/app.py` est partagé (brief p6_atelier, demande utilisateur du 2026-11-17).
 
 ## En attente (utilisateur)
 - Réutilisation du modèle résident : chat au-delà de 92 % avec réserve de 512 Mio/3 %, refus proche de saturation et pics réels à valider (`tests_manuels.md`).
