@@ -81,3 +81,15 @@ def test_relance_reussie_n_escalade_pas(verif, monkeypatch):
     assert verif.verifier("llm", 5, 0.05, 5, pause=0.01) == 1
     assert "REPRISE_OK_APRES_RELANCE llm pas=11" in (verif.STATE / "reprise.log").read_text(encoding="utf-8")
     assert "ESCALADE_REPRISE" not in (verif.STATE / "alertes.log").read_text(encoding="utf-8")
+
+
+def test_reprise_ok_par_csv_de_progression(verif, monkeypatch, tmp_path):
+    csv = tmp_path / "log.csv"
+    csv.write_text("step,train_loss\n10,2.5\n", encoding="utf-8")
+    verif.SORTIE.write_text("step 10 train\n", encoding="utf-8")
+    monkeypatch.setattr(verif, "SUIVIS_CSV", [str(csv)])
+    ecrire(verif, "lock.json", {"holder": "llm", "expires": time.time() + 600})
+    monkeypatch.setattr(verif.time, "sleep", lambda s: csv.open("a", encoding="utf-8").write("20,2.4\n"))
+    assert verif.verifier("llm", 30, 5, 5, pause=0) == 0
+    assert "REPRISE_OK llm pas=20" in (verif.STATE / "reprise.log").read_text(encoding="utf-8")
+    assert not verif.relances

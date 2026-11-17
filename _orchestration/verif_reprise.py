@@ -5,7 +5,8 @@ python verif_reprise.py <session> [--attente-max S] [--delai-pas S] [--delai-lib
 Lancé en arrière-plan par vram_lock quand une session déclarée rend son jeton.
 Tant qu'une autre session tient le GPU ou attend dans la file, on patiente.
 Quand la session reprend le jeton, une ligne `step N` doit apparaître dans
-state/reprise_sortie.log dans le délai --delai-pas : REPRISE_OK.
+state/reprise_sortie.log, ou dans le CSV « progression » déclaré dans reprise.json
+(cas d'une relance faite par la session elle-même), dans le délai --delai-pas : REPRISE_OK.
 Si le GPU reste libre sans reprise pendant --delai-libre, ou si aucun pas
 n'apparaît : REPRISE_KO, journalisée dans state/alertes.log, puis relance par
 reprise_auto.py --apres-pause (une seule fois).
@@ -25,6 +26,8 @@ STATE = ORCH / "state"
 CONFIG = HERE / "reprise.json"
 SORTIE = STATE / "reprise_sortie.log"
 PAS = re.compile(r"^step (\d+)")
+PAS_CSV = re.compile(r"^(\d+),")
+SUIVIS_CSV = []
 DETACHED = 0x00000008 | 0x00000200
 DELAI_RELANCE = 900.0
 PAUSE_RELANCE = 10.0
@@ -45,22 +48,35 @@ def journal(texte, alerte=False):
             f.write(ligne)
 
 
+def suivis():
+    return [(SORTIE, PAS)] + [(Path(c), PAS_CSV) for c in SUIVIS_CSV]
+
+
 def taille_sortie():
-    try:
-        return SORTIE.stat().st_size
-    except OSError:
-        return 0
+    positions = []
+    for chemin, _ in suivis():
+        try:
+            positions.append(chemin.stat().st_size)
+        except OSError:
+            positions.append(0)
+    return positions
 
 
 def dernier_pas(depuis):
-    try:
-        with open(SORTIE, "rb") as f:
-            f.seek(depuis)
-            texte = f.read().decode("utf-8", errors="replace")
-    except OSError:
-        return None
-    pas = [int(m.group(1)) for m in map(PAS.match, texte.splitlines()) if m]
-    return pas[-1] if pas else None
+    if isinstance(depuis, int):
+        depuis = [depuis]
+    trouve = None
+    for (chemin, motif), position in zip(suivis(), list(depuis) + [0] * len(suivis())):
+        try:
+            with open(chemin, "rb") as f:
+                f.seek(position)
+                texte = f.read().decode("utf-8", errors="replace")
+        except OSError:
+            continue
+        pas = [int(m.group(1)) for m in map(motif.match, texte.splitlines()) if m]
+        if pas:
+            trouve = pas[-1]
+    return trouve
 
 
 def detenteur():
@@ -150,6 +166,9 @@ def main():
     if a.session not in declarees:
         print(f"SESSION_NON_DECLAREE {a.session}")
         return 8
+    progression = declarees[a.session].get("progression")
+    if progression:
+        SUIVIS_CSV.append(str(Path(declarees[a.session].get("cwd", ".")) / progression))
     return verifier(a.session, a.attente_max, a.delai_pas, a.delai_libre)
 
 
