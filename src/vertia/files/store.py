@@ -12,6 +12,11 @@ FORMATS = {
     'video/mp4': ('video', '.mp4'), 'video/webm': ('video', '.webm'),
 }
 MAX_BYTES = 256 * 1024**2
+TEXT_FORMATS = {
+    '.md': 'text/markdown', '.txt': 'text/plain', '.json': 'application/json', '.html': 'text/html',
+    '.css': 'text/css', '.js': 'text/javascript', '.py': 'text/x-python', '.csv': 'text/csv',
+    '.xml': 'application/xml', '.yaml': 'application/yaml', '.yml': 'application/yaml',
+}
 
 
 class FileStore:
@@ -97,6 +102,43 @@ class FileStore:
             raise
         self.events.publish('fichiers.maj', {'conversation_id': conv_id})
         return [m['id'] for m, _ in prepared]
+
+    def save_text(self, conv_id, filename, content):
+        conv = self.repository.conversation(conv_id)
+        if conv is None:
+            raise LookupError('Conversation introuvable.')
+        data = content.encode('utf-8')
+        if not data or len(data) > MAX_BYTES:
+            raise ValueError('Contenu vide ou trop volumineux.')
+        mime = TEXT_FORMATS.get(Path(filename).suffix.lower())
+        if mime is None:
+            raise ValueError('Extension de fichier texte non autorisée.')
+        meta = dict(id=uuid4().hex, conversation_id=conv_id, action_id='commande', job_id='commande',
+                    type='texte', mime=mime, name=filename, size=len(data), prompt=filename, parameters={})
+        if conv['ephemere']:
+            if any(m['conversation_id'] == conv_id and m['name'] == filename for m, _ in self.ephemeral.values()):
+                raise ValueError('Ce fichier existe déjà.')
+            self.ephemeral[meta['id']] = (meta, data)
+        else:
+            path = self.path(meta)
+            if path.parent != self.directory(conv_id):
+                raise ValueError('Nom de fichier invalide.')
+            path.parent.mkdir(parents=True, exist_ok=True)
+            try:
+                target = path.open('xb')
+            except FileExistsError as exc:
+                raise ValueError('Ce fichier existe déjà.') from exc
+            try:
+                with target:
+                    target.write(data)
+                with self.db.session() as conn:
+                    conn.execute('INSERT INTO fichiers(id,conversation_id,action_id,job_id,type,mime,name,size,prompt,parameters) VALUES(?,?,?,?,?,?,?,?,?,?)',
+                                 tuple(meta[k] for k in ('id', 'conversation_id', 'action_id', 'job_id', 'type', 'mime', 'name', 'size', 'prompt')) + ('{}',))
+            except BaseException:
+                path.unlink(missing_ok=True)
+                raise
+        self.events.publish('fichiers.maj', {'conversation_id': conv_id})
+        return meta['id']
 
     def references(self, conv_id, ids, kind=None):
         if len(ids) > 3 or len(set(ids)) != len(ids):

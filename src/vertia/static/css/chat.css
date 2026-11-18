@@ -57,6 +57,13 @@
 #envoyer-message svg { width: 20px; height: 20px; stroke: currentColor; stroke-width: 1.7; stroke-linecap: round; stroke-linejoin: round; fill: none; }
 #stop-chat { min-height: 2rem; padding: .25rem .55rem; border-radius: 7px; border-color: #585858; color: #d7d7d7; font-size: .7rem; box-shadow: none; }
 #stop-chat:disabled { display: none; }
+.chat-commandes { position: absolute; bottom: 100%; left: 0; right: 0; background: #262626; border: 1px solid #555; border-radius: 10px; padding: .4rem; z-index: 5; }
+.chat-commandes button { display: block; width: 100%; text-align: left; color: #eee; background: transparent; padding: .6rem; border: 0; }
+.chat-commandes button[aria-selected="true"], .chat-commandes button:hover { background: #1b437b; }
+.capture-overlay { position: fixed; inset: 0; z-index: 10000; cursor: crosshair; background: #0004; touch-action: none; }
+.capture-rectangle { position: absolute; border: 2px solid #8bb9ff; background: #8bb9ff18; pointer-events: none; display: none; }
+.capture-controls { position: absolute; top: 1rem; left: 1rem; right: 1rem; display: flex; flex-wrap: wrap; gap: .6rem; padding: .8rem; background: #202020; color: #eee; cursor: default; border: 1px solid #555; border-radius: 8px; }
+.capture-controls button { padding: .4rem .7rem; }
 [data-panel="chat"] .action-card { background: #202020; border-color: #3b3b3b; color: #e8e8e8; }
 [data-panel="chat"] .action-card textarea { background: #262626; border-color: #444; color: #e8e8e8; }
 

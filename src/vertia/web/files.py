@@ -23,8 +23,11 @@ async def content(file_id: str, telecharger: bool = False, svc=Depends(services)
         meta = svc.files.get(file_id)
         headers = {'Cache-Control': 'no-store', 'X-Content-Type-Options': 'nosniff'}
         disposition = 'attachment' if telecharger else 'inline'
+        if meta['type'] == 'texte' and not telecharger:
+            meta = dict(meta, mime='text/plain; charset=utf-8')
         if file_id in svc.files.ephemeral:
             data, mime = svc.files.read(file_id)
+            mime = meta['mime']
             headers['Content-Disposition'] = f'{disposition}; filename="{meta["name"]}"'
             return Response(data, media_type=mime, headers=headers)
         path = svc.files.path(meta)

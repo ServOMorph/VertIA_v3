@@ -39,15 +39,19 @@ async function main() {
       ] },
     ];
     const sentMessages = [];
+    const captures = [];
+    let rejectModelChange = false;
     await page.route('http://vertia.test/**', async (route) => {
       const url = new URL(route.request().url());
       const apiPath = url.pathname.replace(/^\/api/, '');
       if (url.pathname.startsWith('/api/')) {
         let data;
         if (apiPath === '/preferences/ui') data = { panels: { chat: true, fichiers: false, memoire: false, outils: false } };
+        else if (apiPath === '/chat/aide') data = { local: true, contenu: 'Commandes disponibles : /help /rgpd /write' };
         else if (apiPath === '/dossiers') data = [{ id: 'f1', nom: 'Développement', system_prompt: '' }];
         else if (apiPath === '/conversations') data = conversations;
-        else if (apiPath === '/modeles') data = { modeles: [{ name: 'fake' }], defaut: 'fake' };
+        else if (apiPath === '/modeles') data = { modeles: [{ name: 'fake' }, { name: 'fake2' }], defaut: 'fake' };
+        else if (apiPath === '/captures') { captures.push(route.request().postDataJSON()); data = { fichier: 'capture_test.png' }; }
         else if (apiPath === '/chat/file') data = { actif: null, attente: [] };
         else if (apiPath.endsWith('/fichiers')) data = [];
         else if (apiPath.endsWith('/messages') && route.request().method() === 'POST') {
@@ -58,7 +62,13 @@ async function main() {
             { id: 6, role: 'assistant', contenu: 'Réponse mobile simulée.', statut: 'termine' });
           data = { id: 'mobile-job' };
         }
-        else if (/^\/conversations\/c[12]$/.test(apiPath)) data = conversations.find((c) => c.id === apiPath.split('/')[2]);
+        else if (/^\/conversations\/c[12]$/.test(apiPath)) {
+          data = conversations.find((c) => c.id === apiPath.split('/')[2]);
+          if (route.request().method() === 'PATCH') {
+            if (rejectModelChange) { await route.fulfill({ status: 409, json: { detail: 'Réponse en cours.' } }); return; }
+            Object.assign(data, route.request().postDataJSON());
+          }
+        }
         else throw Error('Route inattendue : ' + apiPath);
         await route.fulfill({ json: data });
       } else if (url.pathname === '/') {
@@ -72,6 +82,7 @@ async function main() {
           await initPanels();
           await initChat();
           connect();
+          document.body.dataset.vue = 'discussion';
           document.getElementById('etat-serveur').textContent = 'en ligne';
           document.getElementById('etat-serveur').dataset.etat = 'ok';
           document.getElementById('etat-ollama').textContent = 'Ollama disponible · chargé : fake';
@@ -101,7 +112,92 @@ async function main() {
       await page.locator(`[data-message-id="${id}"] .message-copy`).click();
       assert.equal(await page.evaluate(() => window.testClipboard), expected);
     }
+    await page.locator('#chat-message').fill('/help');
+    await page.locator('#envoyer-message').click();
+    await page.getByText('Commandes disponibles : /help /rgpd /write').waitFor();
+    assert.deepEqual(sentMessages, []);
     await open('c1');
+    const input = page.locator('#chat-message');
+    await input.fill('/');
+    assert.equal(await page.locator('#chat-commandes button').count(), 3);
+    await input.press('ArrowDown');
+    await input.press('ArrowDown');
+    await input.press('Enter');
+    assert.equal(await input.inputValue(), '/rgpd ');
+    assert.equal(await page.locator('#chat-commandes').isVisible(), false);
+    assert.deepEqual(sentMessages, []);
+    await input.fill('/WR');
+    await page.locator('#commande-write').click();
+    assert.equal(await input.inputValue(), '/write ');
+    await input.fill('/he');
+    await input.press('Tab');
+    assert.equal(await input.inputValue(), '/help');
+    await input.fill('/');
+    await input.press('Escape');
+    assert.equal(await page.locator('#chat-commandes').isVisible(), false);
+    await input.fill('/inconnue');
+    assert.equal(await page.locator('#chat-commandes').isVisible(), false);
+    await input.fill('');
+    await page.waitForFunction(() => !document.querySelector('#modeles').disabled);
+    await page.locator('#modeles').selectOption('fake2');
+    await page.waitForFunction(() => !document.querySelector('#modeles').disabled);
+    assert.equal(conversations[0].modele, 'fake2');
+    rejectModelChange = true;
+    await page.locator('#modeles').selectOption('fake');
+    await page.waitForFunction(() => document.querySelector('#chat-statut').textContent === 'Réponse en cours.');
+    assert.equal(await page.locator('#modeles').inputValue(), 'fake2');
+    rejectModelChange = false;
+    for (const state of [
+      { actif: { conversation_id: 'c1' }, attente: [] },
+      { actif: null, attente: [{ conversation_id: 'c1' }] },
+      { actif: null, attente: [], resume: 'c1' },
+    ]) {
+      await page.evaluate((state) => window.testEvents.emit('chat.file', state), state);
+      assert.equal(await page.locator('#modeles').isDisabled(), true);
+    }
+    await page.evaluate(() => window.testEvents.emit('chat.file', { actif: null, attente: [] }));
+    await page.waitForFunction(() => !document.querySelector('#modeles').disabled);
+    await page.locator('#capture-chat').click();
+    await page.locator('.capture-overlay').waitFor();
+    await page.keyboard.press('Escape');
+    assert.equal(await page.locator('.capture-overlay').count(), 0);
+    await page.evaluate(() => {
+      window.html2canvas = async (_body, options) => {
+        window.captureOptions = options;
+        const canvas = document.createElement('canvas');
+        canvas.width = canvas.height = 2;
+        return canvas;
+      };
+    });
+    await page.locator('#capture-chat').click();
+    await page.mouse.move(400, 300);
+    await page.mouse.down();
+    await page.mouse.move(520, 390);
+    await page.mouse.up();
+    await page.getByRole('button', { name: 'Enregistrer la capture', exact: true }).click();
+    await page.waitForFunction(() => document.querySelector('#chat-statut').textContent.includes('Capture enregistrée'));
+    assert.equal(captures.length, 1);
+    assert.ok(captures[0].image.startsWith('data:image/png;base64,iVBOR'));
+    assert.deepEqual(await page.evaluate(() => [window.captureOptions.width, window.captureOptions.height]), [120, 90]);
+    for (const [language, extension] of Object.entries({
+      html: 'html', json: 'json', md: 'md', markdown: 'md', css: 'css', js: 'js', py: 'py', csv: 'csv', xml: 'xml', yaml: 'yaml', unknown: 'txt',
+    })) {
+      await page.evaluate(async (language) => {
+        const { renderMarkdown } = await import('/static/js/markdown.js');
+        const node = document.createElement('div');
+        node.id = 'export-test';
+        document.querySelector('#chat-zone').append(node);
+        renderMarkdown(node, '```livrable ' + language + '\ncontenu exact\n```');
+      }, language);
+      const downloading = page.waitForEvent('download');
+      await page.locator('#export-test').getByRole('button', { name: 'Télécharger', exact: true }).click();
+      const downloaded = await downloading;
+      assert.equal(downloaded.suggestedFilename(), `livrable.${extension}`);
+      const target = path.join(output, 'p7-livrable.' + extension);
+      await downloaded.saveAs(target);
+      assert.equal(fs.readFileSync(target, 'utf8'), 'contenu exact\n');
+      await page.locator('#export-test').evaluate((node) => node.remove());
+    }
     assert.equal(await page.locator('.message--user img').count(), 0);
     assert.equal(await page.locator('.message-copy').count(), 4);
     await copy(1, rawUser);
@@ -155,7 +251,7 @@ async function main() {
     assert.equal(await page.evaluate(() => document.documentElement.scrollHeight <= innerHeight + 1), true);
     await page.screenshot({ path: path.join(output, 'chat-codex-mobile.png'), fullPage: true });
     assert.deepEqual(errors, []);
-    console.log('Chat Codex : copie user/assistant Markdown brut, flux Unicode, arrêt, rechargement, changement de discussion, refus clipboard et mobile : OK');
+    console.log('Chat : suggestions, export typé, capture, changement de modèle, copie, flux Unicode et mobile : OK');
   } finally { await browser.close(); }
 }
 

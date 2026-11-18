@@ -5,6 +5,7 @@ import { createActionCards } from "./actions.js";
 import { createFiles } from "./files.js";
 import { createNavigation } from "./navigation.js";
 import { setPanel } from "./panels.js";
+import { initCapture } from "./capture.js";
 
 export async function initChat() {
   const el = (id) => document.getElementById(id);
@@ -17,6 +18,8 @@ export async function initChat() {
   let loading = 0;
   let fetching = false;
   let buffered = [];
+  let switchingModel = false;
+  let currentModel = "";
   const streams = new Map();
   const contents = new Map();
 
@@ -40,6 +43,7 @@ export async function initChat() {
   el("chat-form").querySelector(".chat-actions").prepend(modelLabel);
 
   function report(error) { status.textContent = error.message || String(error); }
+  initCapture(el("capture-chat"), status);
   const files = createFiles(report);
   const cards = createActionCards(report, () => loadConversation(selected));
   const navigation = createNavigation({ open: loadConversation, editFolder: folderDialog, refresh: refreshLists, report });
@@ -56,6 +60,7 @@ export async function initChat() {
     const active = data.actif?.conversation_id === selected;
     const summary = Boolean(selected) && data.resume === selected;
     const waiting = data.attente.filter((j) => j.conversation_id === selected).length;
+    el("modeles").disabled = switchingModel || fetching || active || summary || waiting > 0;
     el("stop-chat").disabled = !active && !summary && waiting === 0;
     status.textContent = `${active ? "Réponse en cours. " : ""}${summary ? "Actualisation du résumé. " : ""}${waiting ? `${waiting} message(s) en attente. ` : ""}${!active && !summary && !waiting ? "Prêt." : "Vous pouvez envoyer le message suivant."}`;
   }
@@ -131,7 +136,7 @@ export async function initChat() {
     contents.clear();
     zone.replaceChildren();
     el("conversations").value = selected || "";
-    el("modeles").disabled = Boolean(selected);
+    el("modeles").disabled = true;
     el("dossiers").disabled = Boolean(selected);
     el("ephemere").disabled = Boolean(selected);
     const filesLoaded = files.load(selected).catch(report);
@@ -142,6 +147,7 @@ export async function initChat() {
         el("titre-chat").textContent = c.titre;
         if (![...el("modeles").options].some((o) => o.value === c.modele)) option(el("modeles"), c.modele, c.modele);
         el("modeles").value = c.modele;
+        currentModel = c.modele;
         el("dossiers").value = c.dossier_id || "";
         el("ephemere").checked = c.ephemere;
         for (const m of c.messages) {
@@ -159,6 +165,7 @@ export async function initChat() {
     } finally {
       if (token === loading) {
         fetching = false;
+        queueState(queue);
         const delayed = buffered;
         buffered = [];
         for (const data of delayed) delta(data);
@@ -180,7 +187,61 @@ export async function initChat() {
     el("chat-message").focus();
   });
   el("chat-message").title = "Entrée pour envoyer ; Maj+Entrée pour passer à la ligne";
+  const suggestions = el("chat-commandes");
+  const commandList = [
+    ["help", "Aide locale"], ["rgpd", "Anonymiser du texte ou fichier:<nom>"], ["write", "Enregistrer le dernier livrable"],
+  ];
+  let suggestionIndex = -1;
+  function hideSuggestions() {
+    suggestions.hidden = true;
+    suggestions.replaceChildren();
+    suggestionIndex = -1;
+    el("chat-message").setAttribute("aria-expanded", "false");
+    el("chat-message").removeAttribute("aria-activedescendant");
+  }
+  function chooseSuggestion(name) {
+    el("chat-message").value = `/${name}${name === "help" ? "" : " "}`;
+    hideSuggestions();
+    el("chat-message").focus();
+  }
+  el("chat-message").setAttribute("aria-controls", "chat-commandes");
+  el("chat-message").setAttribute("aria-autocomplete", "list");
+  el("chat-message").addEventListener("input", () => {
+    hideSuggestions();
+    const match = /^\/(\w*)$/.exec(el("chat-message").value);
+    if (!match) return;
+    for (const [name, description] of commandList.filter(([name]) => name.startsWith(match[1].toLowerCase()))) {
+      const button = document.createElement("button");
+      button.type = "button";
+      button.id = `commande-${name}`;
+      button.dataset.command = name;
+      button.setAttribute("role", "option");
+      button.setAttribute("aria-selected", "false");
+      button.textContent = `/${name} · ${description}`;
+      button.addEventListener("mousedown", (event) => event.preventDefault());
+      button.addEventListener("click", () => chooseSuggestion(name));
+      suggestions.append(button);
+    }
+    suggestions.hidden = !suggestions.children.length;
+    el("chat-message").setAttribute("aria-expanded", String(!suggestions.hidden));
+  });
+  el("chat-message").addEventListener("blur", hideSuggestions);
   el("chat-message").addEventListener("keydown", (event) => {
+    if (event.isComposing || event.keyCode === 229) return;
+    if (!suggestions.hidden && !event.shiftKey) {
+      const items = [...suggestions.children];
+      if (["ArrowDown", "ArrowUp", "Enter", "Tab", "Escape"].includes(event.key)) {
+        event.preventDefault();
+        if (event.key === "Escape") hideSuggestions();
+        else if (["Enter", "Tab"].includes(event.key)) chooseSuggestion(items[Math.max(0, suggestionIndex)].dataset.command);
+        else {
+          suggestionIndex = (suggestionIndex + (event.key === "ArrowDown" ? 1 : -1) + items.length) % items.length;
+          items.forEach((item, index) => item.setAttribute("aria-selected", String(index === suggestionIndex)));
+          el("chat-message").setAttribute("aria-activedescendant", items[suggestionIndex].id);
+        }
+        return;
+      }
+    }
     if (event.key !== "Enter" || event.shiftKey || event.isComposing || event.keyCode === 229) return;
     event.preventDefault();
     if (!event.repeat && !el("envoyer-message").disabled) el("chat-form").requestSubmit(el("envoyer-message"));
@@ -192,14 +253,23 @@ export async function initChat() {
     if (!text) return;
     el("envoyer-message").disabled = true;
     try {
+      if (text.split(/\s+/, 1)[0].toLowerCase() === "/help") {
+        const result = await api("/chat/aide");
+        messageNode({ id: `local-${Date.now()}`, role: "assistant", contenu: result.contenu, statut: "termine" });
+        el("chat-message").value = "";
+        hideSuggestions();
+        return;
+      }
       if (!selected) await createConversation();
       const convId = selected;
       const attached = files.ids();
-      await api(`/conversations/${convId}/messages`, { method: "POST", body: { contenu: text, fichiers: attached } });
+      const result = await api(`/conversations/${convId}/messages`, { method: "POST", body: { contenu: text, fichiers: attached } });
       if (selected === convId) files.clear(attached);
       el("chat-message").value = "";
+      hideSuggestions();
       await refreshLists();
       if (selected === convId) await loadConversation(convId);
+      if (result.local && selected === convId) messageNode({ id: `local-${Date.now()}`, role: "assistant", contenu: result.contenu, statut: "termine" });
     } finally { el("envoyer-message").disabled = false; }
   });
   listen("stop-chat", "click", async () => {
@@ -207,6 +277,20 @@ export async function initChat() {
       await api(`/conversations/${selected}/stop`, { method: "POST" });
       await loadConversation(selected);
     }
+  });
+  listen("modeles", "change", async () => {
+    if (!selected) return;
+    const convId = selected;
+    const modele = el("modeles").value;
+    switchingModel = true;
+    queueState(queue);
+    try {
+      const updated = await api(`/conversations/${convId}`, { method: "PATCH", body: { modele } });
+      if (selected === convId) currentModel = updated.modele;
+    } catch (error) {
+      if (selected === convId) el("modeles").value = currentModel;
+      throw error;
+    } finally { switchingModel = false; queueState(queue); }
   });
   listen("renommer-discussion", "click", async () => {
     if (!selected) return;
@@ -308,7 +392,7 @@ export async function initChat() {
       if (![...el("modeles").options].some((o) => o.value === preferred)) option(el("modeles"), preferred, preferred);
       el("modeles").value = preferred;
       el("modeles-statut").textContent = models.modeles.length
-        ? "Modèles actualisés. Le choix s’applique aux nouvelles discussions."
+        ? "Modèles actualisés. Le modèle peut être changé hors réponse en cours ou en attente."
         : "Aucun modèle installé : ouvrez Ollama pour en installer un, puis actualisez cette liste.";
     } catch (error) {
       el("modeles-statut").textContent = `${error.message} Le service démarre automatiquement avec VertIA ; consultez son état dans la barre du haut. Les adresses se règlent dans Accueil et réglages.`;

@@ -35,17 +35,30 @@ export function createNavigation({ open, editFolder, refresh, report }) {
     return node;
   }
 
-  function button(label, handler, className = "navigation-action") {
+  function button(label, handler, className = "navigation-action", doubleHandler = null) {
     const node = document.createElement("button");
     node.type = "button";
     node.className = className;
     node.textContent = label;
-    node.addEventListener("click", async (event) => {
-      event.stopPropagation();
+    let clickTimer;
+    async function run(action) {
       if (pending) return;
       pending = true;
-      try { await handler(); } catch (error) { report(error); }
+      try { await action(); } catch (error) { report(error); }
       finally { pending = false; }
+    }
+    node.addEventListener("click", (event) => {
+      event.stopPropagation();
+      if (doubleHandler) {
+        clearTimeout(clickTimer);
+        clickTimer = setTimeout(() => run(handler), 220);
+      } else run(handler);
+    });
+    if (doubleHandler) node.addEventListener("dblclick", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+      clearTimeout(clickTimer);
+      run(doubleHandler);
     });
     return node;
   }
@@ -123,20 +136,21 @@ export function createNavigation({ open, editFolder, refresh, report }) {
     row.className = "navigation-row";
     row.dataset.conversationId = item.id;
     row.dataset.pinned = String(pinned(item));
+    const rename = async () => {
+      const title = prompt("Titre de la discussion", item.titre);
+      if (title?.trim()) await change("conversations", item, { titre: title.trim() });
+    };
     const title = button(`${item.ephemere ? "[Éphémère] " : ""}${item.titre}`, async () => {
       setPanel("chat", true);
       await open(item.id);
-    }, "navigation-title");
-    title.title = item.titre;
+    }, "navigation-title", rename);
+    title.title = `${item.titre} · Double-clic pour renommer`;
     title.prepend(icon("conversation"));
     if (selected === item.id) title.setAttribute("aria-current", "page");
     row.append(title);
     const menu = menuFor(row, item.titre);
     menu.append(button(pinned(item) ? "Désépingler" : "Épingler", () => change("conversations", item, { epingle: !pinned(item) })));
-    menu.append(button("Renommer", async () => {
-      const title = prompt("Titre de la discussion", item.titre);
-      if (title?.trim()) await change("conversations", item, { titre: title.trim() });
-    }));
+    menu.append(button("Renommer", rename));
     const move = document.createElement("select");
     move.setAttribute("aria-label", `Déplacer ${item.titre}`);
     move.add(new Option("Sans dossier", ""));
@@ -197,6 +211,12 @@ export function createNavigation({ open, editFolder, refresh, report }) {
       const summary = document.createElement("summary");
       const label = document.createElement("span");
       label.textContent = folder.nom;
+      label.title = "Double-clic pour renommer";
+      label.addEventListener("dblclick", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        if (!pending) editFolder(folder);
+      });
       summary.append(icon("folder"), label);
       draggable(summary, "dossiers", folder);
       dropZone(summary, async ({ kind, item }) => {

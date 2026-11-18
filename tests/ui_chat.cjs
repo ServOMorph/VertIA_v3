@@ -387,7 +387,7 @@ async function main() {
       const { MarkdownStream } = await import("/static/js/markdown.js");
       const original = window.marked;
       let processed = 0;
-      window.marked = { parse: (text) => { processed += text.length; return original.parse(text); } };
+      window.marked = { ...original, parse: (text) => { processed += text.length; return original.parse(text); } };
       const node = document.createElement("div");
       const stream = new MarkdownStream(node);
       for (let index = 0; index < 4000; index++) stream.append("a");
@@ -434,7 +434,10 @@ async function main() {
     page.once('dialog', (dialog) => dialog.accept('Discussion renommée'));
     await menu.getByRole('button', { name: 'Renommer', exact: true }).click();
     await convOne.getByRole('button', { name: 'Discussion renommée', exact: true }).waitFor();
-    await convOne.getByRole('button', { name: 'Discussion renommée', exact: true }).click();
+    page.once('dialog', (dialog) => dialog.accept('Discussion double-clic'));
+    await convOne.getByRole('button', { name: 'Discussion renommée', exact: true }).dblclick();
+    await convOne.getByRole('button', { name: 'Discussion double-clic', exact: true }).waitFor();
+    await convOne.getByRole('button', { name: 'Discussion double-clic', exact: true }).click();
     await page.waitForFunction(() => document.querySelector('[data-conversation-id="nav-c1"] .navigation-title').getAttribute('aria-current') === 'page');
     await convTwo.dragTo(convOne);
     await page.waitForFunction(() => document.querySelector('.navigation-root .navigation-row').dataset.conversationId === 'nav-c2');
@@ -467,6 +470,12 @@ async function main() {
     await page.locator('#dossier-nom').fill('Projet renommé');
     await page.locator('#dossier-form [type="submit"]').click();
     await folderAlpha.locator(':scope > summary').getByText('Projet renommé', { exact: false }).waitFor();
+    await folderAlpha.locator(':scope > summary span').dblclick();
+    await page.locator('#dossier-dialog').waitFor({ state: 'visible' });
+    assert.equal(await page.locator('#dossier-nom').inputValue(), 'Projet renommé');
+    await page.locator('#dossier-nom').fill('Projet double-clic');
+    await page.locator('#dossier-form [type="submit"]').click();
+    await folderAlpha.locator(':scope > summary').getByText('Projet double-clic', { exact: false }).waitFor();
     conversations.push(...Array.from({ length: 6 }, (_, index) => ({
       id: `nav-extra-${index}`, titre: `Préparer le livrable ${index + 1}`, dossier_id: 'nav-f2', modele: 'fake', messages: [], ephemere: false,
     })));

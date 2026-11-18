@@ -61,6 +61,7 @@
     <section class="panel panel--main" data-panel="chat" aria-labelledby="titre-chat">
       <header class="panel__head">
         <h2 id="titre-chat">Discussion</h2>
+        <button type="button" class="toggle" id="capture-chat">Capture</button>
       </header>
       <div class="chat-controls">
         <label>Dossier <select id="dossiers" aria-label="Dossier"><option value="">Sans dossier</option></select></label>
@@ -75,6 +76,7 @@
       <form id="chat-form" class="chat-compose">
         <label for="chat-message" class="muted">Votre message</label>
         <textarea id="chat-message" rows="3" maxlength="100000" required placeholder="Écrivez votre message…"></textarea>
+        <div id="chat-commandes" class="chat-commandes" role="listbox" aria-label="Commandes locales" hidden></div>
         <div id="chat-pieces-jointes" aria-label="Pièces jointes sélectionnées" aria-live="polite"></div>
         <div class="chat-actions">
           <button class="btn" type="submit" id="envoyer-message">Envoyer</button>
@@ -169,6 +171,7 @@
 
   <script src="/static/vendor/marked.umd.js?v={{ version }}"></script>
   <script src="/static/vendor/purify.min.js?v={{ version }}"></script>
+  <script src="/static/vendor/html2canvas.min.js?v={{ version }}"></script>
   <script type="module" src="/static/js/main.js?v={{ version }}"></script>
 </body>
 </html>

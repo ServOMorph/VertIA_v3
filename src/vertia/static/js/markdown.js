@@ -5,9 +5,19 @@ function html(text) {
   });
 }
 
-function decorate(root) {
+const extensions = { html: "html", json: "json", md: "md", markdown: "md", css: "css", js: "js", py: "py", csv: "csv", xml: "xml", yaml: "yaml" };
+
+function decorate(root, text) {
+  const languages = [];
+  marked.walkTokens(marked.lexer(text), (token) => {
+    if (token.type === "code" && /^livrable(?:\s|$)/.test(token.lang || "")) {
+      const language = token.lang.trim().split(/\s+/)[1]?.toLowerCase();
+      languages.push(extensions[language] || "txt");
+    }
+  });
   for (const link of root.querySelectorAll("a")) link.rel = "noreferrer noopener";
-  for (const code of root.querySelectorAll("pre > code.language-livrable")) {
+  for (const [index, code] of [...root.querySelectorAll("pre > code.language-livrable")].entries()) {
+    const extension = languages[index] || "txt";
     const tools = document.createElement("div");
     tools.className = "deliverable-actions";
     const copy = document.createElement("button");
@@ -30,7 +40,7 @@ function decorate(root) {
       const url = URL.createObjectURL(new Blob([code.textContent], { type: "text/plain;charset=utf-8" }));
       const a = document.createElement("a");
       a.href = url;
-      a.download = "livrable.txt";
+      a.download = `livrable.${extension}`;
       a.click();
       setTimeout(() => URL.revokeObjectURL(url), 1000);
     });
@@ -41,7 +51,7 @@ function decorate(root) {
 
 export function renderMarkdown(root, text) {
   root.innerHTML = html(text);
-  decorate(root);
+  decorate(root, text);
 }
 
 export class MarkdownStream {

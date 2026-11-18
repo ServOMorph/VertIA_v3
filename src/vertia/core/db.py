@@ -96,6 +96,21 @@ MIGRATIONS: list[str] = [
         FOREIGN KEY(demande_id, numero) REFERENCES essais(demande_id, numero)
     );
     """,
+    """
+    CREATE TABLE fichiers_v2 (
+        id TEXT PRIMARY KEY,
+        conversation_id TEXT NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+        action_id TEXT NOT NULL, job_id TEXT NOT NULL,
+        type TEXT NOT NULL CHECK(type IN ('image','audio','video','texte')),
+        mime TEXT NOT NULL, name TEXT NOT NULL, size INTEGER NOT NULL,
+        prompt TEXT NOT NULL, parameters TEXT NOT NULL,
+        created TEXT NOT NULL DEFAULT CURRENT_TIMESTAMP
+    );
+    INSERT INTO fichiers_v2 SELECT id, conversation_id, action_id, job_id, type, mime, name, size, prompt, parameters, created FROM fichiers;
+    DROP TABLE fichiers;
+    ALTER TABLE fichiers_v2 RENAME TO fichiers;
+    CREATE INDEX fichiers_conversation ON fichiers(conversation_id);
+    """,
 ]
 
 

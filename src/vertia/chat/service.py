@@ -51,6 +51,18 @@ class ChatService:
     def notify(self):
         self.events.publish('chat.file', self.state())
 
+    def local_reply(self, conv_id: str, content: str, reply: str):
+        if self.closed:
+            raise ValueError('Le chat est arrêté.')
+        if self.busy(conv_id):
+            raise ValueError('Attendez la fin des réponses de cette discussion.')
+        user_id = self.repository.append(conv_id, 'user', content, 'termine')
+        assistant_id = self.repository.append(conv_id, 'assistant', reply, 'termine')
+        job = dict(id=uuid4().hex, conversation_id=conv_id, user_id=user_id, message_id=assistant_id)
+        self.events.publish('chat.delta', {**job, 'contenu': reply, 'offset': 0})
+        self.events.publish('chat.fin', {**job, 'statut': 'termine', 'erreur': ''})
+        return job
+
     def submit(self, conv_id: str, content: str):
         if self.closed:
             raise ValueError('Le chat est arrêté.')

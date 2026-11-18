@@ -50,10 +50,11 @@ export function createFiles(report) {
       card.draggable = true;
       card.addEventListener("dragstart", (event) => { event.dataTransfer.setData(dragType, file.id); event.dataTransfer.effectAllowed = "copy"; });
       const url = `/api/fichiers/${encodeURIComponent(file.id)}/contenu`;
-      const media = document.createElement(file.type === "image" ? "img" : file.type === "audio" ? "audio" : "video");
-      media.src = url;
+      const media = document.createElement(file.type === "texte" ? "pre" : file.type === "image" ? "img" : file.type === "audio" ? "audio" : "video");
+      if (file.type === "texte") { media.className = "file-text"; media.textContent = file.name; }
+      else media.src = url;
       if (file.type === "image") { media.alt = file.prompt; media.loading = "lazy"; }
-      else { media.controls = true; media.preload = "metadata"; media.setAttribute("aria-label", file.prompt || file.type); }
+      else if (file.type !== "texte") { media.controls = true; media.preload = "metadata"; media.setAttribute("aria-label", file.prompt || file.type); }
       const title = document.createElement("p");
       title.className = "file-prompt";
       title.textContent = file.prompt || file.name;
