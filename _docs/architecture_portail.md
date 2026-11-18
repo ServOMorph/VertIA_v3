@@ -37,7 +37,7 @@ VertIA_v3/
 | `version` | version du module (semver), journalisée avec chaque essai |
 | `moteurs` | fabriques d'`Engine` (reçoivent `Settings` et chemins résolus) |
 | `outils` | fabriques de `Tool` ; chaque outil déclare ses `capacites` |
-| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `musique.generer`, `video.generer`, `voix.generer`, `voix.transcrire`, `image.editer` (Atelier, page `/atelier/`), `3d.depuis_image`... (alias CLI : `<activité>` seule = `<activité>.generer`) |
+| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `musique.generer`, `video.generer`, `chat.generer` (réponse texte Ollama, livrée en `.md` + `.json`), `voix.generer`, `voix.transcrire`, `image.editer` (Atelier, page `/atelier/`), `3d.depuis_image`... (alias CLI : `<activité>` seule = `<activité>.generer`) |
 | `besoins` | `MemoryNeeds` par moteur (VRAM, RAM, durée typique, interruptible oui/non) |
 | `poids` | liste des poids requis (chemin relatif sous `models/`), contrôlée au diagnostic |
 | `sante()` | diagnostic passif (fichiers présents, venv présent), jamais de chargement GPU |
@@ -111,6 +111,7 @@ vertia_gen.py etat <id>      vertia_gen.py capacites
 - Dans VertIA : `GpuArbiter` (un moteur à la fois) + `JobQueue` (ordre des jobs).
 - Entre sessions : `vram_lock.py` reste la source unique tant qu'il existe des sessions hors VertIA. Le serveur VertIA prend le jeton `vertia` (note = session demandeuse et capacité) quand un job GPU démarre et le rend après inactivité (`engine_idle_seconds`). L'ordre d'urgence de l'utilisateur s'applique aux demandes de la file VertIA (rang de la session demandeuse).
 - Moteurs à travailleurs (`src/vertia/engines/travailleurs.py`, voix et musique) : un sous-processus par moteur dans son venv (`engines/<moteur>/.venv`), démarré à la première demande, un seul travailleur vivant à la fois, protocole JSON-lignes sur stdin/stdout (`travailleurs_protocole/protocole.py`), journal `data/logs/`. Besoins mesurés le 2026-11-17 : voix pic 5,7 Go total, ACE-Step 5,8 Go alloués. Vidéo (2026-11-18) : WanGP dans `engines/wangp/env`, poids `models/wangp/ckpts` (192 Go, jonctions depuis `D:\AI\WanGP\ckpts` et `engines/wangp/ckpts`), Wan 2.1 14B t2v/i2v 832x480, pic 3,7 Go total pour 33 images (24 min) ; un clip de 81 images dure environ 1 h : le jeton `vertia`, non interruptible, est prolongé toutes les 30 min, ce qui fait du clip un bloc GPU entier. Non-régression : pixels identiques au venv d'origine (`outils/non_regression_video.py`).
+- Chat (2026-11-18) : `chat.generer` (module `modules/chat`) partage le moteur `ollama` et l'arbitre du chat de l'interface (une file, un jeton) ; un moteur dont le déchargement échoue garde le jeton jusqu'à une libération réussie. Mesure : gemma4:12b, contexte 16k, 587 jetons en 183 s (débordement partiel de la VRAM 8 Go). Le chat de l'interface reste dans le cœur (`src/vertia/chat`) ; reprises d'IA_V7 : `/help`, `/write` (dossier de la discussion seulement), `/rgpd` (local, texte d'origine non conservé, benchmark `scripts/benchmark_rgpd.py` 21/21 obligatoires), capture d'écran (`outputs/captures/`).
 - Les tâches longues (entraînement creation_llm, phase 11) deviennent des jobs VertIA interruptibles avec point de reprise ; `vram_guard`/`reprise_auto` sont repris à ce moment-là.
 
 ## 8. Entrées utilisateur

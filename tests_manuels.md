@@ -167,3 +167,11 @@ Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées)
 ## Page /video
 1. Ouvrir `http://127.0.0.1:4310/video`, générer un clip texte vers vidéo de 17 images : lecture et téléchargement du MP4.
 2. Image vers vidéo : téléverser une image PNG, générer 17 images : le clip part de l'image.
+
+## Chat portail phase 7 — commandes et fonctions reprises d'IA_V7
+1. Taper `/` dans la saisie : les suggestions `/help`, `/write`, `/rgpd` s'affichent ; `/help` affiche l'aide sans laisser de message dans la discussion après rechargement.
+2. Demander au modèle un bloc ```livrable html```, puis `/write page.html` : le fichier apparaît dans l'onglet Fichiers ; « Ouvrir » l'affiche en texte brut, « Télécharger » donne `page.html`. Un second `/write page.html` est refusé.
+3. `/rgpd Mme Alice Martin, alice@example.fr, 06 12 34 56 78` : texte anonymisé affiché ; après rechargement, la discussion ne contient plus le texte d'origine.
+4. Bouton Capture : sélectionner une zone, un PNG est créé dans `outputs/captures/`.
+5. Changer le modèle d'une discussion au repos : la réponse suivante vient du nouveau modèle ; le sélecteur est bloqué pendant une réponse.
+6. Double-clic sur une discussion ou un dossier : renommage ; bouton télécharger d'un livrable `json` : fichier `.json`.

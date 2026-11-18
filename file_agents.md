@@ -3,6 +3,9 @@
 Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude intègre et commite seul.
 
 ## En cours
+- Codex high : phase 7 lot 1 (arbitre : jeton conservé si déchargement en échec, fermeture du lifespan, module `chat` et `chat.generer`) livré à la limite d'usage ; fins de ligne de reponse_1.md et test Atelier corrigés par Claude ; commit 10fc1f5 (brief p7_module, 2026-11-18).
+- Codex high : phase 7 lot 2 (fonctions IA_V7 : /help /write /rgpd + benchmark, export typé, capture, changement de modèle, double-clic) interrompu deux fois par la limite d'usage ; terminé par Claude (FileStore.save_text hors périmètre du brief, migration du type texte, texte servi en text/plain) ; 929 tests, UI Node verts ; commit 0e20dc3 (briefs p7_ia_v7 et p7_ia_v7_suite, 2026-11-18).
+- Codex medium (read-only) : phase 7 audit du chat livré : phase 1 non close (8 contrôles réels en attente), IA_V7 /help /write /rgpd capture absents, défaut arbitre confirmé par Claude (brief p7_audit, 2026-11-18 08:17).
 - Codex high : phase 6 module vidéo (WanGP Wan 2.1 14B t2v/i2v en travailleur, `video.generer`, page `/video`, tests simulés) livré, 784 tests ; inbox étendu aux images par Claude (785 tests) ; essai réel en attente du déplacement des poids (brief p6_video, 2026-11-17 23:59).
 - Codex high : Atelier intégré au portail sous `/atelier/` (montage, cycle de vie, chemins relatifs, tuile dans le même onglet) livré ; 792 tests verts chez Claude (délais du bac à sable Codex sur test_chat/test_demandes non reproduits) (brief p6_atelier, 2026-11-18).
 - Codex high : phase 5 module musique (moteur à travailleurs générique extrait de la voix, travailleur ACE-Step porté de CreaZik, `musique.generer`, page `/musique`, tests simulés) livrée ; 705 tests (encodage du test corrigé par Claude) ; non-régression GPU : écart VertIA/référence égal au non-déterminisme propre d'ACE-Step (45 et 42 dB) (brief p5_musique, 2026-11-17 13:23).
