@@ -48,6 +48,8 @@ export function initAccueil() {
         button.type = "button";
         button.addEventListener("click", discussion);
         section.append(button);
+        grid.append(section);
+        continue;
       }
       for (const module of activity.modules) {
         let href;

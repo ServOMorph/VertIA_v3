@@ -171,8 +171,8 @@ def test_lifespan_annule_retouche_et_ferme_portail(atelier_portail, tmp_path, mo
         return identifiant
 
     if erreur_arret:
-        with pytest.raises(RuntimeError, match='Arrêt factice'):
-            utiliser()
+        utiliser()
+        app.state.services.demandes.close.assert_awaited_once()
     else:
         identifiant = utiliser()
         assert TestClient(app).get(f'/atelier/api/retouche/{identifiant}').json()['etat'] == 'annule'

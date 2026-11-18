@@ -128,27 +128,29 @@ def create_app(settings: Settings | None = None, overrides: dict | None = None) 
             async with atelier.router.lifespan_context(atelier):
                 yield
         finally:
+            from logging import getLogger
+
+            async def fermer(nom, operation):
+                try:
+                    await operation()
+                except Exception:
+                    getLogger(__name__).exception('Fermeture de %s impossible.', nom)
+
             watcher.cancel()
             await asyncio.gather(watcher, return_exceptions=True)
-            try:
-                await services.ollama_preload.close()
-                await services.jobs.close()
-                await services.demandes.close()
-                await services.arbiter.close()
-                await services.chat.close()
-                services.actions.ephemeral.clear()
-                services.files.ephemeral.clear()
-                for engine in services.arbiter.engines.values():
-                    if hasattr(engine, 'close'):
-                        await engine.close()
-            finally:
-                try:
-                    await services.jobs.close()
-                finally:
-                    try:
-                        await services.arbiter.close()
-                    finally:
-                        await services.ollama_service.close()
+            await fermer('préchargement Ollama', services.ollama_preload.close)
+            await fermer('file de jobs', services.jobs.close)
+            await fermer('demandes', services.demandes.close)
+            await fermer('arbitre GPU', services.arbiter.close)
+            await fermer('chat', services.chat.close)
+            services.actions.ephemeral.clear()
+            services.files.ephemeral.clear()
+            for nom, engine in services.arbiter.engines.items():
+                if hasattr(engine, 'close'):
+                    await fermer(nom, engine.close)
+            await fermer('file de jobs', services.jobs.close)
+            await fermer('arbitre GPU', services.arbiter.close)
+            await fermer('service Ollama', services.ollama_service.close)
 
     app = FastAPI(title="VertIA", version=__version__, lifespan=lifespan)
     app.state.services = services

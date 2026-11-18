@@ -23,6 +23,7 @@ class GpuArbiter:
         self._prolongation = None
         self._execution = None
         self._erreur_verrou = None
+        self._non_liberes = set()
 
     async def _prolonger(self):
         try:
@@ -41,17 +42,25 @@ class GpuArbiter:
                 except Exception:
                     logger.exception('Libération des moteurs après perte du jeton GPU impossible.')
 
+    async def _liberer_moteur(self, name):
+        try:
+            await self.engines[name].free()
+        except BaseException:
+            self._non_liberes.add(name)
+            logger.exception('Déchargement du moteur %s impossible ; jeton GPU conservé.', name)
+            raise
+        self._non_liberes.discard(name)
+        if self.active == name:
+            self.active = None
+
     async def _liberer(self, names):
         erreurs = []
         for name in names:
             try:
-                await self.engines[name].free()
+                await self._liberer_moteur(name)
             except Exception as exc:
                 erreurs.append(exc)
-            finally:
-                if self.active == name:
-                    self.active = None
-        if self.active is None:
+        if self.active is None and not self._non_liberes:
             task, self._prolongation = self._prolongation, None
             if task and task is not asyncio.current_task():
                 task.cancel()
@@ -86,9 +95,7 @@ class GpuArbiter:
                 # Libérer aussi les modèles présents avant le démarrage de VertIA.
                 for name, adapter in self.engines.items():
                     if name != engine:
-                        await adapter.free()
-                        if self.active == name:
-                            self.active = None
+                        await self._liberer_moteur(name)
                 needs = memory if self.active != engine else None
                 reuse = getattr(self.engines[engine], 'can_reuse', None)
                 if memory_request is not None and reuse is not None:
@@ -125,5 +132,5 @@ class GpuArbiter:
         await self.free()
 
     async def close(self):
-        if self.verrou and (self.active is not None or self.verrou.detenu or self._prolongation):
+        if self._non_liberes or (self.verrou and (self.active is not None or self.verrou.detenu or self._prolongation)):
             await self.free()

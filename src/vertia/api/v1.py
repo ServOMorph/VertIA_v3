@@ -132,6 +132,7 @@ async def fichier_demande(demande_id: str, index: int, request: Request):
             raise ValueError
         mime = {'.wav': 'audio/wav', '.mp3': 'audio/mpeg', '.flac': 'audio/flac',
                 '.txt': 'text/plain; charset=utf-8',
+                '.md': 'text/markdown; charset=utf-8',
                 '.json': 'application/json', '.png': 'image/png', '.mp4': 'video/mp4'}.get(fichier.suffix.lower())
         if mime is None:
             raise ValueError
