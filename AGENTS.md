@@ -19,3 +19,10 @@ pertinent(s) — jamais tout le dossier. Absence de `DOCUMENTATION/` : rien à c
 - Tests : `.venv\Scripts\python -m pytest -q` ; syntaxe JS : `node --check <fichier>`.
 - Interdits : lancer une génération GPU ou un serveur, écrire hors du dépôt, modifier `data/` ou `outputs/`, committer.
 - Délégation : consignes permanentes dans `_codex/PREAMBULE.md` ; rapport final au format STATUT / FICHIERS / VERIFS / OUVERT.
+
+## Modèle Codex
+
+Quand l'agent est Codex : modèle `gpt-6.1-sol` uniquement, jamais `astra`. Le modèle est
+affiché en tête de la sortie (ligne `model:`) ; le vérifier au démarrage. En cas de refus du
+modèle (« not supported with a ChatGPT account »), s'arrêter et le signaler, ne pas choisir un
+autre modèle.
