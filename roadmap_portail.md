@@ -109,7 +109,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 5 — Musique, voix et branchement CreaZik_V3 [TODO]
+## Phase 5 — Musique, voix et branchement CreaZik_V3 [FAIT]
 - Module voix : migration de TTS_Local (Chatterbox, Kokoro) et de whisper selon les règles communes ; `vertia_gen.py voice`.
 - Migration d'ACE-Step et du système d'apprentissage de CreaZik_V3. Précision de l'inventaire : ce système est un calcul de préférences sur les votes de la webradio, pas un entraînement ; le contrat d'API précise où vit ce calcul (décision de phase 2).
 - `vertia_gen.py music` et API musique versionnée.
@@ -119,16 +119,25 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 6 — Vidéo [TODO]
+## Phase 6 — Vidéo [FAIT]
 - Migration du projet creation_videos selon les règles communes ; `vertia_gen.py video`.
 - Clips longs non interruptibles : blocs GPU entiers.
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 7 — Chat [TODO]
+## Phase 7 — Chat [FAIT]
 - Clôture de la phase 1 de `roadmap_vertia_v1.md` et intégration du chat comme module du portail.
 - Reprise des éléments IA_V7 non encore portés, selon l'inventaire.
+
+**⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
+Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
+
+## Phase 7-bis — Demandes de l'utilisateur du 2026-11-19 (ajoutées en session) [EN COURS]
+- Correction de la retouche IA par masque (Atelier) : échec « moteur » constaté le 2026-11-19, lecture de l'encodeur de texte (16,7 Go) en erreur mémoire ; corriger puis vérifier une retouche de bout en bout (test manuel 165 de `tests_manuels.md`). Fait le 2026-11-19 côté portail (cause : sous-processus asyncio indisponible sous le serveur à rechargement ; correctif dans `verrou.py`) ; reste le test manuel dans l'Atelier.
+- Libération de la VRAM au lancement de l'UI de VertIA : l'utilisateur doit pouvoir se servir des LLM locaux depuis l'UI ; une fonction met en pause ou libère le GPU (jeton `vertia`, pause de creation_llm) à l'ouverture de l'UI et le rend à la fermeture.
+- Design du chat : reprendre celui d'IA_V7 (disposition, couleurs, polices identiques), le design actuel ne convient pas à l'utilisateur.
+- Outil de retouche d'image dialoguée : partager une image, discuter avec un LLM local (modèle de vision) pour proposer des améliorations et des zones ; après validation de l'utilisateur, déclenchement des générations Qwen par zone (capture de la zone, génération, remplacement en calque). Limites relevées : un seul modèle à la fois sur 8 Go, texte manuscrit difficile, repérage de zones à tester.
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.

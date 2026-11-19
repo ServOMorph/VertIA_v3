@@ -1,5 +1,16 @@
 # Changelog
 
+## v0.4.0 - 2026-11-19
+
+### Ajouté
+- Modules du portail : voix (Chatterbox, Kokoro, Whisper), musique (ACE-Step, branchement de la génération de CreaZik_V3), vidéo (WanGP), chat (`chat.generer`, commandes /help /write /rgpd, capture, export typé, changement de modèle) ; Atelier servi sous `/atelier/`.
+- Veille et benchmarks (`veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`) ; phase 7-bis de la roadmap.
+- Logo VertIA : arbre-circuit.
+
+### Corrigé
+- Verrou GPU : repli en thread quand la boucle asyncio ne permet pas les sous-processus (serveur à rechargement sous Windows), cause de l'échec de la retouche IA dans l'UI.
+- Erreurs de demande jamais vides, trace complète journalisée, sortie de ComfyUI dans `data/logs/comfy_qwen.log`.
+
 ## v0.3.0 - 2026-11-16
 
 ### Ajouté

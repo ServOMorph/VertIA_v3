@@ -7,12 +7,11 @@ Studio d'IA 100 % locale pour novices : un chat orchestrateur pilote la généra
 Python 3.11+ / FastAPI / SQLite, front HTML/CSS/JS vanilla, Ollama, ComfyUI (API), ACE-Step (API), pytest + Playwright
 
 ## État actuel (réécrit intégralement à chaque /close)
-Portail v0.3.0 : phases 1 à 4 de `roadmap_portail.md` faites (socle, CLI `vertia_gen.py`, accueil, image générer et retoucher, Atelier) ; phase 5 (musique, voix, CreaZik_V3) à lancer.
-Le portail arbitre le GPU par le jeton `vertia` ; creation_llm (pré-entraînement) reprend seul, contrôle par `verif_reprise.py`.
-Un modèle Ollama chargé en « Forever » par un client inconnu a bloqué la reprise ; origine à trouver.
+Portail v0.4.0 : phases 1 à 7 de `roadmap_portail.md` faites (image, Atelier, voix, musique, CreaZik branché, vidéo, chat) ; phase 7-bis en cours (VRAM à l'ouverture de l'UI, design du chat d'IA_V7, retouche dialoguée) ; phase 8 (3D) après `/compact`.
+Le portail arbitre le GPU par le jeton `vertia` ; creation_llm (pré-entraînement) reprend seul, contrôle par `verif_reprise.py` (REPRISE_OK pas 40590 le 2026-11-19).
+FLUX 3 Klein en attente de la licence de l'utilisateur ; veille et benchmarks dans `veille/` et `benchmarks/veille/`.
 
 ## Décisions structurantes (append only — 10 entrées max, 5 lignes max/entrée, archiver au-delà)
-- 2026-10-31 : Initialisation du protocole vibecoding.
 - 2026-11-01 : FastAPI + front vanilla, run.py en autoreload ; MISE_EN_PROD.md maintenu par /close et contrôlé par /mise_en_prod.
 - 2026-11-01 : Délégation du code à Codex/OpenCode via `_codex/`, Claude seul commite ; dossiers de référence en lecture seule.
 - 2026-11-01 : Un seul moteur lourd en VRAM à la fois (GpuArbiter), file de jobs persistée, carte d'action validée par l'utilisateur.
@@ -21,3 +20,5 @@ Un modèle Ollama chargé en « Forever » par un client inconnu a bloqué la re
 - 2026-11-16 : Toute demande GPU passe avant creation_llm (reprise seule) ; toute demande d'IA locale passe par `vertia_gen.py` (ligne dans CLAUDE.md, diffusion aux autres sessions après la phase 5).
 - 2026-11-16 : Délégation par type de tâche selon `_docs/benchmark_agents.md` ; relance du benchmark à l'apparition d'un modèle ou après deux échecs.
 - 2026-11-16 : Poids de modèles déplacés vers `models/` avec jonction ; LFM3 évalué, décision d'usage en attente.
+- 2026-11-18 : chat dans le cœur du portail plus module `chat.generer` sur le moteur ollama partagé ; ports IA_V7 retenus (/help, /write, /rgpd, capture, export typé, changement de modèle, renommage) ; mode Code, /controle_pc, taskkill écartés.
+- 2026-11-19 : demandes rangées en phase 7-bis (VRAM à l'ouverture de l'UI, design IA_V7, retouche dialoguée) ; copie séparée de ComfyUI pour FLUX 3 ; logo VertIA remplacé.

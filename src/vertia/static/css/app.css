@@ -49,7 +49,7 @@ button { font: inherit; color: inherit; cursor: pointer; }
 .brand { flex-wrap: wrap; min-width: 0; }
 #etat-ollama { max-width: 26rem; overflow-wrap: anywhere; }
 #etat-ollama[data-etat="attente"]::before { background: var(--muted); }
-.brand__logo { border-radius: 50%; filter: drop-shadow(0 0 8px rgb(155 255 122 / .35)); }
+.brand__logo { filter: drop-shadow(0 0 8px rgb(155 255 122 / .35)); }
 .brand__name { font-family: var(--font-title); font-size: 1.35rem; font-weight: 700; }
 .brand__name em {
   font-style: normal;

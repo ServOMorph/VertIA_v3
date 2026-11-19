@@ -13,3 +13,6 @@
 - [amélioration] Module image sans page d'interface dédiée (tuile d'accueil seulement)
   - fait quand: page image ajoutée ou besoin écarté.
   - réf: `modules/image/module.py`.
+- [dette] Lecture de l'encodeur Qwen (16,7 Go) en MemoryError sous pression de RAM (aimdo, mémoire épinglée) : non reproduit avec 20 Go libres ; options `--disable-pinned-memory` ou `--disable-dynamic-vram` de ComfyUI à essayer si l'erreur revient (journal `data/logs/comfy_qwen.log`)
+  - fait quand: option ajoutée au lancement ou erreur constatée absente sur plusieurs retouches.
+  - réf: `src/vertia/engines/comfy_qwen.py`.

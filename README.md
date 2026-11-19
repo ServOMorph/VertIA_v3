@@ -2,8 +2,8 @@
 
 Studio d'intelligence artificielle **100 % locale**, pensé pour les personnes qui débutent. On discute avec un assistant qui prépare les demandes (images, musiques, vidéos), on valide, et tout tourne sur son propre ordinateur.
 
-## État actuel (v0.3.0)
-- Portail (consolidation des projets d'IA locale, `roadmap_portail.md`, phases 1 à 4 faites) : modules découverts dans `modules/`, écran d'accueil par activité, API versionnée `/api/v1`, commande `vertia_gen.py <capacité>` pour les autres sessions (le portail démarre seul et prend le jeton GPU `vertia`), boucle demande / essai / retour avec livraison dans `outbox/`. Capacités disponibles : `image.generer` (texte vers image) et `image.retoucher` (retouche par masque depuis `inbox/`) ; `python vertia_gen.py capacites` donne la liste à jour.
+## État actuel (v0.4.0)
+- Portail (consolidation des projets d'IA locale, `roadmap_portail.md`, phases 1 à 7 faites) : modules découverts dans `modules/`, écran d'accueil par activité, API versionnée `/api/v1`, commande `vertia_gen.py <capacité>` pour les autres sessions (le portail démarre seul et prend le jeton GPU `vertia`), boucle demande / essai / retour avec livraison dans `outbox/`. Capacités : image (génération, retouche par masque), voix, musique, vidéo et chat ; l'Atelier est servi sous `/atelier/` ; `python vertia_gen.py capacites` donne la liste à jour.
 - Atelier (`modules/atelier/`, `python run_atelier.py`, port 4320) : éditeur d'image local type Canva et Photoshop (calques, remplissage de scans, palette, pinceau, texte, formes, export PNG, projets) avec outil Retouche IA par masque ; interface à valider dans un navigateur (`tests_manuels.md`).
 - Orchestration GPU entre sessions (`_orchestration/`) : jeton VRAM, reprise automatique et vérifiée de l'entraînement de creation_llm.
 - Fondations v0.1.0 ci-dessous.

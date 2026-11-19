@@ -107,6 +107,7 @@ La base SQLite est `data/vertia.db` par défaut. Les nouveaux médias persistant
 | `VERTIA_PRELOAD_OLLAMA` | Préchargement du modèle de chat au démarrage, actif par défaut ; coupé en mode `--headless` |
 | `ATELIER_PORT`, `ATELIER_INBOX`, `ATELIER_VERTIA_GEN` | Port de l'Atelier (4320), dossier de dépôt des images à retoucher, script de génération (tests) |
 
+- **Journaux** : `data/logs/comfy_qwen.log` (sortie de ComfyUI lancé par le portail, remplacée à chaque démarrage) et `data/logs/<moteur>_<nom>.log` des travailleurs ; les échecs de demande sont tracés par le journal du serveur (`vertia.demandes`).
 - **Vérification** : `python vertia_gen.py capacites` (le portail démarre seul), puis une génération `image` courte ; relever que `vram_lock.py status` montre le jeton `vertia` pendant le travail et que creation_llm repart ensuite.
 
 ## Contrôle après installation
@@ -156,4 +157,5 @@ Pour retirer VertIA, arrêter son processus et retirer son dossier après sauveg
 Ce plan ne constitue pas un installateur exécuté. Les validations matérielles et de redistribution doivent précéder une annonce de compatibilité ou une diffusion des moteurs.
 
 ## Journal
+- 2026-11-19 v0.4.0 : modules voix, musique, vidéo, chat et Atelier dans le portail ; verrou GPU compatible avec le serveur à rechargement ; sortie de ComfyUI conservée dans `data/logs/comfy_qwen.log`.
 - 2026-11-16 v0.3.0 : portail (config/chemins.toml, vertia_gen.py, API v1, verrou GPU, modules image et Atelier), poids ComfyUI-Qwen déplacés vers `models/comfy/` avec jonctions, dépendances `pillow` et `psutil`, nouvelles variables d'environnement.

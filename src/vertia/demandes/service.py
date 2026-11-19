@@ -3,6 +3,7 @@ from __future__ import annotations
 import ast
 import asyncio
 import inspect
+import logging
 import re
 import shutil
 import time
@@ -187,11 +188,12 @@ class DemandesService:
                 self.repository.essai(demande_id, numero, etat='annule')
                 self._etat(demande_id, 'annule')
             except Exception as exc:
+                logging.getLogger('vertia.demandes').error('Échec de la demande %s', demande_id, exc_info=exc)
                 code = 'gpu_occupe' if isinstance(exc, (MemoryRefused, GpuOccupe)) else 'moteur'
                 if getattr(exc, 'motif_code', None) == 'pause':
                     code = 'pause'
                 self.repository.essai(demande_id, numero, etat='echec')
-                self._etat(demande_id, 'echec', motif_code=code, erreur=str(exc))
+                self._etat(demande_id, 'echec', motif_code=code, erreur=str(exc) or repr(exc))
             finally:
                 self.jobs.waiters.pop(job_id, None)
 

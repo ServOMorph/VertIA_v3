@@ -105,10 +105,20 @@ class ComfyQwenEngine(ProcessOwner):
         if not python.is_file() or not (self.directory / 'main.py').is_file():
             raise EngineError('Installation ComfyUI introuvable. Vérifiez VERTIA_COMFY_DIR.')
         await asyncio.to_thread(self.check_patch)
-        self.process = self.launcher(
-            [str(python), '-B', 'main.py', '--port', str(self.port), '--lowvram', '--reserve-vram', '1'], cwd=self.directory,
-            stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
-            creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+        logs = Path(os.environ.get('VERTIA_DATA_DIR') or Path(__file__).resolve().parents[3] / 'data') / 'logs'
+        try:
+            logs.mkdir(parents=True, exist_ok=True)
+            sortie = (logs / 'comfy_qwen.log').open('wb')
+        except OSError:
+            sortie = subprocess.DEVNULL
+        try:
+            self.process = self.launcher(
+                [str(python), '-B', 'main.py', '--port', str(self.port), '--lowvram', '--reserve-vram', '1'], cwd=self.directory,
+                stdout=sortie, stderr=subprocess.STDOUT if sortie is not subprocess.DEVNULL else subprocess.DEVNULL,
+                creationflags=subprocess.CREATE_NO_WINDOW if os.name == 'nt' else 0)
+        finally:
+            if sortie is not subprocess.DEVNULL:
+                sortie.close()
         try:
             async with asyncio.timeout(600):
                 while not await self.health():

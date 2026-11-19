@@ -375,3 +375,26 @@ async def test_jeton_pris_avant_la_garde_memoire(processus):
     assert await arbiter.execute('gpu', travail) == 'ok'
     assert ordre == [('garde', True)]
     await arbiter.close()
+
+
+@pytest.mark.asyncio
+async def test_repli_thread_si_sous_processus_asyncio_indisponible(monkeypatch):
+    async def indisponible(*args, **kwargs):
+        raise NotImplementedError
+
+    appels = []
+
+    class FauxPopen:
+        def __init__(self, commande, **kwargs):
+            appels.append(commande)
+
+        def poll(self):
+            return 0
+
+        def wait(self):
+            return 0
+
+    monkeypatch.setattr('vertia.gpu.verrou.asyncio.create_subprocess_exec', indisponible)
+    monkeypatch.setattr('vertia.gpu.verrou.subprocess.Popen', FauxPopen)
+    assert await VerrouGpu(attente_s=5)._commande('status') == 0
+    assert appels[0][-2:] == ['status', 'vertia']

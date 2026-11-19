@@ -2,6 +2,7 @@ from __future__ import annotations
 
 import asyncio
 import os
+import subprocess
 import sys
 from contextvars import ContextVar, copy_context
 from pathlib import Path
@@ -45,6 +46,21 @@ class PauseUtilisateur(VerrouIndisponible):
     motif_code = 'pause'
 
 
+class _ProcessThread:
+    def __init__(self, process):
+        self._process = process
+
+    @property
+    def returncode(self):
+        return self._process.poll()
+
+    async def wait(self):
+        return await asyncio.to_thread(self._process.wait)
+
+    def kill(self):
+        self._process.kill()
+
+
 class VerrouGpu:
     def __init__(self, attente_s=600):
         self.attente_s = max(0, attente_s)
@@ -52,12 +68,23 @@ class VerrouGpu:
         self._lock = asyncio.Lock()
         self.script = Path(__file__).resolve().parents[3] / '_orchestration' / 'vram_lock.py'
 
+    async def _lancer(self, commande, args):
+        try:
+            return await asyncio.create_subprocess_exec(
+                sys.executable, str(self.script), commande, 'vertia', *args,
+                stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
+                stderr=asyncio.subprocess.DEVNULL,
+                creationflags=0x08000000 if os.name == 'nt' else 0)
+        except NotImplementedError:
+            # Boucle Selector (serveur lancé avec rechargement sous Windows) : pas de sous-processus asyncio.
+            process = subprocess.Popen(
+                [sys.executable, str(self.script), commande, 'vertia', *args],
+                stdin=subprocess.DEVNULL, stdout=subprocess.DEVNULL, stderr=subprocess.DEVNULL,
+                creationflags=0x08000000 if os.name == 'nt' else 0)
+            return _ProcessThread(process)
+
     async def _commande(self, commande, *args):
-        lancement = asyncio.create_task(asyncio.create_subprocess_exec(
-            sys.executable, str(self.script), commande, 'vertia', *args,
-            stdin=asyncio.subprocess.DEVNULL, stdout=asyncio.subprocess.DEVNULL,
-            stderr=asyncio.subprocess.DEVNULL,
-            creationflags=0x08000000 if os.name == 'nt' else 0))
+        lancement = asyncio.create_task(self._lancer(commande, args))
         process = None
         try:
             process = await asyncio.shield(lancement)

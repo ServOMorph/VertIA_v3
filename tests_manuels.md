@@ -175,3 +175,7 @@ Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées)
 4. Bouton Capture : sélectionner une zone, un PNG est créé dans `outputs/captures/`.
 5. Changer le modèle d'une discussion au repos : la réponse suivante vient du nouveau modèle ; le sélecteur est bloqué pendant une réponse.
 6. Double-clic sur une discussion ou un dossier : renommage ; bouton télécharger d'un livrable `json` : fichier `.json`.
+
+## Retouche IA et logo après correctif du 2026-11-19
+1. Lancer `python run.py` (avec rechargement), ouvrir l'Atelier, faire une retouche IA par masque : le résultat revient dans le calque (avant correctif : échec « moteur » en 5 s).
+2. Vérifier que le nouveau logo (arbre-circuit) s'affiche dans l'en-tête et l'onglet, sans cadre rond ni fond blanc.
