@@ -23,9 +23,9 @@
 - [P2|décision requise] Supprimer ou garder granite4.2:8b (Ollama) et les fichiers de `models/veille/` (garder le VAE de 0,25 Go recommandé)
   - fait quand: décision de l'utilisateur appliquée.
   - réf: `models/veille/`, `benchmarks/veille/rapport_resultats.md`.
-- [P2|ouvert] Push : `pre_push_check.py` puis `git push` des commits locaux (dont 920371e, AGENTS.md modifié par VibeObs sans confirmation écrite du consentement) ; nouveaux fichiers non versionnés : `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`
-  - fait quand: push fait après contrôle, fichiers versionnés ou écartés.
-  - réf: `_orchestration/pre_push_check.py`.
+- [P2|ouvert] Fichiers non versionnés à décider (versionner ou écarter) : `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py` ; consentement d'écriture d'AGENTS.md par VibeObs (commit 920371e, poussé le 2026-11-19) non confirmé par écrit
+  - fait quand: fichiers versionnés ou écartés ; consentement confirmé.
+  - réf: `veille/`, `AGENTS.md`.
 - [P2|ouvert] Fermer la session creation_videos (migration validée) ; renard (poly_fox) pour creation_3d sur demande séparée
   - fait quand: session fermée ; demande renard reçue ou écartée.
   - réf: `_orchestration/sessions.md`.
