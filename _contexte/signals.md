@@ -57,6 +57,7 @@
 - Jeton GPU : état courant par `python _orchestration/vram_lock.py status`.
 - Portail relancé le 2026-11-19 en headless (code avec correctifs, sortie dans `data/logs/portail.err`) ; l'Atelier de l'utilisateur a été fermé par ce redémarrage. L'UI avec rechargement automatique (`run.py`) prend désormais le jeton GPU sans erreur (repli en thread).
 - 2026-11-19 : wrapper Codex remplacé par la version du kit v7.2 (politique centrale, verrou, seuils 50 % / 60 %), sur proposition de VibeObs et validation de l'utilisateur ; `run_codex.ps1 -Statut` : modèle gpt-6.2-sol, sous les seuils, flag de blocage en place ; `_codex/garde_codex.sh` ajouté.
+- 2026-11-19 : section « Modèle Codex » d'AGENTS.md réécrite (modèle imposé par ~/.codex/politique_delegation.json) sur proposition de VibeObs, après les trois validations de l'utilisateur dans cette session.
 - Résidus non commités : dossiers `.codex-test-*` (accès refusé), `.tmp_*`.
 
 ## Dernière session (2026-11-19)
