@@ -56,6 +56,7 @@
 - Pause GPU utilisateur : non ; creation_llm repris (REPRISE_OK pas 40590 à 21:16 le 2026-11-19). Un `unhold` ne se fait que sur ordre de l'utilisateur.
 - Jeton GPU : état courant par `python _orchestration/vram_lock.py status`.
 - Portail relancé le 2026-11-19 en headless (code avec correctifs, sortie dans `data/logs/portail.err`) ; l'Atelier de l'utilisateur a été fermé par ce redémarrage. L'UI avec rechargement automatique (`run.py`) prend désormais le jeton GPU sans erreur (repli en thread).
+- 2026-11-19 : wrapper Codex remplacé par la version du kit v7.2 (politique centrale, verrou, seuils 50 % / 60 %), sur proposition de VibeObs et validation de l'utilisateur ; `run_codex.ps1 -Statut` : modèle gpt-6.2-sol, sous les seuils, flag de blocage en place ; `_codex/garde_codex.sh` ajouté.
 - Résidus non commités : dossiers `.codex-test-*` (accès refusé), `.tmp_*`.
 
 ## Dernière session (2026-11-19)
