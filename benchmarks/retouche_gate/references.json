@@ -1,0 +1,38 @@
+{
+  "phare": {"zones": [
+    {"cible": "the lighthouse", "boite": [478, 205, 575, 505]},
+    {"cible": "the sun", "boite": [270, 395, 308, 430]},
+    {"cible": "the door of the lighthouse", "boite": [493, 452, 513, 500]},
+    {"cible": "the stone stairs", "boite": [470, 505, 515, 552]}
+  ]},
+  "rue": {"zones": [
+    {"cible": "the red bicycle", "boite": [232, 255, 780, 615]},
+    {"cible": "the blue door", "boite": [500, 0, 885, 548]},
+    {"cible": "the potted plant", "boite": [80, 292, 282, 590]},
+    {"cible": "the black cat", "boite": [1037, 533, 1112, 680]}
+  ]},
+  "personnage": {"zones": [
+    {"cible": "the purple umbrella", "boite": [130, 92, 670, 640]},
+    {"cible": "the green hat", "boite": [208, 258, 556, 470]},
+    {"cible": "the yellow raincoat", "boite": [232, 500, 500, 850]},
+    {"cible": "the brown dog", "boite": [430, 862, 547, 1012]}
+  ]},
+  "affiche": {"zones": [
+    {"cible": "the word PARIS", "boite": [78, 45, 825, 272]},
+    {"cible": "the letter S", "boite": [660, 48, 825, 272]},
+    {"cible": "the Eiffel Tower", "boite": [222, 148, 625, 1110]},
+    {"cible": "the red hot air balloon", "boite": [640, 318, 736, 465]}
+  ]},
+  "table": {"zones": [
+    {"cible": "the white cup of coffee", "boite": [65, 415, 285, 588]},
+    {"cible": "the croissant", "boite": [203, 712, 497, 972]},
+    {"cible": "the laptop", "boite": [465, 0, 1024, 870]},
+    {"cible": "the glass vase", "boite": [272, 190, 455, 325]}
+  ]},
+  "lac": {"zones": [
+    {"cible": "the sailboat", "boite": [229, 242, 350, 472]},
+    {"cible": "the wooden house with a red roof", "boite": [32, 306, 188, 385]},
+    {"cible": "the pine trees on the right", "boite": [1265, 5, 1536, 340]},
+    {"cible": "the snowy mountains", "boite": [55, 78, 1295, 250]}
+  ]}
+}

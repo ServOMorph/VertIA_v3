@@ -1,0 +1,449 @@
+{
+  "synthese": {
+    "date": "2026-11-20 22:37",
+    "modeles": {
+      "dialogue": "gemma4:12b",
+      "reperage": "qwen2.5vl:latest"
+    },
+    "zones": 24,
+    "zones_iou_05": 21,
+    "taux_iou": 0.875,
+    "json_valides": 6,
+    "images": 6,
+    "gate": true
+  },
+  "details": {
+    "phare": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the lighthouse",
+          "reference": [
+            478,
+            205,
+            575,
+            505
+          ],
+          "modele": [
+            477,
+            196,
+            571,
+            508
+          ],
+          "iou": 0.914
+        },
+        {
+          "cible": "the sun",
+          "reference": [
+            270,
+            395,
+            308,
+            430
+          ],
+          "modele": [
+            274,
+            404,
+            303,
+            426
+          ],
+          "iou": 0.48
+        },
+        {
+          "cible": "the door of the lighthouse",
+          "reference": [
+            493,
+            452,
+            513,
+            500
+          ],
+          "modele": [
+            495,
+            455,
+            514,
+            499
+          ],
+          "iou": 0.789
+        },
+        {
+          "cible": "the stone stairs",
+          "reference": [
+            470,
+            505,
+            515,
+            552
+          ],
+          "modele": [
+            479,
+            508,
+            541,
+            556
+          ],
+          "iou": 0.452
+        }
+      ],
+      "duree_dialogue_s": 131.7,
+      "reponse_brute": "{\n \"reponse\": \"Voici quelques suggestions de modifications locales pour enrichir cette scène côtière :\",\n \"propositions\": [\n  {\n   \"titre\": \"Bateau au loin\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the horizon on the left side of the image\",\n   \"prompt\": \"a small silhouette of a sailboat sailing on the water near the horizon\"\n  },\n  {\n   \"titre\": \"Éléments de végétation\",\n   \"type\": \"objet\",\n   \"cible\": \"the rocky ground in the foreground\",\n   \"prompt\": \"add some colorful coastal wildflowers and wild grasses among the rocks\"\n  },\n  {\n   \"titre\": \"Oiseaux marins\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the sky near the lighthouse\",\n   \"prompt\": \"a small flock of seagulls flying in the distance\"\n  },\n  {\n   \"titre\": \"Détails de la structure\",\n   \"type\": \"objet\",\n   \"cible\": \"the base of the lighthouse\",\n   \"prompt\": \"add a rustic wooden fence or a small stone wall around the base\"\n  }\n ]\n}"
+    },
+    "rue": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the red bicycle",
+          "reference": [
+            232,
+            255,
+            780,
+            615
+          ],
+          "modele": [
+            233,
+            256,
+            779,
+            618
+          ],
+          "iou": 0.985
+        },
+        {
+          "cible": "the blue door",
+          "reference": [
+            500,
+            0,
+            885,
+            548
+          ],
+          "modele": [
+            496,
+            0,
+            886,
+            545
+          ],
+          "iou": 0.982
+        },
+        {
+          "cible": "the potted plant",
+          "reference": [
+            80,
+            292,
+            282,
+            590
+          ],
+          "modele": [
+            79,
+            295,
+            281,
+            592
+          ],
+          "iou": 0.974
+        },
+        {
+          "cible": "the black cat",
+          "reference": [
+            1037,
+            533,
+            1112,
+            680
+          ],
+          "modele": [
+            1038,
+            534,
+            1113,
+            679
+          ],
+          "iou": 0.961
+        }
+      ],
+      "duree_dialogue_s": 40.6,
+      "reponse_brute": "{\n \"reponse\": \"Voici quelques suggestions de modifications locales pour dynamiser ou personnaliser cette scène urbaine.\",\n \"propositions\": [\n  {\n   \"titre\": \"Changer la couleur du vélo\",\n   \"type\": \"objet\",\n   \"cible\": \"red bicycle frame\",\n   \"prompt\": \"a vintage bicycle with a turquoise blue frame\"\n  },\n  {\n   \"titre\": \"Ajouter un panier à vélo\",\n   \"type\": \"emplacement\",\n   \"cible\": \"front of the bicycle handlebars\",\n   \"prompt\": \"a wicker basket filled with fresh flowers and bread\"\n  },\n  {\n   \"titre\": \"Modifier la plante en pot\",\n   \"type\": \"objet\",\n   \"cible\": \"potted plant on the left\",\n   \"prompt\": \"a lush terracotta pot with blooming red geraniums\"\n  },\n  {\n   \"titre\": \"Changer la couleur de la porte\",\n   \"type\": \"objet\",\n   \"cible\": \"blue wooden door\",\n   \"prompt\": \"a rustic sage green wooden door\"\n  }\n ]\n}"
+    },
+    "personnage": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the purple umbrella",
+          "reference": [
+            130,
+            92,
+            670,
+            640
+          ],
+          "modele": [
+            131,
+            93,
+            673,
+            637
+          ],
+          "iou": 0.985
+        },
+        {
+          "cible": "the green hat",
+          "reference": [
+            208,
+            258,
+            556,
+            470
+          ],
+          "modele": [
+            209,
+            255,
+            558,
+            472
+          ],
+          "iou": 0.969
+        },
+        {
+          "cible": "the yellow raincoat",
+          "reference": [
+            232,
+            500,
+            500,
+            850
+          ],
+          "modele": [
+            230,
+            504,
+            499,
+            849
+          ],
+          "iou": 0.975
+        },
+        {
+          "cible": "the brown dog",
+          "reference": [
+            430,
+            862,
+            547,
+            1012
+          ],
+          "modele": [
+            430,
+            863,
+            549,
+            1012
+          ],
+          "iou": 0.977
+        }
+      ],
+      "duree_dialogue_s": 40.1,
+      "reponse_brute": "{\n\"reponse\": \"Voici quelques suggestions de modifications locales pour personnaliser cette illustration tout en conservant son style mignon.\",\n\"propositions\": [\n    {\n        \"titre\": \"Changer la couleur du manteau\",\n        \"type\": \"objet\",\n        \"cible\": \"yellow raincoat\",\n        \"prompt\": \"a bright red raincoat with buttons\"\n    },\n    {\n        \"titre\": \"Modifier la couleur de l'ombrelle\",\n        \"type\": \"objet\",\n        \"cible\": \"purple umbrella\",\n        \"prompt\": \"a turquoise blue umbrella\"\n    },\n    {\n        \"titre\": \"Ajouter un accessoire au chien\",\n        \"type\": \"emplacement\",\n        \"cible\": \"the small dog's neck\",\n        \"prompt\": \"a small red collar with a gold bell\"\n    },\n    {\n        \"titre\": \"Changer la couleur des bottes\",\n        \"type\": \"objet\",\n        \"cible\": \"green boots\",\n        \"prompt\": \"bright orange rain boots\"\n    }\n]\n}"
+    },
+    "affiche": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the word PARIS",
+          "reference": [
+            78,
+            45,
+            825,
+            272
+          ],
+          "modele": [
+            80,
+            45,
+            822,
+            274
+          ],
+          "iou": 0.985
+        },
+        {
+          "cible": "the letter S",
+          "reference": [
+            660,
+            48,
+            825,
+            272
+          ],
+          "modele": [
+            658,
+            47,
+            825,
+            272
+          ],
+          "iou": 0.984
+        },
+        {
+          "cible": "the Eiffel Tower",
+          "reference": [
+            222,
+            148,
+            625,
+            1110
+          ],
+          "modele": [
+            211,
+            145,
+            634,
+            1118
+          ],
+          "iou": 0.942
+        },
+        {
+          "cible": "the red hot air balloon",
+          "reference": [
+            640,
+            318,
+            736,
+            465
+          ],
+          "modele": [
+            641,
+            321,
+            736,
+            465
+          ],
+          "iou": 0.969
+        }
+      ],
+      "duree_dialogue_s": 48.3,
+      "reponse_brute": "{\n \"reponse\": \"Voici quelques suggestions de modifications locales pour enrichir l'atmosphère de cette affiche de Paris :\",\n \"propositions\": [\n  {\n   \"titre\": \"Montgolfière supplémentaire\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the sky to the left of the Eiffel Tower\",\n   \"prompt\": \"a small vintage hot air balloon in a different color, like blue or yellow\"\n  },\n  {\n   \"titre\": \"Détails de la foule\",\n   \"type\": \"objet\",\n   \"cible\": \"the crowd at the base of the tower\",\n   \"prompt\": \"more detailed silhouettes of people walking and enjoying the scene\"\n  },\n  {\n   \"titre\": \"Végétation plus dense\",\n   \"type\": \"objet\",\n   \"cible\": \"the trees on the sides\",\n   \"prompt\": \"fuller, more lush green foliage for the trees flanking the tower\"\n  },\n  {\n   \"titre\": \"Bateau sur la Seine\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the water area in front of the archway\",\n   \"prompt\": \"a small vintage boat on the river\"\n  }\n ]\n}"
+    },
+    "table": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the white cup of coffee",
+          "reference": [
+            65,
+            415,
+            285,
+            588
+          ],
+          "modele": [
+            66,
+            403,
+            288,
+            591
+          ],
+          "iou": 0.904
+        },
+        {
+          "cible": "the croissant",
+          "reference": [
+            203,
+            712,
+            497,
+            972
+          ],
+          "modele": [
+            203,
+            707,
+            498,
+            973
+          ],
+          "iou": 0.974
+        },
+        {
+          "cible": "the laptop",
+          "reference": [
+            465,
+            0,
+            1024,
+            870
+          ],
+          "modele": [
+            464,
+            0,
+            1024,
+            879
+          ],
+          "iou": 0.988
+        },
+        {
+          "cible": "the glass vase",
+          "reference": [
+            272,
+            190,
+            455,
+            325
+          ],
+          "modele": [
+            272,
+            187,
+            458,
+            331
+          ],
+          "iou": 0.922
+        }
+      ],
+      "duree_dialogue_s": 89.1,
+      "reponse_brute": "{\n  \"reponse\": \"Voici quelques suggestions de modifications locales pour personnaliser votre scène de petit-déjeuner et de travail.\",\n  \"propositions\": [\n    {\n      \"titre\": \"Changer le type de viennoiserie\",\n      \"type\": \"objet\",\n      \"cible\": \"croissant on the plate\",\n      \"prompt\": \"a flaky pain au chocolat with chocolate filling\"\n    },\n    {\n      \"titre\": \"Modifier la couleur des tulipes\",\n      \"type\": \"objet\",\n      \"cible\": \"orange tulips in the vase\",\n      \"prompt\": \"pale pink and white tulips\"\n    },\n    {\n      \"titre\": \"Ajouter un élément de bureau\",\n      \"type\": \"emplacement\",\n      \"cible\": \"empty space on the wooden table next to the laptop\",\n      \"prompt\": \"a pair of stylish glasses\"\n    },\n    {\n      \"titre\": \"Changer la couleur de la tasse\",\n      \"type\": \"objet\",\n      \"cible\": \"white coffee cup and saucer\",\n      \"prompt\": \"a matte turquoise ceramic cup and saucer\"\n    }\n  ]\n}"
+    },
+    "lac": {
+      "json_strict": true,
+      "propositions": 4,
+      "zones": [
+        {
+          "cible": "the sailboat",
+          "reference": [
+            229,
+            242,
+            350,
+            472
+          ],
+          "modele": [
+            227,
+            239,
+            352,
+            474
+          ],
+          "iou": 0.947
+        },
+        {
+          "cible": "the wooden house with a red roof",
+          "reference": [
+            32,
+            306,
+            188,
+            385
+          ],
+          "modele": [
+            32,
+            305,
+            186,
+            381
+          ],
+          "iou": 0.926
+        },
+        {
+          "cible": "the pine trees on the right",
+          "reference": [
+            1265,
+            5,
+            1536,
+            340
+          ],
+          "modele": [
+            1423,
+            62,
+            1536,
+            312
+          ],
+          "iou": 0.311
+        },
+        {
+          "cible": "the snowy mountains",
+          "reference": [
+            55,
+            78,
+            1295,
+            250
+          ],
+          "modele": [
+            52,
+            77,
+            1354,
+            308
+          ],
+          "iou": 0.709
+        }
+      ],
+      "duree_dialogue_s": 196.2,
+      "reponse_brute": "{\n \"reponse\": \"Voici quelques suggestions de modifications locales pour enrichir ce paysage alpin :\",\n \"propositions\": [\n  {\n   \"titre\": \"Ajout d'oiseaux\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the sky above the mountains\",\n   \"prompt\": \"a small flock of birds flying in the distance\"\n  },\n  {\n   \"titre\": \"Détails sur le bateau\",\n   \"type\": \"objet\",\n   \"cible\": \"the sailboat\",\n   \"prompt\": \"add some ropes and details to the mast and deck\"\n  },\n  {\n   \"titre\": \"Flore au premier plan\",\n   \"type\": \"emplacement\",\n   \"cible\": \"the rocky shore in the foreground\",\n   \"prompt\": \"add small wildflowers and alpine grass among the rocks\"\n  },\n  {\n   \"titre\": \"Reflet sur l'eau\",\n   \"type\": \"objet\",\n   \"cible\": \"the water surface near the cabin\",\n   \"prompt\": \"enhance the reflection of the red roof in the water\"\n  }\n ]\n}"
+    }
+  }
+}

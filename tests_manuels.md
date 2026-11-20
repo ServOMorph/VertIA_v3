@@ -200,3 +200,7 @@ Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées)
 4. Poser une seconde question (« Garde la meilleure idée ») : la discussion reprend avec l'historique.
 5. Annuler pendant une analyse puis pendant une application : l'état passe à « Annulé », le GPU est rendu (`vram_lock.py status`).
 6. Document avec zones transparentes : la marge autour d'une zone appliquée reste transparente.
+
+## Références du gate de la retouche dialoguée
+Gate atteint le 2026-11-20 (21/24 zones IoU >= 0,5, JSON 6/6, `benchmarks/retouche_gate/resultats.json`), mais les 24 zones de référence ont été tracées par Claude.
+1. Ouvrir les 6 images de `benchmarks/retouche_gate/images/` et vérifier que chaque boîte de `references.json` encadre bien l'objet nommé (format [x1, y1, x2, y2] en pixels). Corriger les boîtes fausses puis relancer `scripts/benchmark_retouche_gate.py`.
