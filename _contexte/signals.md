@@ -23,9 +23,9 @@
 - [P2|décision requise] Supprimer ou garder granite4.2:8b (Ollama) et les fichiers de `models/veille/` (garder le VAE de 0,25 Go recommandé)
   - fait quand: décision de l'utilisateur appliquée.
   - réf: `models/veille/`, `benchmarks/veille/rapport_resultats.md`.
-- [P2|ouvert] Fichiers non versionnés à décider (versionner ou écarter) : `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py` ; consentement d'écriture d'AGENTS.md par VibeObs (commit 920371e, poussé le 2026-11-19) non confirmé par écrit
-  - fait quand: fichiers versionnés ou écartés ; consentement confirmé.
-  - réf: `veille/`, `AGENTS.md`.
+- [P2|ouvert] Fichiers non versionnés à décider (versionner ou écarter) : `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`
+  - fait quand: fichiers versionnés ou écartés.
+  - réf: `veille/`, `benchmarks/veille/`.
 - [P2|ouvert] Fermer la session creation_videos (migration validée) ; renard (poly_fox) pour creation_3d sur demande séparée
   - fait quand: session fermée ; demande renard reçue ou écartée.
   - réf: `_orchestration/sessions.md`.
@@ -68,6 +68,7 @@
 - Veille et benchmarks (chat, image, vidéo) faits sous jeton ; FLUX 3 Klein sauté (licence à accepter par l'utilisateur), MOSS-Image bloqué (ComfyUI 0.38.0).
 - Demandes du 2026-11-19 rangées en phase 7-bis : VRAM libérée au lancement de l'UI, design du chat d'IA_V7, retouche dialoguée, correction de la retouche IA.
 - Copie séparée de ComfyUI (engines/comfy-flux3, v0.46.0) autorisée pour FLUX ; logo VertIA remplacé par l'arbre-circuit de l'utilisateur.
+- Délégation Codex : wrapper du kit v7.2 appliqué (0a10d23) et section « Modèle Codex » d'AGENTS.md réécrite (16aeed6) sur proposition de VibeObs, après validation de l'utilisateur (trois validations pour AGENTS.md).
 
 ## Livrables produits ou modifiés
 - Modules voix, musique, vidéo, chat, Atelier intégré : faits et commités (voir CHANGELOG v0.4.0).
