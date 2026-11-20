@@ -144,6 +144,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 ## Phase 7-bis — Demandes de l'utilisateur du 2026-11-19 (ajoutées en session) [EN COURS]
 **Modèle Claude à sélectionner :** Opus 5.5 (VRAM à l'ouverture de l'UI, préchargement sous jeton, retouche dialoguée) ; Sonnet 5.5 pour le design du chat repris d'IA_V7. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Correction de la retouche IA par masque (Atelier) : échec « moteur » constaté le 2026-11-19, lecture de l'encodeur de texte (16,7 Go) en erreur mémoire ; corriger puis vérifier une retouche de bout en bout (test manuel 165 de `tests_manuels.md`). Fait le 2026-11-19 côté portail (cause : sous-processus asyncio indisponible sous le serveur à rechargement ; correctif dans `verrou.py`) ; reste le test manuel dans l'Atelier.
+- État au 2026-11-20 : les quatre demandes ci-dessous et le point `gemma4:e4b` sont codés et commités (1df9546, 098dbf9, 6a68c13, d112ba9, 56d0e81 ; 1070 tests verts). Restent : contrôles manuels à l'écran (`tests_manuels.md`), gate benchmark de la retouche dialoguée (6 images, IoU >= 0,5 sur 70 % des zones, `_docs/conception_retouche_dialoguee.md`), correction du `keep_alive` -1 dans la session VisioAide (client identifié, `AIDE_VISIO_OLLAMA_KEEP_ALIVE`).
 - Libération de la VRAM au lancement de l'UI de VertIA : l'utilisateur doit pouvoir se servir des LLM locaux depuis l'UI ; une fonction met en pause ou libère le GPU (jeton `vertia`, pause de creation_llm) à l'ouverture de l'UI et le rend à la fermeture.
 - Design du chat : reprendre celui d'IA_V7 (disposition, couleurs, polices identiques), le design actuel ne convient pas à l'utilisateur.
 - Outil de retouche d'image dialoguée : partager une image, discuter avec un LLM local (modèle de vision) pour proposer des améliorations et des zones ; après validation de l'utilisateur, déclenchement des générations Qwen par zone (capture de la zone, génération, remplacement en calque). Limites relevées : un seul modèle à la fois sur 8 Go, texte manuscrit difficile, repérage de zones à tester.
@@ -154,7 +155,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 
 ## Actions ouvertes hors phase (classées du plus urgent au moins urgent, 2026-11-20)
 Source unique des actions depuis le 2026-11-20 (signals et backlog y renvoient). Retirer un point une fois fait.
-1. Contrôles manuels à valider : retouche IA et logo (`tests_manuels.md`, sections « Retouche IA et logo » et « Atelier dans le portail », Atelier v1 points 9 à 11) ; conditionne la fin de la phase 7-bis.
+1. Contrôles manuels à valider (`tests_manuels.md`) : retouche IA et logo (sections « Retouche IA et logo » et « Atelier dans le portail », Atelier v1 points 9 à 11), GPU réservé, design du chat, retouche dialoguée ; conditionne la fin de la phase 7-bis. Puis gate benchmark de la retouche dialoguée.
 2. Décision : supprimer ou garder granite4.2:8b et `models/veille/` (garder le VAE de 0,25 Go recommandé).
 3. Versionner ou écarter `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`.
 4. LFM3 : écoute de `outputs/lfm3_voix/tts_fr.wav` et décision d'usage face à gemma4:e4b (`_docs/lfm3.md`, note échue de `_contexte/notes_a_faire.md`).

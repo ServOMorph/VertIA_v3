@@ -2,7 +2,8 @@
 
 Studio d'intelligence artificielle **100 % locale**, pensé pour les personnes qui débutent. On discute avec un assistant qui prépare les demandes (images, musiques, vidéos), on valide, et tout tourne sur son propre ordinateur.
 
-## État actuel (v0.4.0)
+## État actuel (v0.5.0)
+- Phase 7-bis codée, en attente de validation à l'écran : GPU réservé tant que l'interface est ouverte, design du chat repris d'IA_V7, capacité `image.analyser` (dialogue gemma4:12b puis repérage de zones qwen2.5vl) et outil « Retouche dialoguée » de l'Atelier (zones éditables, application zone par zone en calques).
 - Portail (consolidation des projets d'IA locale, `roadmap_portail.md`, phases 1 à 7 faites) : modules découverts dans `modules/`, écran d'accueil par activité, API versionnée `/api/v1`, commande `vertia_gen.py <capacité>` pour les autres sessions (le portail démarre seul et prend le jeton GPU `vertia`), boucle demande / essai / retour avec livraison dans `outbox/`. Capacités : image (génération, retouche par masque), voix, musique, vidéo et chat ; l'Atelier est servi sous `/atelier/` ; `python vertia_gen.py capacites` donne la liste à jour.
 - Atelier (`modules/atelier/`, `python run_atelier.py`, port 4320) : éditeur d'image local type Canva et Photoshop (calques, remplissage de scans, palette, pinceau, texte, formes, export PNG, projets) avec outil Retouche IA par masque ; interface à valider dans un navigateur (`tests_manuels.md`).
 - Orchestration GPU entre sessions (`_orchestration/`) : jeton VRAM, reprise automatique et vérifiée de l'entraînement de creation_llm.

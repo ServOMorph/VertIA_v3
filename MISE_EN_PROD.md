@@ -105,6 +105,7 @@ La base SQLite est `data/vertia.db` par défaut. Les nouveaux médias persistant
 | `VERTIA_VERROU_GPU` | Verrou GPU du portail, actif par défaut ; `0` le coupe |
 | `VERTIA_VERROU_GPU_ATTENTE_S` | Attente maximale du jeton en secondes, défaut 600 |
 | `VERTIA_PRELOAD_OLLAMA` | Préchargement du modèle de chat au démarrage, actif par défaut ; coupé en mode `--headless` |
+| `VERTIA_RESERVER_GPU_UI` | Garde le jeton GPU tant qu'un client de l'interface est connecté et le rend 30 s après la fermeture, actif par défaut ; `0` le coupe |
 | `ATELIER_PORT`, `ATELIER_INBOX`, `ATELIER_VERTIA_GEN` | Port de l'Atelier (4320), dossier de dépôt des images à retoucher, script de génération (tests) |
 
 - **Journaux** : `data/logs/comfy_qwen.log` (sortie de ComfyUI lancé par le portail, remplacée à chaque démarrage) et `data/logs/<moteur>_<nom>.log` des travailleurs ; les échecs de demande sont tracés par le journal du serveur (`vertia.demandes`).
@@ -157,5 +158,6 @@ Pour retirer VertIA, arrêter son processus et retirer son dossier après sauveg
 Ce plan ne constitue pas un installateur exécuté. Les validations matérielles et de redistribution doivent précéder une annonce de compatibilité ou une diffusion des moteurs.
 
 ## Journal
+- 2026-11-20 v0.5.0 : variable `VERTIA_RESERVER_GPU_UI` (GPU gardé pendant l'ouverture de l'UI), capacité `image.analyser` (gemma4:12b et qwen2.5vl via Ollama, aucun nouveau poids hors ces deux modèles à avoir dans Ollama), routes `/api/analyse` de l'Atelier.
 - 2026-11-19 v0.4.0 : modules voix, musique, vidéo, chat et Atelier dans le portail ; verrou GPU compatible avec le serveur à rechargement ; sortie de ComfyUI conservée dans `data/logs/comfy_qwen.log`.
 - 2026-11-16 v0.3.0 : portail (config/chemins.toml, vertia_gen.py, API v1, verrou GPU, modules image et Atelier), poids ComfyUI-Qwen déplacés vers `models/comfy/` avec jonctions, dépendances `pillow` et `psutil`, nouvelles variables d'environnement.

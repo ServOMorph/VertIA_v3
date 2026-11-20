@@ -1,5 +1,19 @@
 # Changelog
 
+## v0.5.0 - 2026-11-20
+
+### Ajouté
+- GPU réservé tant que l'interface est ouverte (`ReservationUi`, variable `VERTIA_RESERVER_GPU_UI`), besoin en jeton de Qwen déclaré (`MemoryNeeds.jeton_gb`).
+- Capacité `image.analyser` (dialogue gemma4:12b, repérage de zones qwen2.5vl) et outil « Retouche dialoguée » de l'Atelier (routes `/api/analyse`).
+- Design du chat repris d'IA_V7 (`chat.css`).
+- `_docs/conception_retouche_dialoguee.md`.
+
+### Modifié
+- Roadmaps : `roadmap_portail.md` seule source des actions, `roadmap_vertia_v1.md` et `roadmap_orchestration.md` archivées ; creation_3d et WorldModel abandonnés. `run_codex.ps1` remplacé par la version du kit.
+
+### Corrigé
+- Lecture du JSON du dialogue tolérante au texte environnant ; gemma4 sans réflexion (157 s -> 46 s par tour).
+
 ## v0.4.0 - 2026-11-19
 
 ### Ajouté
