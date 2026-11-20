@@ -57,6 +57,39 @@ def png(image):
     return buffer.getvalue()
 
 
+def ouvrir_image_inbox(inbox, nom):
+    if not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', nom) or '..' in nom:
+        raise ParameterError('Nom de fichier inbox invalide.')
+    limite = 64 * 1024**2
+    try:
+        racine = inbox.resolve(strict=True)
+        chemin = inbox / nom
+        infos = chemin.lstat()
+        if (not stat.S_ISREG(infos.st_mode) or infos.st_nlink != 1
+                or getattr(infos, 'st_file_attributes', 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT
+                or chemin.resolve(strict=True).parent != racine):
+            raise ParameterError('Le fichier doit être dans inbox, sans lien.')
+        if infos.st_size > limite:
+            raise ParameterError('Image supérieure à 64 Mio.')
+        with chemin.open('rb') as fichier:
+            actuel = os.fstat(fichier.fileno())
+            if (actuel.st_ino, actuel.st_dev) != (infos.st_ino, infos.st_dev):
+                raise ParameterError('Le fichier inbox a changé pendant la lecture.')
+            contenu = fichier.read(limite + 1)
+        if len(contenu) > limite:
+            raise ParameterError('Image supérieure à 64 Mio.')
+        with Image.open(BytesIO(contenu)) as image:
+            if image.format not in {'PNG', 'JPEG', 'WEBP'}:
+                raise ParameterError('Format attendu : PNG, JPEG ou WebP.')
+            if max(image.size) > 8000:
+                raise ParameterError('Image supérieure à 8000 pixels de côté.')
+            image.verify()
+        with Image.open(BytesIO(contenu)) as image:
+            return ImageOps.exif_transpose(image).convert('RGB')
+    except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
+        raise ParameterError(f'Image inbox invalide : {exc}') from exc
+
+
 class OutilRetouche:
     capacite = 'image.retoucher'
     moteur = 'comfy'
@@ -73,47 +106,15 @@ class OutilRetouche:
         self.adapter = moteurs[self.moteur]
         self.inbox = chemins.inbox_dir
 
-    def _ouvrir(self, nom):
-        if not re.fullmatch(r'[A-Za-z0-9_.-]{1,100}', nom) or '..' in nom:
-            raise ParameterError('Nom de fichier inbox invalide.')
-        limite = 64 * 1024**2
-        try:
-            racine = self.inbox.resolve(strict=True)
-            chemin = self.inbox / nom
-            infos = chemin.lstat()
-            if (not stat.S_ISREG(infos.st_mode) or infos.st_nlink != 1
-                    or getattr(infos, 'st_file_attributes', 0) & stat.FILE_ATTRIBUTE_REPARSE_POINT
-                    or chemin.resolve(strict=True).parent != racine):
-                raise ParameterError('Le fichier doit être dans inbox, sans lien.')
-            if infos.st_size > limite:
-                raise ParameterError('Image supérieure à 64 Mio.')
-            with chemin.open('rb') as fichier:
-                actuel = os.fstat(fichier.fileno())
-                if (actuel.st_ino, actuel.st_dev) != (infos.st_ino, infos.st_dev):
-                    raise ParameterError('Le fichier inbox a changé pendant la lecture.')
-                contenu = fichier.read(limite + 1)
-            if len(contenu) > limite:
-                raise ParameterError('Image supérieure à 64 Mio.')
-            with Image.open(BytesIO(contenu)) as image:
-                if image.format not in {'PNG', 'JPEG', 'WEBP'}:
-                    raise ParameterError('Format attendu : PNG, JPEG ou WebP.')
-                if max(image.size) > 8000:
-                    raise ParameterError('Image supérieure à 8000 pixels de côté.')
-                image.verify()
-            with Image.open(BytesIO(contenu)) as image:
-                return ImageOps.exif_transpose(image).convert('RGB')
-        except (OSError, ValueError, SyntaxError, Image.DecompressionBombError) as exc:
-            raise ParameterError(f'Image inbox invalide : {exc}') from exc
-
     def _preparer(self, params):
         try:
             params = ParametresRetouche.model_validate(params).model_dump()
         except ValueError as exc:
             raise ParameterError(str(exc)) from exc
-        source = self._ouvrir(params['source'])
+        source = ouvrir_image_inbox(self.inbox, params['source'])
         masque = None
         if params['masque'] is not None:
-            masque = self._ouvrir(params['masque']).convert('L')
+            masque = ouvrir_image_inbox(self.inbox, params['masque']).convert('L')
             rapport = source.width / source.height
             if abs(masque.width / masque.height / rapport - 1) >= 0.02:
                 raise ParameterError('Le masque doit avoir les mêmes proportions que la source (écart < 2 %).')

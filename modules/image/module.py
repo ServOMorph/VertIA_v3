@@ -2,6 +2,7 @@ from vertia.chemins import resoudre_chemins
 from vertia.modules.contrat import Module
 
 from .outil import OutilImage
+from .outil_analyse import OutilAnalyse
 from .outil_retouche import OutilRetouche
 
 POIDS = [
@@ -20,6 +21,6 @@ def sante():
 
 
 MODULE = Module(nom='image', activite='image', titre='Image', version='0.1.0',
-                capacites=['image.generer', 'image.retoucher'],
-                outils={'generer': OutilImage, 'retoucher': OutilRetouche},
+                capacites=['image.generer', 'image.retoucher', 'image.analyser'],
+                outils={'generer': OutilImage, 'retoucher': OutilRetouche, 'analyser': OutilAnalyse},
                 moteurs={}, besoins={}, poids=POIDS, sante=sante)

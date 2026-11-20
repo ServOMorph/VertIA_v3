@@ -35,6 +35,7 @@ Règle : jamais deux exécutants sur les mêmes fichiers en même temps. Claude 
 - Test vidéo n°1 Wan 2.2 TI2V-5B (`tests_manuels.md`).
 
 ## Terminé
+- 2026-11-20 · Codex (gpt-6.2-sol) · Phase 7-bis lot 2 : capacité image.analyser (dialogue gemma4:12b JSON tolérant, repérage qwen2.5vl sur cadre ~1 Mpx multiple de 28, conversion vers la source), lecture inbox extraite de la retouche ; relu par Claude sans défaut ; 978 tests verts ; essai réel en attente du redémarrage du portail (brief p7bis_image_analyser).
 - 2026-11-20 · OpenCode (deepseek-v4.1-flash-free) · Phase 7-bis, design du chat repris d'IA_V7 : seul chat.css modifié (Codex bloqué par l'utilisateur) ; Claude a retiré le fond blanc posé sur .app-layout et .workspace (panneau Fichiers délavé) ; 937 tests Python verts, ui_chat et ui_chat_messages verts, ui_accueil en échec déjà avant la modification (lien Atelier) ; rendu validé par captures de Claude, à valider par l'utilisateur.
 - 2026-11-15 · Codex · Portail phase 3, API v1 et CLI : demandes/essais/retours SQLite, file de jobs, livraison et journal outbox, rétention, retours et plafond, démarrage headless ; 47 tests ciblés verts, suite complète 323 réussis / 1 échec ; adaptation du test de migration tests/test_navigation.py:56 hors périmètre requise. Aucun portail réel ni moteur lancé.
 - 2026-11-15 · Codex · Portail phase 3, socle : chemins TOML et priorités conservées, contrat et registre de modules passifs, compatibilité Atelier par conversion de sa dataclass ; 277 tests Python verts, aucun moteur ni serveur lancé.

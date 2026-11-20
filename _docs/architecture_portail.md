@@ -37,7 +37,7 @@ VertIA_v3/
 | `version` | version du module (semver), journalisée avec chaque essai |
 | `moteurs` | fabriques d'`Engine` (reçoivent `Settings` et chemins résolus) |
 | `outils` | fabriques de `Tool` ; chaque outil déclare ses `capacites` |
-| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `musique.generer`, `video.generer`, `chat.generer` (réponse texte Ollama, livrée en `.md` + `.json`), `voix.generer`, `voix.transcrire`, `image.editer` (Atelier, page `/atelier/`), `3d.depuis_image`... (alias CLI : `<activité>` seule = `<activité>.generer`) |
+| `capacites` | verbes exposés à la CLI : `image.generer`, `image.retoucher`, `image.analyser` (dialogue de retouche et zones en JSON), `musique.generer`, `video.generer`, `chat.generer` (réponse texte Ollama, livrée en `.md` + `.json`), `voix.generer`, `voix.transcrire`, `image.editer` (Atelier, page `/atelier/`), `3d.depuis_image`... (alias CLI : `<activité>` seule = `<activité>.generer`) |
 | `besoins` | `MemoryNeeds` par moteur (VRAM, RAM, durée typique, interruptible oui/non) |
 | `poids` | liste des poids requis (chemin relatif sous `models/`), contrôlée au diagnostic |
 | `sante()` | diagnostic passif (fichiers présents, venv présent), jamais de chargement GPU |
