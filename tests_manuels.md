@@ -192,3 +192,11 @@ Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées)
 2. Basculer le thème de Windows (clair puis sombre) : le chat et la navigation suivent le thème ; l'en-tête VertIA et les panneaux Fichiers, Mémoire, Outils gardent leur thème vert.
 3. Vérifier les fonctions : cartes d'action, pièces jointes, suggestions `/`, Capture, glisser-déposer et épinglage dans la navigation, Stop, largeur réduite (moins de 900 px).
 4. Signaler ce qui diffère encore d'IA_V7 (par exemple le sélecteur de modèle, resté sous la zone de saisie au lieu de la barre du haut).
+
+## Phase 7-bis — Retouche dialoguée dans l'Atelier
+1. Portail redémarré avec le code actuel. Ouvrir l'Atelier, importer une image (par exemple `outputs/retouche_essai/source.png`), choisir l'outil « Retouche dialoguée », cliquer Envoyer : la progression s'affiche en secondes (2 à 4 minutes attendues), puis une réponse en français et jusqu'à 4 propositions numérotées avec leurs rectangles sur le canevas.
+2. Sélectionner une proposition, déplacer et redimensionner son rectangle ; pour une proposition « Zone à tracer », tracer le rectangle par glisser.
+3. Modifier un prompt, cocher deux propositions, « Appliquer les zones cochées » : un calque « Retouche : <titre> » par zone, la seconde tient compte de la première ; hors des zones, l'image est inchangée.
+4. Poser une seconde question (« Garde la meilleure idée ») : la discussion reprend avec l'historique.
+5. Annuler pendant une analyse puis pendant une application : l'état passe à « Annulé », le GPU est rendu (`vram_lock.py status`).
+6. Document avec zones transparentes : la marge autour d'une zone appliquée reste transparente.

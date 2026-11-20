@@ -36,7 +36,8 @@ export function ajouterRetouche(doc, historique, calque) {
 }
 
 export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer = setTimeout,
-  deprogrammer = clearTimeout, notifier = () => {}, resultat = async () => {} } = {}) {
+  deprogrammer = clearTimeout, notifier = () => {}, resultat = async () => {},
+  base = 'api/retouche', typeResultat = 'blob' } = {}) {
   let id = null, minuterie = null, controle = null, generation = 0, debut = 0;
   const arreter = () => {
     generation++; deprogrammer(minuterie); minuterie = null; controle?.abort(); controle = null;
@@ -58,13 +59,13 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
       const interroger = async () => {
         minuterie = null;
         try {
-          const etat = await (await requete(`api/retouche/${id}`)).json();
+          const etat = await (await requete(`${base}/${id}`)).json();
           if (courant !== generation) return;
           if (etat.etat === 'termine') {
-            const reponse = await requete(`api/retouche/${id}/resultat`);
-            const blob = await reponse.blob();
+            const reponse = await requete(`${base}/${id}/resultat`);
+            const contenu = await reponse[typeResultat]();
             if (courant !== generation) return;
-            await resultat(blob, () => courant === generation);
+            await resultat(contenu, () => courant === generation);
             if (courant !== generation) return;
           }
           publier(etat);
@@ -75,7 +76,7 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
       };
       try {
         publier({ etat: 'attente', message: 'En attente' });
-        const reponse = await (await requete('api/retouche', { method: 'POST',
+        const reponse = await (await requete(base, { method: 'POST',
           headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(donnees) })).json();
         if (courant !== generation) return;
         id = reponse.id; await interroger();
@@ -85,7 +86,7 @@ export function creerSuivi({ fetcher = (...args) => fetch(...args), programmer =
     },
     async annuler() {
       if (!id) throw new Error('Attendez la prise en charge de la retouche');
-      await requete(`api/retouche/${id}`, { method: 'DELETE' });
+      await requete(`${base}/${id}`, { method: 'DELETE' });
       arreter(); notifier({ etat: 'annule', message: 'Annulé', secondes: 0 });
     }
   };

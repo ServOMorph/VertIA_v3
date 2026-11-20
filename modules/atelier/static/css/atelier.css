@@ -22,6 +22,17 @@ input[type="range"] { min-width: 70px; width: 120px; accent-color: var(--accent)
 input[type="number"] { width: 110px; }
 input, select { padding: 4px; max-width: 100%; }
 textarea { width: 100%; min-height: 90px; resize: vertical; }
+.retouche-dialogue textarea { min-height: 68px; }
+.dialogue-fil { max-height: 235px; overflow: auto; }
+.dialogue-fil p { margin: 0 0 6px; padding: 6px 8px; background: #e6edf9; border-radius: 4px;
+  white-space: pre-wrap; overflow-wrap: anywhere; }
+.dialogue-fil strong { display: block; }
+.dialogue-actions { display: flex; flex-wrap: wrap; gap: 5px; }
+.dialogue-proposition { margin: 8px 0; padding: 6px; border-left: 3px solid; background: #fff; }
+.dialogue-proposition button { max-width: calc(100% - 24px); text-align: left; overflow-wrap: anywhere; }
+.dialogue-proposition input { margin: 0 6px 0 0; vertical-align: middle; }
+.dialogue-proposition textarea { margin-top: 6px; }
+.dialogue-proposition p { margin: 5px 0 0; }
 #zone { overflow: auto; background: #cbd0d6; touch-action: none; overscroll-behavior: contain; }
 .surface { min-width: 100%; min-height: 100%; width: max-content; display: flex; padding: 32px; align-items: center; justify-content: center; }
 canvas { display: block; flex: none; box-shadow: 0 2px 12px #0003; background-color: #fff;

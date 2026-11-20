@@ -51,7 +51,7 @@ function clicZone(type, x, y) {
 
 test('Application : ordre des outils, saisie protégée, validation au clic et Ctrl+Z/Y/S après édition', async () => {
   await import('../../static/js/app.js');
-  assert.deepEqual($('outils').children.map(b => b.textContent), ['Déplacer / Sélection', 'Pinceau', 'Gomme', 'Pot de peinture', 'Pipette', 'Texte', 'Formes', 'Retouche IA']);
+  assert.deepEqual($('outils').children.map(b => b.textContent), ['Déplacer / Sélection', 'Pinceau', 'Gomme', 'Pot de peinture', 'Pipette', 'Texte', 'Formes', 'Retouche IA', 'Retouche dialoguée']);
   $('largeur').value = '1200'; $('hauteur').value = '800';
   $('nouveau-form').listeners.submit({ submitter: { value: 'creer' }, preventDefault() {} });
   touche('t'); clicZone('pointerdown', 100, 100); clicZone('pointerup', 100, 100);

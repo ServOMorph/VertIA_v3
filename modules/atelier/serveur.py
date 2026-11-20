@@ -30,6 +30,7 @@ NOM_PROJET = re.compile(r"[\w -]{1,80}", re.UNICODE)
 NOMS_RESERVES = {"CON", "PRN", "AUX", "NUL", *(f"COM{i}" for i in range(1, 10)), *(f"LPT{i}" for i in range(1, 10))}
 RACINE = Path(__file__).resolve().parents[2]
 MAX_PNG = 64 * 1024 * 1024
+MAX_JSON_ANALYSE = 1024 * 1024
 ERREURS_RETOUCHE = {4: "GPU occupé", 5: "délai dépassé", 6: "échec du moteur",
                     7: "GPU en pause à la demande de l'utilisateur", 8: "session inconnue",
                     9: "portail injoignable", 10: "paramètres invalides", 11: "plafond d'essais"}
@@ -61,6 +62,16 @@ def decoder_png(valeur):
     return contenu, verifier_png(contenu)
 
 
+def refuser_constante_json(valeur):
+    raise ValueError(f"Constante JSON invalide : {valeur}")
+
+
+def verifier_json_analyse(contenu):
+    resultat = json.loads(contenu.decode("utf-8"), parse_constant=refuser_constante_json)
+    if not isinstance(resultat, dict):
+        raise ValueError("Objet JSON attendu")
+
+
 def arreter_arbre(processus):
     try:
         parent = psutil.Process(processus.pid)
@@ -81,6 +92,7 @@ def arreter_arbre(processus):
 
 def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE) -> FastAPI:
     travaux = {}
+    analyses = {}
     taches = set()
     verrou = threading.RLock()
     depot = racine_retouche.resolve()
@@ -96,17 +108,31 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
         nettoyer(travail)
         travail.update(**etat)
 
-    def executer(travail, commande):
+    def lire_resultat(cible, verifier, maximum):
+        cible = cible.resolve()
+        if not cible.is_relative_to(outbox) or not cible.is_file():
+            raise ValueError("Résultat hors outbox ou absent")
+        with cible.open("rb") as fichier:
+            contenu = fichier.read(maximum + 1)
+        if len(contenu) > maximum:
+            raise ValueError("Résultat trop volumineux")
+        verifier(contenu)
+        return contenu
+
+    def executer(travail, commande, verifier, maximum, arguments=None):
         try:
             with verrou:
                 if travail.get("annulation"):
                     return
                 options = {"creationflags": subprocess.CREATE_NO_WINDOW} if os.name == "nt" else {"start_new_session": True}
+                if arguments is not None:
+                    options["stdin"] = subprocess.PIPE
                 processus = subprocess.Popen(commande, stdout=subprocess.PIPE, stderr=subprocess.DEVNULL,
                                              cwd=depot, **options)
                 travail.update(processus=processus, etat="en_cours", message="En cours")
             try:
-                sortie, _ = processus.communicate(timeout=1720)
+                entree = {"input": arguments} if arguments is not None else {}
+                sortie, _ = processus.communicate(timeout=1720, **entree)
             except subprocess.TimeoutExpired:
                 arreter_arbre(processus)
                 processus.communicate()
@@ -118,12 +144,7 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
                     terminer(travail, etat="echec", message=ERREURS_RETOUCHE.get(processus.returncode, "erreur interne"))
                 else:
                     cible = (depot / Path(sortie.decode("utf-8").splitlines()[0])).resolve()
-                    if not cible.is_relative_to(outbox) or not cible.is_file():
-                        raise ValueError("Résultat hors outbox ou absent")
-                    contenu = cible.read_bytes()
-                    if len(contenu) > MAX_PNG:
-                        raise ValueError("Résultat trop volumineux")
-                    verifier_png(contenu)
+                    lire_resultat(cible, verifier, maximum)
                     terminer(travail, etat="termine", message="Terminé", resultat=cible)
         except Exception as erreur:
             with verrou:
@@ -135,12 +156,20 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
                 if travail.get("annulation"):
                     travail.update(etat="annule", message="Annulé")
 
+    def lancer(registre, identifiant, travail, commande, verifier, maximum, arguments=None):
+        while len(registre) >= 20:
+            del registre[next(iter(registre))]
+        registre[identifiant] = travail
+        tache = asyncio.create_task(asyncio.to_thread(executer, travail, commande, verifier, maximum, arguments))
+        taches.add(tache)
+        tache.add_done_callback(taches.discard)
+
     @asynccontextmanager
     async def lifespan(app):
         try:
             yield
         finally:
-            for travail in list(travaux.values()):
+            for travail in [*travaux.values(), *analyses.values()]:
                 await asyncio.to_thread(annuler_travail, travail)
             if taches:
                 await asyncio.gather(*taches)
@@ -148,10 +177,10 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
     app = FastAPI(title="Atelier", lifespan=lifespan)
     racine = dossier.resolve()
 
-    def obtenir(identifiant):
-        travail = travaux.get(identifiant)
+    def obtenir(identifiant, registre=travaux, nom="Retouche"):
+        travail = registre.get(identifiant)
         if travail is None:
-            raise HTTPException(404, "Retouche introuvable")
+            raise HTTPException(404, f"{nom} introuvable")
         return travail
 
     def annuler_travail(travail):
@@ -204,9 +233,6 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
             except OSError:
                 nettoyer(travail)
                 raise HTTPException(500, "Écriture de la retouche impossible") from None
-            while len(travaux) >= 20:
-                del travaux[next(iter(travaux))]
-            travaux[identifiant] = travail
             commande = [sys.executable, str(script), "image.retoucher", "--session", "vertia", "--prompt", prompt]
             if seed < 0:
                 seed = secrets.randbelow(2**31)
@@ -214,9 +240,7 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
                                 "force": force, "etapes": etapes, "seed": seed}.items():
                 commande.extend(["--param", f"{cle}={valeur}"])
             commande.extend(["--timeout", "1700"])
-            tache = asyncio.create_task(asyncio.to_thread(executer, travail, commande))
-            taches.add(tache)
-            tache.add_done_callback(taches.discard)
+            lancer(travaux, identifiant, travail, commande, verifier_png, MAX_PNG)
         return {"id": identifiant}
 
     @app.get("/api/retouche/{identifiant}")
@@ -232,13 +256,7 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
             if travail["etat"] != "termine":
                 raise HTTPException(409, "Résultat indisponible")
             try:
-                cible = travail["resultat"].resolve()
-                if not cible.is_relative_to(outbox):
-                    raise ValueError()
-                contenu = cible.read_bytes()
-                if len(contenu) > MAX_PNG:
-                    raise ValueError()
-                verifier_png(contenu)
+                contenu = lire_resultat(travail["resultat"], verifier_png, MAX_PNG)
             except (OSError, ValueError, SyntaxError, Image.DecompressionBombError, Image.DecompressionBombWarning):
                 travail.update(etat="echec", message="Résultat PNG indisponible")
                 raise HTTPException(404, travail["message"]) from None
@@ -248,6 +266,88 @@ def creer_app(dossier: Path = DOSSIER_PROJETS, *, racine_retouche: Path = RACINE
     def annuler_retouche(identifiant: str):
         annuler_travail(obtenir(identifiant))
         return etat_retouche(identifiant)
+
+    @app.post("/api/analyse")
+    async def analyser(request: Request):
+        corps = bytearray()
+        async for bloc in request.stream():
+            corps.extend(bloc)
+            if len(corps) > MAX_CORPS_OCTETS:
+                raise HTTPException(413, "Analyse trop volumineuse")
+        try:
+            params = json.loads(corps)
+            if not isinstance(params, dict):
+                raise ValueError()
+            prompt = params.get("prompt")
+            if not isinstance(prompt, str) or not 1 <= len(prompt) <= 4000 or not prompt.strip():
+                raise ValueError()
+            historique = params.get("historique", [])
+            if not isinstance(historique, list) or len(historique) > 20 or any(
+                not isinstance(m, dict) or m.keys() != {"role", "contenu"}
+                or m["role"] not in ("user", "assistant")
+                or not isinstance(m["contenu"], str) or len(m["contenu"]) > 8000
+                for m in historique
+            ):
+                raise ValueError()
+            image, _ = decoder_png(params.get("image"))
+        except (ValueError, TypeError, OSError, SyntaxError, binascii.Error, RecursionError,
+                Image.DecompressionBombError, Image.DecompressionBombWarning):
+            raise HTTPException(400, "Paramètres d’analyse invalides (PNG, question ou historique)") from None
+        with verrou:
+            if any(t["etat"] in {"attente", "en_cours"} for t in analyses.values()):
+                raise HTTPException(409, "Une analyse est déjà active")
+            identifiant = uuid.uuid4().hex
+            cible = inbox / f"atelier_{identifiant}_analyse.png"
+            travail = {"etat": "attente", "message": "En attente", "entrees": [cible]}
+            try:
+                inbox.mkdir(parents=True, exist_ok=True)
+                with cible.open("xb") as fichier:
+                    fichier.write(image)
+            except OSError:
+                nettoyer(travail)
+                raise HTTPException(500, "Écriture de l’analyse impossible") from None
+            question = [f"--prompt={prompt}"] if prompt.startswith("-") else ["--prompt", prompt]
+            commande = [sys.executable, str(script), "image.analyser", "--session", "vertia",
+                        *question, "--param", f"source={cible.name}"]
+            if "historique" in params:
+                commande.extend(["--param", f"historique={json.dumps(historique)}"])
+            commande.extend(["--timeout", "1700"])
+            arguments = None
+            # Au-delà des limites du système, transmettre le même argv par l'entrée standard.
+            trop_long = (len(subprocess.list2cmdline(commande).encode("utf-16-le", "surrogatepass")) >= 65534
+                         if os.name == "nt" else any(len(os.fsencode(arg)) >= 65536 for arg in commande))
+            if trop_long or "\0" in prompt:
+                arguments = json.dumps(commande[1:]).encode("ascii")
+                commande = [sys.executable, "-c",
+                            "import json, os, runpy, sys; sys.argv = json.load(sys.stdin); "
+                            "sys.path.insert(0, os.path.dirname(sys.argv[0])); "
+                            "runpy.run_path(sys.argv[0], run_name='__main__')"]
+            lancer(analyses, identifiant, travail, commande, verifier_json_analyse, MAX_JSON_ANALYSE, arguments)
+        return {"id": identifiant}
+
+    @app.get("/api/analyse/{identifiant}")
+    def etat_analyse(identifiant: str):
+        with verrou:
+            travail = obtenir(identifiant, analyses, "Analyse")
+            return {cle: travail[cle] for cle in ("etat", "message")}
+
+    @app.get("/api/analyse/{identifiant}/resultat")
+    def resultat_analyse(identifiant: str):
+        with verrou:
+            travail = obtenir(identifiant, analyses, "Analyse")
+            if travail["etat"] != "termine":
+                raise HTTPException(409, "Résultat indisponible")
+            try:
+                contenu = lire_resultat(travail["resultat"], verifier_json_analyse, MAX_JSON_ANALYSE)
+            except (OSError, ValueError, RecursionError):
+                travail.update(etat="echec", message="Résultat JSON indisponible")
+                raise HTTPException(404, travail["message"]) from None
+        return Response(contenu, media_type="application/json")
+
+    @app.delete("/api/analyse/{identifiant}")
+    def annuler_analyse(identifiant: str):
+        annuler_travail(obtenir(identifiant, analyses, "Analyse"))
+        return etat_analyse(identifiant)
 
     def chemin(nom: str) -> Path:
         if not NOM_PROJET.fullmatch(nom) or not nom.strip() or nom.strip().upper() in NOMS_RESERVES:
