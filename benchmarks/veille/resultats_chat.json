@@ -1,0 +1,302 @@
+{
+ "gemma4:12b": {
+  "base_mib": 1233,
+  "cas": [
+   {
+    "id": "resume",
+    "texte": "Le comité de pilotage a examiné l'état d'avancement de la migration du serveur, notant des retards pour certaines équipes dus à des problèmes de configuration. En conséquence, la période de double fonctionnement est prolongée jusqu'à la fin du mois et un référent technique sera nommé pour chaque équipe avant la revue de sécurité finale.",
+    "jetons": 72,
+    "jetons_par_s": 9.6,
+    "duree_s": 19.5,
+    "chargement_s": 11.2,
+    "pic_vram_mib": 7423,
+    "vram_ajoutee_mib": 6190,
+    "controle_auto": null
+   },
+   {
+    "id": "extraction",
+    "texte": "```json\n{\n  \"client\": \"Dubois et Fils\",\n  \"date\": \"14 mars 2026\",\n  \"montant_ttc\": 1500.0\n}\n```",
+    "jetons": 51,
+    "jetons_par_s": 9.8,
+    "duree_s": 17.4,
+    "chargement_s": 11.6,
+    "pic_vram_mib": 7438,
+    "vram_ajoutee_mib": 6205,
+    "controle_auto": true
+   },
+   {
+    "id": "raisonnement",
+    "texte": "Pour résoudre ce problème, nous allons calculer le temps nécessaire pour que le deuxième train comble la distance parcourue par le premier train pendant son avance.\n\n1.  **Calculer l'avance du premier train :**\n    Le premier train part à 9h15 et le second à 10h00. Il y a une différence de **45 minutes**.\n    En heures, 45 minutes correspondent à $45 / 60 = 0,75$ heure.\n\n2.  **Calculer la distance parcourue par le premier train avant le départ du second :**\n    Distance = Vitesse $\\times$ Temps\n    $80 \\text{ km/h} \\times 0,75 \\text{ h} = 60 \\text{ km}$.\n    À 10h00, le premier train a donc 60 km d'avance.\n\n3.  **Calculer la vitesse de rapprochement :**\n    Le deuxième train va plus vite que le premier. La différence de vitesse est :\n    $100 \\text{ km/h} - 80 \\text{ km/h} = 20 \\text{ km/h}$.\n\n4.  **Calculer le temps nécessaire pour rattraper le premier train :**\n    Temps = Distance à rattraper / Vitesse de rapprochement\n    $60 \\text{ km} / 20 \\text{ km/h} = 3 \\text{ heures}$.\n\n5.  **Déterminer l'heure d'arrivée :**\n    Le deuxième train part à 10h00 et met 3 heures pour rattraper le premier.\n    $10\\text{h}00 + 3\\text{h} = 13\\text{h}00$.\n\n13:00",
+    "jetons": 402,
+    "jetons_par_s": 8.7,
+    "duree_s": 57.9,
+    "chargement_s": 10.8,
+    "pic_vram_mib": 7438,
+    "vram_ajoutee_mib": 6205,
+    "controle_auto": true
+   },
+   {
+    "id": "consigne",
+    "texte": "Canberra",
+    "jetons": 3,
+    "jetons_par_s": 12.2,
+    "duree_s": 11.5,
+    "chargement_s": 10.3,
+    "pic_vram_mib": 7434,
+    "vram_ajoutee_mib": 6201,
+    "controle_auto": true
+   },
+   {
+    "id": "redaction",
+    "texte": "Madame, Monsieur,\n\nNous vous informons que la livraison de votre commande est retardée de trois jours.\nCe contretemps est dû à une légère complication logistique imprévue.\nPour nous excuser du désagrément, nous vous offrons une remise de 10 % sur votre prochain achat.\nNous restons à votre entière disposition pour toute question complémentaire.\nMerci de votre patience et de votre confiance.",
+    "jetons": 89,
+    "jetons_par_s": 8.7,
+    "duree_s": 20.8,
+    "chargement_s": 10.0,
+    "pic_vram_mib": 7436,
+    "vram_ajoutee_mib": 6203,
+    "controle_auto": null
+   }
+  ]
+ },
+ "gemma4:12b-32k": {
+  "base_mib": 1209,
+  "cas": [
+   {
+    "id": "resume",
+    "texte": "Le comité de pilotage a examiné l'état d'avancement de la migration du serveur, notant des retards pour certaines équipes dus à des problèmes de configuration. En conséquence, la période de double fonctionnement est prolongée jusqu'à la fin du mois et un référent technique sera nommé pour chaque équipe avant la revue de sécurité finale.",
+    "jetons": 72,
+    "jetons_par_s": 9.5,
+    "duree_s": 18.6,
+    "chargement_s": 10.4,
+    "pic_vram_mib": 7437,
+    "vram_ajoutee_mib": 6228,
+    "controle_auto": null
+   },
+   {
+    "id": "extraction",
+    "texte": "```json\n{\n  \"client\": \"Dubois et Fils\",\n  \"date\": \"14 mars 2026\",\n  \"montant_ttc\": 1500.0\n}\n```",
+    "jetons": 51,
+    "jetons_par_s": 9.8,
+    "duree_s": 17.6,
+    "chargement_s": 11.8,
+    "pic_vram_mib": 7445,
+    "vram_ajoutee_mib": 6236,
+    "controle_auto": true
+   },
+   {
+    "id": "raisonnement",
+    "texte": "Pour résoudre ce problème, nous allons calculer le temps nécessaire pour que le deuxième train comble la distance parcourue par le premier train pendant son avance.\n\n1.  **Calculer l'avance du premier train :**\n    Le premier train part à 9h15 et le second à 10h00. Il y a une différence de **45 minutes**.\n    En heures, 45 minutes correspondent à $45 / 60 = 0,75$ heure.\n\n2.  **Calculer la distance parcourue par le premier train avant le départ du second :**\n    Distance = Vitesse $\\times$ Temps\n    $80 \\text{ km/h} \\times 0,75 \\text{ h} = 60 \\text{ km}$.\n    À 10h00, le premier train a donc 60 km d'avance.\n\n3.  **Calculer la vitesse de rapprochement :**\n    Le deuxième train va plus vite que le premier. La différence de vitesse est :\n    $100 \\text{ km/h} - 80 \\text{ km/h} = 20 \\text{ km/h}$.\n\n4.  **Calculer le temps nécessaire pour rattraper le premier train :**\n    Temps = Distance à rattraper / Vitesse de rapprochement\n    $60 \\text{ km} / 20 \\text{ km/h} = 3 \\text{ heures}$.\n\n5.  **Déterminer l'heure d'arrivée :**\n    Le deuxième train part à 10h00 et met 3 heures pour rattraper le premier.\n    $10\\text{h}00 + 3\\text{h} = 13\\text{h}00$.\n\n13:00",
+    "jetons": 402,
+    "jetons_par_s": 8.8,
+    "duree_s": 57.3,
+    "chargement_s": 11.0,
+    "pic_vram_mib": 7439,
+    "vram_ajoutee_mib": 6230,
+    "controle_auto": true
+   },
+   {
+    "id": "consigne",
+    "texte": "Canberra",
+    "jetons": 3,
+    "jetons_par_s": 13.5,
+    "duree_s": 12.9,
+    "chargement_s": 11.8,
+    "pic_vram_mib": 7435,
+    "vram_ajoutee_mib": 6226,
+    "controle_auto": true
+   },
+   {
+    "id": "redaction",
+    "texte": "Madame, Monsieur,\n\nNous vous informons que la livraison de votre commande est retardée de trois jours.\nCe contretemps est dû à une légère complication logistique imprévue.\nPour nous excuser du désagrément, nous vous offrons une remise de 10 % sur votre prochain achat.\nNous restons à votre entière disposition pour toute question complémentaire.\nMerci de votre patience et de votre confiance.",
+    "jetons": 89,
+    "jetons_par_s": 9.0,
+    "duree_s": 21.0,
+    "chargement_s": 10.5,
+    "pic_vram_mib": 7417,
+    "vram_ajoutee_mib": 6208,
+    "controle_auto": null
+   }
+  ]
+ },
+ "gemma4:e4b": {
+  "base_mib": 1203,
+  "cas": [
+   {
+    "id": "resume",
+    "texte": "Le comité de pilotage s'est réuni pour faire le point sur la migration du serveur de fichiers, constatant que deux équipes accusent un retard dû à des problèmes de droits d'accès. Par conséquent, il a été décidé de prolonger la période de double fonctionnement jusqu'à fin mois et de désigner un référent technique par équipe, avec une revue de sécurité prévue avant la coupure définitive.",
+    "jetons": 85,
+    "jetons_par_s": 59.7,
+    "duree_s": 9.0,
+    "chargement_s": 7.3,
+    "pic_vram_mib": 5619,
+    "vram_ajoutee_mib": 4416,
+    "controle_auto": null
+   },
+   {
+    "id": "extraction",
+    "texte": "```json\n{\n  \"client\": \"Dubois et Fils\",\n  \"date\": \"14 mars 2026\",\n  \"montant_ttc\": 1500.00\n}\n```",
+    "jetons": 52,
+    "jetons_par_s": 58.9,
+    "duree_s": 8.8,
+    "chargement_s": 7.7,
+    "pic_vram_mib": 5633,
+    "vram_ajoutee_mib": 4430,
+    "controle_auto": true
+   },
+   {
+    "id": "raisonnement",
+    "texte": "Voici la démarche pour résoudre ce problème :\n\n**1. Calculer la distance parcourue par le premier train avant le départ du second train.**\n\n*   Le premier train part à 9h15 et le second à 10h00.\n*   Durée de trajet avant rattrapage = $10\\text{h}00 - 9\\text{h}15 = 45$ minutes.\n*   Convertir la durée en heures : $45 \\text{ minutes} / 60 = 0,75$ heure.\n*   Distance parcourue par le premier train ($D_1$) :\n    $$D_1 = \\text{Vitesse}_1 \\times \\text{Temps} = 80 \\text{ km/h} \\times 0,75 \\text{ h} = 60 \\text{ km}$$\n\n**2. Déterminer la vitesse relative.**\n\n*   Les deux trains roulent dans la même direction. La vitesse à laquelle le second train rattrape le premier est la différence de leurs vitesses :\n    $$\\text{Vitesse relative} = \\text{Vitesse}_2 - \\text{Vitesse}_1 = 100 \\text{ km/h} - 80 \\text{ km/h} = 20 \\text{ km/h}$$\n\n**3. Calculer le temps nécessaire pour rattraper la distance initiale.**\n\n*   Le second train doit combler l'écart de 60 km à une vitesse relative de 20 km/h.\n    $$\\text{Temps de rattrapage} (t) = \\frac{\\text{Distance initiale}}{\\text{Vitesse relative}} = \\frac{60 \\text{ km}}{20 \\text{ km/h}} = 3 \\text{ heures}$$\n\n**4. Déterminer l'heure de rencontre.**\n\n*   Le temps de rattrapage commence au moment où le second train démarre, soit 10h00.\n*   Heure de rencontre = Heure de départ du second train + Temps de rattrapage\n    $$\\text{Heure} = 10\\text{h}00 + 3 \\text{ heures} = 13\\text{h}00$$\n\nLe second train rattrape le premier à 13:00.\n\n13:00",
+    "jetons": 520,
+    "jetons_par_s": 59.1,
+    "duree_s": 16.3,
+    "chargement_s": 7.3,
+    "pic_vram_mib": 5624,
+    "vram_ajoutee_mib": 4421,
+    "controle_auto": true
+   },
+   {
+    "id": "consigne",
+    "texte": "Canberra",
+    "jetons": 3,
+    "jetons_par_s": 53.0,
+    "duree_s": 7.8,
+    "chargement_s": 7.5,
+    "pic_vram_mib": 5445,
+    "vram_ajoutee_mib": 4242,
+    "controle_auto": true
+   },
+   {
+    "id": "redaction",
+    "texte": "Objet : Information concernant votre commande [Numéro de commande]\n\nCher/Chère Client(e), nous vous informons que la livraison de votre commande sera malheureusement retardée de trois jours ouvrés. Nous vous prions de bien vouloir accepter nos sincères excuses pour ce contretemps. En guise de dédommagement, nous avons crédité un bon de réduction de 10% sur votre prochain achat. Merci de votre compréhension et de votre patience.",
+    "jetons": 94,
+    "jetons_par_s": 59.6,
+    "duree_s": 9.4,
+    "chargement_s": 7.7,
+    "pic_vram_mib": 5610,
+    "vram_ajoutee_mib": 4407,
+    "controle_auto": null
+   }
+  ]
+ },
+ "qwen3.5:latest": {
+  "base_mib": 1055,
+  "cas": [
+   {
+    "id": "resume",
+    "texte": "Le comité de pilotage, après avoir constaté des retards dus à des problèmes d'accès sur deux équipes, a décidé de prolonger le double fonctionnement jusqu'à fin du mois et de désigner un référent technique par équipe. Une revue de sécurité sera également organisée avant la coupure définitive prévue pour clôturer cette migration partielle.",
+    "jetons": 73,
+    "jetons_par_s": 28.5,
+    "duree_s": 9.7,
+    "chargement_s": 6.8,
+    "pic_vram_mib": 7361,
+    "vram_ajoutee_mib": 6306,
+    "controle_auto": null
+   },
+   {
+    "id": "extraction",
+    "texte": "{\n  \"client\": \"Dubois et Fils\",\n  \"date\": \"2026-03-14\",\n  \"montant_ttc\": 1500.0\n}",
+    "jetons": 48,
+    "jetons_par_s": 28.5,
+    "duree_s": 8.8,
+    "chargement_s": 6.8,
+    "pic_vram_mib": 7341,
+    "vram_ajoutee_mib": 6286,
+    "controle_auto": true
+   },
+   {
+    "id": "raisonnement",
+    "texte": "Pour résoudre ce problème, nous devons d'abord calculer l'avance que le premier train a sur le deuxième au moment où celui-ci démarre.\n\nLe premier train part à 9 h 15 et roule à 80 km/h. Le second train part à 10 h 00.\nLa différence de temps est donc : $10\\text{h}00 - 9\\text{h}15 = 45$ minutes, soit $\\frac{3}{4}$ d'heure (ou 0,75 heure).\n\nPendant ces 45 minutes, le premier train a parcouru une distance de :\n$$d_1 = v \\times t = 80\\,\\text{km/h} \\times 0,75\\,\\text{h} = 60\\,\\text{km}$$.\n\nÀ partir de 10 h 00, le second train (vitesse $V_s = 100$ km/h) doit rattraper ce retard. La vitesse relative du deuxième par rapport au premier est :\n$$V_{rel} = V_s - v_p = 100\\,\\text{km/h} - 80\\,\\text{km/h} = 20\\,\\text{km/h}$$.\n\nLe temps nécessaire pour rattraper la distance de 60 km à cette vitesse relative est :\n$$t_{rattrapage} = \\frac{\\text{distance}}{\\text{vitesse relative}} = \\frac{60}{20} = 3\\,\\text{heures}$$.\n\nLe second train part donc à 10 h 00 et mettra 3 heures pour rattraper le premier.\nL'heure du rattrapage est : $10\\text{h}00 + 3\\text{h} = 13\\text{h}00$.\n\n13:00",
+    "jetons": 421,
+    "jetons_par_s": 28.8,
+    "duree_s": 21.7,
+    "chargement_s": 6.8,
+    "pic_vram_mib": 7340,
+    "vram_ajoutee_mib": 6285,
+    "controle_auto": true
+   },
+   {
+    "id": "consigne",
+    "texte": "Canberra",
+    "jetons": 3,
+    "jetons_par_s": 34.0,
+    "duree_s": 7.3,
+    "chargement_s": 7.0,
+    "pic_vram_mib": 7344,
+    "vram_ajoutee_mib": 6289,
+    "controle_auto": true
+   },
+   {
+    "id": "redaction",
+    "texte": "Objet : Mise à jour concernant votre commande [Numéro]\nMadame, Monsieur, nous vous informons avec regret d'un délai de trois jours supplémentaire pour la livraison de votre commande en raison d'une contrainte logistique imprévue. En guise de compensation pour cet inconvénient, nous avons le plaisir de vous offrir un bon réduction de 15 % valable sur votre prochaine achat. Nous restons à votre entière disposition pour toute question et vous prions d'agréer nos excuses sincères ainsi que l'expression de nos salutations distinguées.",
+    "jetons": 117,
+    "jetons_par_s": 28.0,
+    "duree_s": 11.3,
+    "chargement_s": 6.8,
+    "pic_vram_mib": 7367,
+    "vram_ajoutee_mib": 6312,
+    "controle_auto": null
+   }
+  ]
+ },
+ "granite4.2:8b": {
+  "base_mib": 968,
+  "cas": [
+   {
+    "id": "resume",
+    "texte": "Le comité de pilotage s'est réuni mardi pour faire le point sur la migration du serveur de fichiers, où trois équipes ont terminé leur transfert tandis que deux autres sont en retard à cause de droits d'accès mal configurés. Le comité a décidé de prolonger la période de double fonctionnement jusqu'à la fin du mois, de nommer un référent technique par équipe et d'organiser une revue de sécurité avant la coupure définitive.",
+    "jetons": 112,
+    "jetons_par_s": 31.7,
+    "duree_s": 7.2,
+    "chargement_s": 3.4,
+    "pic_vram_mib": 7047,
+    "vram_ajoutee_mib": 6079,
+    "controle_auto": null
+   },
+   {
+    "id": "extraction",
+    "texte": "{\n  \"client\": \"Dubois et Fils\",\n  \"date\": \"14 mars 2026\",\n  \"montant_ttc\": 1500\n}",
+    "jetons": 40,
+    "jetons_par_s": 32.3,
+    "duree_s": 5.0,
+    "chargement_s": 3.5,
+    "pic_vram_mib": 7046,
+    "vram_ajoutee_mib": 6078,
+    "controle_auto": true
+   },
+   {
+    "id": "raisonnement",
+    "texte": "On cherche l'heure à laquelle le deuxième train rattrape le premier.\n\nLe premier train part à 9 h 15 et roule à 80 km/h.  \nLe second train part à 10 h 00 dans la même direction et roule à 100 km/h.\n\nOn suppose que les deux trains partent du même point au départ (ou qu’on cherche quand le second rattrape le premier, donc on calcule la distance entre eux au moment du départ du second, puis quand le second rattrape).\n\nÉtape 1 : Calculer la distance parcourue par le premier train entre 9 h 15 et 10 h 00.\n\nHeure de départ du premier : 9 h 15 = 9,25 heures (en unité décimale)  \nHeure de départ du second : 10 h 00 = 10 heures\n\nTemps écoulé entre les deux départs : 10:00 - 9:15 = 45 minutes = 0,75 heure\n\nDistance parcourue par le premier train en 0,75 h à 80 km/h :  \n\\( d_1 = 80 \\times 0.75 = 60 \\) km\n\nÀ l’instant du départ du second train (10 h 00), le premier train est donc à 60 km de son point de départ dans la même direction.\n\nLe second train part en même sens, donc il doit parcourir cette distance de 60 km pour rattraper le premier, mais pendant ce temps, le premier continue à avancer.\n\nSoit \\( t \\) le temps (en heures) après 10 h 00 où le deuxième train rattrape le premier.\n\nÀ l’instant 10 h 00 :\n- Le premier train est déjà en route depuis 0,75 h et a parcouru 60 km.\n- Il continue à avancer à 80 km/h.\n- Le second train part de 0 km (au point de départ) à 100 km/h.\n\nÀ l’instant \\( t \\) heures après 10 h 00 (c’est-à-dire à l’heure \\( 10 + t \\)), la position du premier train est :  \n\\( x_1 = 60 + 80 \\times t \\)  \n(car il a déjà parcouru 60 km au départ du second, puis continue à 80 km/h pendant \\( t \\) heures)\n\nLa position du deuxième train est :  \n\\( x_2 = 100 \\times t \\)\n\nIls se rencontrent quand \\( x_1 = x_2 \\):\n\n\\[\n60 + 80t = 100t\n\\]\n\n\\[\n60 = 20t\n\\]\n\n\\[\nt = 3 \\text{ heures}\n\\]\n\nDonc le deuxième train rattrape le premier à \\( 10:00 + 3 \\text{ h} = 13:00 \\)\n\nVérification :\n- À 13:00, le premier train a parcouru depuis 9h15 jusqu’à 13h00 →",
+    "jetons": 700,
+    "jetons_par_s": 30.7,
+    "duree_s": 26.4,
+    "chargement_s": 3.4,
+    "pic_vram_mib": 7046,
+    "vram_ajoutee_mib": 6078,
+    "controle_auto": false
+   },
+   {
+    "id": "consigne",
+    "texte": "Canberra",
+    "jetons": 3,
+    "jetons_par_s": 34.4,
+    "duree_s": 3.7,
+    "chargement_s": 3.4,
+    "pic_vram_mib": 7044,
+    "vram_ajoutee_mib": 6076,
+    "controle_auto": true
+   },
+   {
+    "id": "redaction",
+    "texte": "Bonjour Madame/Monsieur,  \n\nNous vous informons que la livraison de votre commande est désormais prévue dans les trois jours suivant la date initiale en raison d’un imprévu logistique. Nous vous présentons nos excuses pour cet retard et vous assurons du sérieux avec lequel nous gérons votre dossier.  \n\nEn compensation, nous vous offrons une réduction de 15 % sur votre prochain achat ainsi qu’un bon d’achat de 20 € valable pendant les deux semaines suivantes. Ces gestes sont appliqués automatiquement à votre compte client.  \n\nN’hésitez pas à nous contacter si vous avez la moindre question ou besoin d’assistance supplémentaire. Nous restons à votre disposition pour tout ajustement souhaité.  \n\nCordialement,  \n[Votre nom / Service Client]",
+    "jetons": 190,
+    "jetons_par_s": 31.7,
+    "duree_s": 9.6,
+    "chargement_s": 3.3,
+    "pic_vram_mib": 7049,
+    "vram_ajoutee_mib": 6081,
+    "controle_auto": null
+   }
+  ]
+ }
+}

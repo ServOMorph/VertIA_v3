@@ -1,0 +1,70 @@
+{
+ "wan2.2-5b": {
+  "base_mib": 1150,
+  "cas": [
+   {
+    "cas": "tasse",
+    "duree_s": 184.5,
+    "pic_vram_mib": 7621,
+    "vram_ajoutee_mib": 6471,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "wan2.2-5b_tasse_00001_.mp4",
+        "subfolder": "",
+        "type": "output"
+       }
+      ],
+      "animated": [
+       true
+      ]
+     }
+    }
+   },
+   {
+    "cas": "foret",
+    "duree_s": 48.1,
+    "pic_vram_mib": 7585,
+    "vram_ajoutee_mib": 6435,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "wan2.2-5b_foret_00001_.mp4",
+        "subfolder": "",
+        "type": "output"
+       }
+      ],
+      "animated": [
+       true
+      ]
+     }
+    }
+   },
+   {
+    "cas": "personnage",
+    "duree_s": 48.1,
+    "pic_vram_mib": 7620,
+    "vram_ajoutee_mib": 6470,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "wan2.2-5b_personnage_00001_.mp4",
+        "subfolder": "",
+        "type": "output"
+       }
+      ],
+      "animated": [
+       true
+      ]
+     }
+    }
+   }
+  ]
+ }
+}

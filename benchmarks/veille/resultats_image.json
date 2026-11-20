@@ -1,0 +1,120 @@
+{
+ "qwen-image-2.1": {
+  "base_mib": 1151,
+  "cas": [
+   {
+    "cas": "affiche",
+    "duree_s": 320.9,
+    "pic_vram_mib": 7480,
+    "vram_ajoutee_mib": 6329,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "qwen-image-2.1_affiche_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "cas": "portrait",
+    "duree_s": 99.5,
+    "pic_vram_mib": 7488,
+    "vram_ajoutee_mib": 6337,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "qwen-image-2.1_portrait_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "cas": "objet",
+    "duree_s": 143.3,
+    "pic_vram_mib": 7413,
+    "vram_ajoutee_mib": 6262,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "qwen-image-2.1_objet_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   }
+  ]
+ },
+ "z-image-turbo": {
+  "base_mib": 1118,
+  "cas": [
+   {
+    "cas": "affiche",
+    "duree_s": 161.4,
+    "pic_vram_mib": 7072,
+    "vram_ajoutee_mib": 5954,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "z-image-turbo_affiche_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "cas": "portrait",
+    "duree_s": 70.2,
+    "pic_vram_mib": 7068,
+    "vram_ajoutee_mib": 5950,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "z-image-turbo_portrait_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   },
+   {
+    "cas": "objet",
+    "duree_s": 28.4,
+    "pic_vram_mib": 7155,
+    "vram_ajoutee_mib": 6037,
+    "erreur": null,
+    "sorties": {
+     "12": {
+      "images": [
+       {
+        "filename": "z-image-turbo_objet_00001_.png",
+        "subfolder": "",
+        "type": "output"
+       }
+      ]
+     }
+    }
+   }
+  ]
+ }
+}

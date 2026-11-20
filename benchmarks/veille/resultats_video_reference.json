@@ -1,0 +1,32 @@
+[
+ {
+  "cas": "tasse",
+  "code": 5,
+  "duree_s": 1503.7,
+  "pic_vram_mib": 7158,
+  "base_mib": 868,
+  "fichier": "",
+  "demande": "id=e50d338a6c074616a769c3b624e9f771",
+  "erreur": "id=e50d338a6c074616a769c3b624e9f771\nDélai d’attente dépassé.\n"
+ },
+ {
+  "cas": "foret",
+  "code": 4,
+  "duree_s": 136.0,
+  "pic_vram_mib": 2680,
+  "base_mib": 868,
+  "fichier": "",
+  "demande": "id=b7abafd2955e42859219b3ad5615d7eb",
+  "erreur": "id=b7abafd2955e42859219b3ad5615d7eb\nRAM à 96 % (limite 90 %). Fermez des applications puis réessayez.\n"
+ },
+ {
+  "cas": "personnage",
+  "code": 0,
+  "duree_s": 1180.8,
+  "pic_vram_mib": 3766,
+  "base_mib": 868,
+  "fichier": "D:\\ServOMorph\\VertIA_v3\\benchmarks\\veille\\video\\wan2.1-14b-portail_personnage.json",
+  "demande": "id=62f7536e06874700bc8a0d8b9395ff4b",
+  "erreur": ""
+ }
+]
