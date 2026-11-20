@@ -53,7 +53,7 @@ class OllamaPreload:
             self.status('erreur', f'Préchargement de {self.model} impossible. Consultez Mémoire et file, ou réessayez en envoyant votre message.')
 
     def start(self):
-        if self.task is None:
+        if self.task is None or self.task.done():
             self.task = asyncio.create_task(self.run())
 
     async def close(self):

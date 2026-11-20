@@ -48,6 +48,7 @@ class Settings:
     verrou_gpu: bool = True
     preload_ollama: bool = True
     verrou_gpu_attente_s: int = 600
+    reserver_gpu_ui: bool = True
 
     @classmethod
     def from_env(cls, **overrides: object) -> "Settings":
@@ -76,6 +77,7 @@ class Settings:
             preload_ollama=_env('VERTIA_PRELOAD_OLLAMA', 'true').lower() not in {'0', 'false', 'no'},
             verrou_gpu=_env('VERTIA_VERROU_GPU', 'true').lower() not in {'0', 'false', 'no'},
             verrou_gpu_attente_s=max(0, int(_env('VERTIA_VERROU_GPU_ATTENTE_S', '600'))),
+            reserver_gpu_ui=_env('VERTIA_RESERVER_GPU_UI', 'true').lower() not in {'0', 'false', 'no'},
         )
         config_path = Path(overrides.get("local_config", settings.local_config))
         if config_path.is_file():

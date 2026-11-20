@@ -13,6 +13,7 @@ class MemoryNeeds:
     ram_mb: int | None = None
     vram_mb: int | None = None
     note: str = ''
+    jeton_gb: int | None = None
 
 
 class Engine(Protocol):

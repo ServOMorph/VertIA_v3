@@ -179,3 +179,16 @@ Branchement essayé sur une playlist de test hors CreaZik (2 pistes générées)
 ## Retouche IA et logo après correctif du 2026-11-19
 1. Lancer `python run.py` (avec rechargement), ouvrir l'Atelier, faire une retouche IA par masque : le résultat revient dans le calque (avant correctif : échec « moteur » en 5 s).
 2. Vérifier que le nouveau logo (arbre-circuit) s'affiche dans l'en-tête et l'onglet, sans cadre rond ni fond blanc.
+
+## Phase 7-bis — GPU réservé tant que l'interface est ouverte
+1. Lancer `python run.py` et laisser l'interface ouverte : `python _orchestration/vram_lock.py status` affiche le détenteur `vertia` (note « portail : ollama ») ; creation_llm est en pause ; le badge indique gemma4:12b chargé.
+2. Laisser l'interface ouverte plus de 5 minutes sans rien faire : le jeton reste à `vertia` (pas de libération sur inactivité).
+3. Recharger la page (F5) : le jeton reste à `vertia`, pas de nouveau préchargement visible.
+4. Fermer l'onglet : environ 30 à 35 s plus tard, le jeton est rendu, `ollama ps` est vide et creation_llm reprend (ligne REPRISE_OK dans le statut).
+5. Rouvrir l'interface : le préchargement repart et le jeton revient à `vertia`.
+
+## Phase 7-bis — Design du chat repris d'IA_V7
+1. Lancer `python run.py`, ouvrir Discussion : colonne de gauche de 280 px (Nouveau chat, Projets), bulles utilisateur à droite en teal et assistant à gauche avec bordure, polices Inter et Space Grotesk, comme dans IA_V7.
+2. Basculer le thème de Windows (clair puis sombre) : le chat et la navigation suivent le thème ; l'en-tête VertIA et les panneaux Fichiers, Mémoire, Outils gardent leur thème vert.
+3. Vérifier les fonctions : cartes d'action, pièces jointes, suggestions `/`, Capture, glisser-déposer et épinglage dans la navigation, Stop, largeur réduite (moins de 900 px).
+4. Signaler ce qui diffère encore d'IA_V7 (par exemple le sélecteur de modèle, resté sous la zone de saisie au lieu de la barre du haut).

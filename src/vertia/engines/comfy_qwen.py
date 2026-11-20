@@ -54,7 +54,9 @@ def build_graph_retouche(p):
 
 
 class ComfyQwenEngine(ProcessOwner):
-    memory = MemoryNeeds(ram_mb=17000, note='Minimum du seul encodeur ; consommation totale et VRAM à mesurer.')
+    memory = MemoryNeeds(ram_mb=17000, jeton_gb=8,
+                         note='ComfyUI en LOW_VRAM avec VRAM dynamique : occupe toute la VRAM libre, jeton du GPU entier. '
+                              'RAM : minimum du seul encodeur (16,7 Go).')
 
     def __init__(self, directory: Path, port: int, client=None, websocket=connect, launcher=subprocess.Popen):
         super().__init__('ComfyUI')

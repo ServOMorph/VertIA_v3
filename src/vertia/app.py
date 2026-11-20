@@ -30,6 +30,7 @@ from vertia.engines.ollama_preload import OllamaPreload
 from vertia.jobs.arbiter import GpuArbiter
 from vertia.jobs.queue import JobQueue
 from vertia.gpu import VerrouGpu
+from vertia.gpu.reservation import ReservationUi
 from vertia.resources.monitor import MemoryGuard, ResourceMonitor
 from vertia.tools.registry import ToolRegistry
 from vertia.tools.image import ImageTool
@@ -59,11 +60,13 @@ class Services:
     modules: RegistreModules
     demandes: DemandesService
     chemins: Chemins
+    reservation: ReservationUi | None = None
 
     async def watch_resources(self):
         while True:
             try:
-                await self.arbiter.release_idle()
+                if self.reservation is None or await self.reservation.tick():
+                    await self.arbiter.release_idle()
                 state = dict(await self.monitor.sample(), engine=self.arbiter.active)
                 self.events.publish('ressources.maj', state)
             except Exception:
@@ -109,7 +112,8 @@ def build_services(settings: Settings, overrides: dict | None = None) -> Service
     return Services(settings=settings, db=db, events=events, ollama=ollama, chat=chat_service,
                     monitor=monitor, arbiter=arbiter, jobs=jobs, tools=tools, actions=actions_service, files=file_store,
                     ollama_service=ollama_service, ollama_preload=ollama_preload,
-                    modules=modules, demandes=demandes, chemins=chemins)
+                    modules=modules, demandes=demandes, chemins=chemins,
+                    reservation=ReservationUi(events, arbiter, ollama_preload) if settings.reserver_gpu_ui else None)
 
 
 def create_app(settings: Settings | None = None, overrides: dict | None = None) -> FastAPI:
