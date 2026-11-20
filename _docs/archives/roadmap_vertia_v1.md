@@ -1,5 +1,7 @@
 # Roadmap VertIA_v3 — V1
 
+> Archivée le 2026-11-20 sur demande de l'utilisateur. Phases 1 à 8 livrées par Codex (commit 8059b6d, « phases 1 a 8 ») puis reprises par `roadmap_portail.md` (chat en phase 7) ; statuts ci-dessous non mis à jour. Distribution aux novices hors périmètre (cadrage n° 5 de `roadmap_portail.md` : produits novices dans des dépôts séparés).
+
 Objectif : studio d'IA 100 % locale pour novices. Un chat orchestrateur pilote la génération d'images (Qwen-Image 2.1 via ComfyUI), de musique (ACE-Step 1.5) puis de vidéo, avec file d'attente GPU exclusive, garde-fous mémoire et onglet Fichiers réutilisables.
 
 Matériel de référence : RTX 4060 8 Go VRAM, 48 Go RAM, Windows 11. Une seule IA lourde en VRAM à la fois.

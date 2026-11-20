@@ -1,18 +1,1 @@
-- [piste] creation_3d : refaire la voiture en couleur (idée non lancée)
-  - fait quand: décision de lancer ou d'écarter, consignée.
-  - réf: `_orchestration/sessions.md`.
-- [dette] 9 dépôts avec travail non poussé : push reporté
-  - fait quand: `python _orchestration/pre_push_check.py` passe sur chaque dépôt puis push fait, ou report acté.
-  - réf: `_orchestration/pre_push_check.py`.
-- [amélioration] Benchmark agents : tâches non discriminantes (11 agents sur 14 au maximum) et lecture seule de T1 non mesurée pour OpenCode
-  - fait quand: tâches plus dures ajoutées et T1 rejoué avec contrôle des fichiers modifiés.
-  - réf: `_docs/benchmark_agents.md`.
-- [dette] Le moteur Qwen ne déclare pas son besoin VRAM (le portail demande 8 Go par défaut)
-  - fait quand: besoin VRAM déclaré dans le moteur et test ajouté.
-  - réf: `src/vertia/engines/comfy_qwen.py`.
-- [amélioration] Module image sans page d'interface dédiée (tuile d'accueil seulement)
-  - fait quand: page image ajoutée ou besoin écarté.
-  - réf: `modules/image/module.py`.
-- [dette] Lecture de l'encodeur Qwen (16,7 Go) en MemoryError sous pression de RAM (aimdo, mémoire épinglée) : non reproduit avec 20 Go libres ; options `--disable-pinned-memory` ou `--disable-dynamic-vram` de ComfyUI à essayer si l'erreur revient (journal `data/logs/comfy_qwen.log`)
-  - fait quand: option ajoutée au lancement ou erreur constatée absente sur plusieurs retouches.
-  - réf: `src/vertia/engines/comfy_qwen.py`.
+Backlog transféré dans `roadmap_portail.md` (section « Actions ouvertes hors phase ») le 2026-11-20.

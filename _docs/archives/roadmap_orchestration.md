@@ -1,5 +1,7 @@
 # Roadmap orchestration — sessions IA locales
 
+> Archivée le 2026-11-20 sur demande de l'utilisateur. Remplacée par `roadmap_portail.md` : creation_videos migré (phase 6), creation_3d et WorldModel abandonnés, creation_llm en phase 11 ; reprise auto après redémarrage et audit `--audit` reportés dans `roadmap_portail.md` (actions hors phase n° 8, phase 12). Phase 2 non close, calendrier GPU devenu sans objet.
+
 Objectif : VertIA devient le portail des IA locales de l'utilisateur ; ses 4 sessions (creation_3d, WorldModel, creation_llm, creation_videos) sont pilotées comme sub-agents, une seule IA en VRAM à la fois (RTX 4060 8 Go). Protocole : `_orchestration/protocole.md`.
 
 ## Phase 1 — Mécanique centralisée [FAIT]

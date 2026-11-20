@@ -27,7 +27,7 @@ VertIA_v3/
 ```
 
 ## Prérequis
-- Revue et commit des phases Codex 1 à 8 (action P1 de `_contexte/signals.md`, `roadmap_vertia_v1.md`).
+- Revue et commit des phases Codex 1 à 8 (action P1 de `_contexte/signals.md`, `_docs/archives/roadmap_vertia_v1.md`).
 - Mise à jour de `.claude/CLAUDE.md` (section Spécificités projet) selon les décisions 1, 3, 10 et 11, validée par l'utilisateur.
 
 ## Modèles par phase (efficacité et abonnement)
@@ -41,9 +41,10 @@ VertIA_v3/
 | 5 Musique et CreaZik | Opus | Codex |
 | 6 Vidéo | Sonnet | Codex |
 | 7 Chat | Sonnet | Codex |
-| 8 3D | Sonnet | Codex / OpenCode |
-| 9 Animation 3D | Sonnet | Codex / OpenCode |
-| 10 WorldModel | Sonnet | Codex |
+| 7-bis Demandes du 2026-11-19 | Opus (Sonnet pour le seul design du chat) | Codex |
+| 8 3D | abandonnée | — |
+| 9 Animation 3D | abandonnée | — |
+| 10 WorldModel | abandonnée | — |
 | 11 creation_llm | Opus | Codex |
 | 12 Nettoyage du disque | Sonnet | — |
 
@@ -61,6 +62,7 @@ Règles communes aux phases de migration (4 à 11) :
 - Ancien dossier conservé ; session correspondante fermée après validation.
 
 ## Phase 1 — Inventaire D: et C: (lecture seule) [FAIT]
+**Modèle Claude à sélectionner :** Sonnet 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Projets d'IA locale : rôle, état (actif / abandonné), taille, dépôt git (propre, non poussé), venv et version Python, dépendances.
 - Modèles et caches (HuggingFace, Ollama, ComfyUI...) sur D: et C: : taille, doublons.
 - Chemins absolus en dur (scripts, config, tâche Windows `VertIA_reprise_auto`, CLAUDE.md).
@@ -73,6 +75,7 @@ Règles communes aux phases de migration (4 à 11) :
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 2 — Architecture cible [FAIT]
+**Modèle Claude à sélectionner :** Opus 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Arborescence définitive, contrat de module (déclaration, capacités, besoins VRAM, adaptateur), `models/` partagé et jonctions, config des chemins.
 - Contrat CLI / API versionné (commandes, codes de sortie, timeout, démarrage automatique).
 - Boucle demande / génération / retour (décision utilisateur du 2026-11-15, version hybride) : demande avec critère de réussite et nombre d'essais maximal ; livraison dans `outbox/<session>/` (jamais d'écriture dans le dossier d'une session) ; retour de la session (valide / à refaire + motif) ; analyse des frictions par VertIA seulement pour un type de demande nouveau ou après 2 échecs ; journal de chaque demande, essai et retour, pour améliorer les zones et les sessions.
@@ -84,6 +87,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 3 — Socle, CLI et accueil UI [FAIT]
+**Modèle Claude à sélectionner :** Opus 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Paramètres `-Model` et `-Effort` dans `_codex/run_codex.ps1` (défaut : `gpt-6.1-sol`, `medium`).
 - Benchmark des agents : un même jeu de briefs VertIA (revue read-only, code simple, code délicat) soumis aux modèles OpenCode disponibles, Ollama locaux compris, et à Codex en `medium` / `high` ; critères : tests verts, qualité du diff, respect du brief, durée. Résultat et choix par type de tâche dans `_docs/benchmark_agents.md`.
 - Pour les modèles Ollama locaux (décision utilisateur du 2026-11-15, remplace « relancé sur ordre écrit ») : toute demande GPU passe avant l'entraînement de creation_llm, qui tourne quand rien d'autre n'est à faire ; le benchmark local a pris le jeton `vertia` et creation_llm a repris seul, contrôlé par `_orchestration/verif_reprise.py`. Fait le 2026-11-16 : synthèse dans `_docs/benchmark_agents.md`.
@@ -97,6 +101,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 4 — Image (pilote) [FAIT]
+**Modèle Claude à sélectionner :** Opus 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Migration du moteur image (ComfyUI / Qwen) selon les règles communes.
 - `vertia_gen.py image` opérationnel ; ligne d'usage ajoutée au CLAUDE.md de VertIA, proposée aux autres sessions par message.
 - Procédure de migration écrite dans `_docs/` pour les phases suivantes.
@@ -110,6 +115,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 5 — Musique, voix et branchement CreaZik_V3 [FAIT]
+**Modèle Claude à sélectionner :** Opus 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Module voix : migration de TTS_Local (Chatterbox, Kokoro) et de whisper selon les règles communes ; `vertia_gen.py voice`.
 - Migration d'ACE-Step et du système d'apprentissage de CreaZik_V3. Précision de l'inventaire : ce système est un calcul de préférences sur les votes de la webradio, pas un entraînement ; le contrat d'API précise où vit ce calcul (décision de phase 2).
 - `vertia_gen.py music` et API musique versionnée.
@@ -120,6 +126,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 6 — Vidéo [FAIT]
+**Modèle Claude à sélectionner :** Sonnet 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Migration du projet creation_videos selon les règles communes ; `vertia_gen.py video`.
 - Clips longs non interruptibles : blocs GPU entiers.
 
@@ -127,40 +134,46 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 7 — Chat [FAIT]
-- Clôture de la phase 1 de `roadmap_vertia_v1.md` et intégration du chat comme module du portail.
+**Modèle Claude à sélectionner :** Sonnet 5.5. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
+- Clôture de la phase 1 de `_docs/archives/roadmap_vertia_v1.md` et intégration du chat comme module du portail.
 - Reprise des éléments IA_V7 non encore portés, selon l'inventaire.
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 7-bis — Demandes de l'utilisateur du 2026-11-19 (ajoutées en session) [EN COURS]
+**Modèle Claude à sélectionner :** Opus 5.5 (VRAM à l'ouverture de l'UI, préchargement sous jeton, retouche dialoguée) ; Sonnet 5.5 pour le design du chat repris d'IA_V7. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Correction de la retouche IA par masque (Atelier) : échec « moteur » constaté le 2026-11-19, lecture de l'encodeur de texte (16,7 Go) en erreur mémoire ; corriger puis vérifier une retouche de bout en bout (test manuel 165 de `tests_manuels.md`). Fait le 2026-11-19 côté portail (cause : sous-processus asyncio indisponible sous le serveur à rechargement ; correctif dans `verrou.py`) ; reste le test manuel dans l'Atelier.
 - Libération de la VRAM au lancement de l'UI de VertIA : l'utilisateur doit pouvoir se servir des LLM locaux depuis l'UI ; une fonction met en pause ou libère le GPU (jeton `vertia`, pause de creation_llm) à l'ouverture de l'UI et le rend à la fermeture.
 - Design du chat : reprendre celui d'IA_V7 (disposition, couleurs, polices identiques), le design actuel ne convient pas à l'utilisateur.
 - Outil de retouche d'image dialoguée : partager une image, discuter avec un LLM local (modèle de vision) pour proposer des améliorations et des zones ; après validation de l'utilisateur, déclenchement des générations Qwen par zone (capture de la zone, génération, remplacement en calque). Limites relevées : un seul modèle à la fois sur 8 Go, texte manuscrit difficile, repérage de zones à tester.
+- Avec la libération de la VRAM : identifier le client qui charge `gemma4:e4b` en « Forever » (suspects : Aide_Visio, `keep_alive` -1 ; préchargement du portail hors `--headless`) et faire passer le préchargement par le jeton GPU (`src/vertia/engines/ollama_preload.py`). Déclarer le besoin VRAM du moteur Qwen (`src/vertia/engines/comfy_qwen.py`, test ajouté).
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
-## Phase 8 — Modélisation 3D [TODO]
-- Migration de la génération 3D de creation_3d selon les règles communes.
+## Actions ouvertes hors phase (classées du plus urgent au moins urgent, 2026-11-20)
+Source unique des actions depuis le 2026-11-20 (signals et backlog y renvoient). Retirer un point une fois fait.
+1. Contrôles manuels à valider : retouche IA et logo (`tests_manuels.md`, sections « Retouche IA et logo » et « Atelier dans le portail », Atelier v1 points 9 à 11) ; conditionne la fin de la phase 7-bis.
+2. Décision : supprimer ou garder granite4.2:8b et `models/veille/` (garder le VAE de 0,25 Go recommandé).
+3. Versionner ou écarter `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`.
+4. LFM3 : écoute de `outputs/lfm3_voix/tts_fr.wav` et décision d'usage face à gemma4:e4b (`_docs/lfm3.md`, note échue de `_contexte/notes_a_faire.md`).
+5. Diffuser une fois la ligne d'usage du portail (`vertia_gen.py`, `--note`) aux autres sessions par message ; message à jean-luc-dariol (scan abandonné, images à la main, retouche IA disponible) ; trois validations utilisateur pour toucher le CLAUDE.md d'une autre session.
+6. Fermer les sessions creation_videos (migration validée en phase 6), creation_3d et WorldModel (abandonnés le 2026-11-20).
+7. Renouveler la pause Windows Update avant le 2026-12-18 si creation_llm s'entraîne encore.
+8. Reprise auto de creation_llm après un vrai redémarrage Windows : à constater au prochain redémarrage (ligne dans `_orchestration/state/reprise.log`, `tests_manuels.md`, « Reprise auto après redémarrage ») ; sans objet si l'entraînement se termine avant.
+9. FLUX 3 Klein : licence à accepter et jeton à fournir par l'utilisateur, puis essai dans `engines/comfy-flux3` (~11 Go, ComfyUI 0.46.0 jamais lancé : vérifier la prise en charge de FLUX 3) ; résultat dans `benchmarks/veille/rapport_resultats.md`.
+10. MemoryError de l'encodeur Qwen sous pression de RAM : options ComfyUI `--disable-pinned-memory` ou `--disable-dynamic-vram` si l'erreur revient.
+11. Page d'interface dédiée au module image, ou besoin écarté.
+12. Licence Qwen Research de Qwen-Image 2.1 à lire avant tout usage commercial.
+13. Benchmark agents : tâches plus discriminantes, T1 OpenCode rejoué avec contrôle des fichiers.
+14. 9 dépôts avec travail non poussé : traité en phase 12 (archivage avant suppression).
 
-**⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
-Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
-
-## Phase 9 — Animation 3D [TODO]
-- Migration de l'animation 3D selon les règles communes.
-
-**⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
-Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
-
-## Phase 10 — WorldModel [TODO]
-- Migration de WorldModel selon les règles communes.
-
-**⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
-Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
+## Phases 8 (modélisation 3D), 9 (animation 3D) et 10 (WorldModel) [ABANDONNÉ]
+- Décision utilisateur du 2026-11-20 : creation_3d et WorldModel arrêtés, les résultats montrant qu'aucun outil local n'est assez performant pour la machine (RTX 4060 8 Go). Aucune migration ; les projets sont traités en phase 12.
 
 ## Phase 11 — Entraînement de LLM et LLM créés [TODO]
+**Modèle Claude à sélectionner :** Opus 5.5 (migration de checkpoints et de la reprise auto : risque de perte). Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Uniquement après la fin du pré-entraînement en cours.
 - Migration de creation_llm, de ses checkpoints, de `reprise_auto.py`, `reprise.json` et de la tâche Windows.
 - LLM créés utilisables dans le chat VertIA (export vers Ollama ou moteur équivalent).
@@ -170,9 +183,10 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
 ## Phase 12 — Nettoyage du disque [TODO]
-- Archivage puis suppression des projets solo migrés, un par un, avec accord explicite pour chacun.
+**Modèle Claude à sélectionner :** Sonnet 5.5 (suppressions une par une, accord explicite). Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
+- Archivage puis suppression des projets solo migrés et des projets abandonnés (creation_3d, WorldModel), un par un, avec accord explicite pour chacun ; avant archivage, audit d'historique `pre_push_check.py --audit` et push des 9 dépôts au travail non poussé.
 - Suppression des poids en double et des jonctions devenues inutiles.
-- Fin de l'orchestration multi-sessions (`_orchestration/sessions.md`, `protocole.md`).
+- Fin de l'orchestration multi-sessions (`_orchestration/sessions.md`, `protocole.md` ; roadmap d'origine archivée dans `_docs/archives/roadmap_orchestration.md`).
 
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.

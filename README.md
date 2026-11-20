@@ -18,7 +18,7 @@ Studio d'intelligence artificielle **100 % locale**, pensé pour les personnes q
 - Fichiers : copie locale des nouveaux résultats, catalogue par conversation, aperçu image/audio/vidéo, ouverture, téléchargement, dossier Windows et pièces jointes par bouton ou glisser-déposer. Les lecteurs sont testés avec des données simulées.
 - Accueil : guide de première utilisation, diagnostic local sans lancement, chemins et modèle configurables pour le prochain démarrage, récupération de la liste Ollama après indisponibilité.
 - Ollama : service démarré automatiquement avec VertIA (instance existante réutilisée), préchargement du modèle par défaut via la file GPU dès que le service est disponible, badge de chargement puis des modèles chargés. Aucun téléchargement automatique.
-- À venir : voir [roadmap_vertia_v1.md](roadmap_vertia_v1.md).
+- À venir : voir [roadmap_portail.md](roadmap_portail.md).
 
 ## Démarrer
 ```powershell
