@@ -75,8 +75,17 @@ def extraire_boite(texte):
 def analyser_dialogue(texte):
     try:
         resultat = json.loads(texte)
-    except (ValueError, RecursionError) as exc:
-        raise EngineError('JSON du modèle de dialogue illisible.') from exc
+    except (ValueError, RecursionError):
+        resultat = None
+        decodeur = json.JSONDecoder()
+        for debut in re.finditer(r'\{', texte):
+            try:
+                resultat = decodeur.raw_decode(texte, debut.start())[0]
+                break
+            except (ValueError, RecursionError):
+                continue
+        if resultat is None:
+            raise EngineError('JSON du modèle de dialogue illisible.')
     if not isinstance(resultat, dict):
         raise EngineError('Le JSON du modèle de dialogue doit être un objet.')
 

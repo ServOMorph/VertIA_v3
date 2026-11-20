@@ -68,6 +68,13 @@ def test_dialogue_borne_les_champs_et_le_nombre_de_propositions():
                                  type='objet', zone=None)] * 4
 
 
+def test_dialogue_tolere_le_texte_autour_du_json():
+    texte = 'Voici :\n```json\n{"reponse": "ok", "propositions": [{"titre": "t", "cible": "c", "prompt": "p"}]}\n```'
+    reponse, propositions = analyser_dialogue(texte)
+    assert reponse == 'ok'
+    assert propositions == [dict(titre='t', cible='c', prompt='p', type='objet', zone=None)]
+
+
 class FauxOllama:
     def __init__(self, textes):
         self.client = self
@@ -122,7 +129,7 @@ async def test_analyse_avec_reperage(contexte, tmp_path):
 
     dialogue = ollama.appels[1][1]
     messages = dialogue.pop('messages')
-    assert dialogue == dict(model='gemma4:12b', stream=False, keep_alive=300, format='json',
+    assert dialogue == dict(model='gemma4:12b', stream=False, keep_alive=300, format='json', think=False,
                             options=dict(num_ctx=8192, temperature=0.2))
     assert messages[:-1] == [dict(role='system', content=SYSTEME), dict(role='user', content='Bonjour'),
                              dict(role='assistant', content='Salut')]

@@ -114,7 +114,7 @@ class OutilAnalyse:
 
         debut = time.monotonic()
         texte = await self._chat(modeles['dialogue'], messages, dict(num_ctx=8192, temperature=0.2),
-                                 preparer=True, format='json')
+                                 preparer=True, format='json', think=False)
         reponse, propositions = analyser_dialogue(texte)
         durees = dict(dialogue=time.monotonic() - debut, reperage=0.0)
 
