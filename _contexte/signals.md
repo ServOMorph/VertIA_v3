@@ -9,7 +9,7 @@ Toutes les actions et le backlog sont suivis dans `roadmap_portail.md` (phase 7-
 - Pause GPU utilisateur : non. Un `unhold` ne se fait que sur ordre de l'utilisateur. Jeton GPU : `python _orchestration/vram_lock.py status`.
 - Portail : instance headless démarrée le 2026-11-20 pour les images du gate, répond sur le port 4310 au 2026-11-21 ; 5 demandes image du gate non clôturées par `retour`.
 - Jeton `vertia` partagé entre le portail et les scripts : un `acquire` renvoie `DEJA_DETENU` si le portail le tient, puis le portail le rend sans prévenir (creation_llm a repris le GPU pendant le gate). `scripts/benchmark_retouche_gate.py` attend désormais.
-- Diffusion de la ligne portail : VibeObs refuse de relayer ; VertIA l'envoie lui-même à chaque session concernée quand elle est en ligne (`ListAgents`), chacune validant dans sa session.
+- Diffusion de la ligne portail : aucune autre session ne l'a (constaté 2026-11-21). VibeObs a refusé de relayer ; l'utilisateur a choisi la voie du kit, ligne proposée à VibeObs Général comme template (décision séparée, réponse attendue).
 - Mode téléphone utilisé cette session, aucune correction de format reçue.
 - Résidus non commités : dossiers `.codex-test-*` (accès refusé), `.tmp_*`.
 
