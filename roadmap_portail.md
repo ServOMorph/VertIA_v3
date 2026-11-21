@@ -144,7 +144,7 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 ## Phase 7-bis — Demandes de l'utilisateur du 2026-11-19 (ajoutées en session) [EN COURS]
 **Modèle Claude à sélectionner :** Opus 5.5 (VRAM à l'ouverture de l'UI, préchargement sous jeton, retouche dialoguée) ; Sonnet 5.5 pour le design du chat repris d'IA_V7. Passer sur ce modèle juste après le `/compact` du checkpoint précédent.
 - Correction de la retouche IA par masque (Atelier) : échec « moteur » constaté le 2026-11-19, lecture de l'encodeur de texte (16,7 Go) en erreur mémoire ; corriger puis vérifier une retouche de bout en bout (test manuel 165 de `tests_manuels.md`). Fait le 2026-11-19 côté portail (cause : sous-processus asyncio indisponible sous le serveur à rechargement ; correctif dans `verrou.py`) ; reste le test manuel dans l'Atelier.
-- État au 2026-11-20 : les quatre demandes ci-dessous et le point `gemma4:e4b` sont codés et commités (1df9546, 098dbf9, 6a68c13, d112ba9, 56d0e81 ; 1070 tests verts). Restent : contrôles manuels à l'écran (`tests_manuels.md`), gate benchmark de la retouche dialoguée (6 images, IoU >= 0,5 sur 70 % des zones, `_docs/conception_retouche_dialoguee.md`), correction du `keep_alive` -1 dans la session VisioAide (client identifié, `AIDE_VISIO_OLLAMA_KEEP_ALIVE`).
+- État au 2026-11-20 : les quatre demandes ci-dessous et le point `gemma4:e4b` sont codés et commités (1df9546, 098dbf9, 6a68c13, d112ba9, 56d0e81 ; 1070 tests verts). Gate benchmark de la retouche dialoguée atteint le 2026-11-20 (21/24 zones IoU >= 0,5, JSON 6/6, `benchmarks/retouche_gate/`, commit 8ce600a ; références tracées par Claude, à valider). Restent : contrôles manuels à l'écran (`tests_manuels.md`, références du gate comprises), correction du `keep_alive` -1 dans la session VisioAide (client identifié, `AIDE_VISIO_OLLAMA_KEEP_ALIVE`).
 - Libération de la VRAM au lancement de l'UI de VertIA : l'utilisateur doit pouvoir se servir des LLM locaux depuis l'UI ; une fonction met en pause ou libère le GPU (jeton `vertia`, pause de creation_llm) à l'ouverture de l'UI et le rend à la fermeture.
 - Design du chat : reprendre celui d'IA_V7 (disposition, couleurs, polices identiques), le design actuel ne convient pas à l'utilisateur.
 - Outil de retouche d'image dialoguée : partager une image, discuter avec un LLM local (modèle de vision) pour proposer des améliorations et des zones ; après validation de l'utilisateur, déclenchement des générations Qwen par zone (capture de la zone, génération, remplacement en calque). Limites relevées : un seul modèle à la fois sur 8 Go, texte manuscrit difficile, repérage de zones à tester.
@@ -153,22 +153,31 @@ Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmati
 **⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
 Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
 
+## Phase 7-ter — LFM3 comme utilitaire texte et vision (décision utilisateur du 2026-11-20) [TODO]
+**Modèle Claude à sélectionner :** Opus 5.5 (moteur llama.cpp sous jeton GPU, routage) ; Sonnet 5.5 pour les tests et l'intégration UI.
+- Décision : LFM3-1.7B (texte) et LFM3-VL-2B (vision, OCR) deviennent des utilitaires légers (2,3 à 2,9 Go de VRAM) ; gemma4:12b reste le modèle de discussion. Voix (Audio-2B, Omni-2B) hors périmètre. Base : `_docs/lfm3.md`.
+- Moteur llama.cpp (`engines/llamacpp/`, b12427) branché au portail sous le jeton GPU, poids `models/llamacpp/lfm3/`.
+- Routage des tâches courtes et cadrées vers LFM3 (titres, résumés, extraction, choix d'outil, réécriture de prompt) ; réflexion à cadrer (boucle avec, réponses moins fiables sans).
+- Vision : OCR et description d'image par LFM3-VL ; comparer avec qwen2.5vl pour le repérage de zones de la retouche dialoguée avant tout remplacement.
+- Licence LFM Open License v1.0 (usage commercial < 10 M$ de CA) à garder en tête avant toute distribution.
+- Tests : unitaires du moteur et du routage, puis benchmark à cas verrouillés (qualité et vitesse face à gemma4:12b sur les tâches routées).
+
+**⏸ Checkpoint** — Demander à l'utilisateur de faire `/compact` avant de continuer.
+Attendre sa réponse écrite. Ne pas commencer la phase suivante sans confirmation.
+
 ## Actions ouvertes hors phase (classées du plus urgent au moins urgent, 2026-11-20)
 Source unique des actions depuis le 2026-11-20 (signals et backlog y renvoient). Retirer un point une fois fait.
-1. Contrôles manuels à valider (`tests_manuels.md`) : retouche IA et logo (sections « Retouche IA et logo » et « Atelier dans le portail », Atelier v1 points 9 à 11), GPU réservé, design du chat, retouche dialoguée ; conditionne la fin de la phase 7-bis. Puis gate benchmark de la retouche dialoguée.
-2. Décision : supprimer ou garder granite4.2:8b et `models/veille/` (garder le VAE de 0,25 Go recommandé).
-3. Versionner ou écarter `veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`.
-4. LFM3 : écoute de `outputs/lfm3_voix/tts_fr.wav` et décision d'usage face à gemma4:e4b (`_docs/lfm3.md`, note échue de `_contexte/notes_a_faire.md`).
-5. Diffuser une fois la ligne d'usage du portail (`vertia_gen.py`, `--note`) aux autres sessions par message ; message à jean-luc-dariol (scan abandonné, images à la main, retouche IA disponible) ; trois validations utilisateur pour toucher le CLAUDE.md d'une autre session.
-6. Fermer les sessions creation_videos (migration validée en phase 6), creation_3d et WorldModel (abandonnés le 2026-11-20).
-7. Renouveler la pause Windows Update avant le 2026-12-18 si creation_llm s'entraîne encore.
-8. Reprise auto de creation_llm après un vrai redémarrage Windows : à constater au prochain redémarrage (ligne dans `_orchestration/state/reprise.log`, `tests_manuels.md`, « Reprise auto après redémarrage ») ; sans objet si l'entraînement se termine avant.
-9. FLUX 3 Klein : licence à accepter et jeton à fournir par l'utilisateur, puis essai dans `engines/comfy-flux3` (~11 Go, ComfyUI 0.46.0 jamais lancé : vérifier la prise en charge de FLUX 3) ; résultat dans `benchmarks/veille/rapport_resultats.md`.
-10. MemoryError de l'encodeur Qwen sous pression de RAM : options ComfyUI `--disable-pinned-memory` ou `--disable-dynamic-vram` si l'erreur revient.
-11. Page d'interface dédiée au module image, ou besoin écarté.
-12. Licence Qwen Research de Qwen-Image 2.1 à lire avant tout usage commercial.
-13. Benchmark agents : tâches plus discriminantes, T1 OpenCode rejoué avec contrôle des fichiers.
-14. 9 dépôts avec travail non poussé : traité en phase 12 (archivage avant suppression).
+1. Contrôles manuels à valider (`tests_manuels.md`) : retouche IA et logo (sections « Retouche IA et logo » et « Atelier dans le portail », Atelier v1 points 9 à 11), GPU réservé, design du chat, retouche dialoguée ; conditionne la fin de la phase 7-bis. Inclut la validation des références du gate (`benchmarks/retouche_gate/references.json`).
+2. Diffuser une fois la ligne d'usage du portail (`vertia_gen.py`) aux autres sessions : proposée à VibeObs Général le 2026-11-21, réponse attendue (l'option `--note` n'existe pas dans `vertia_gen.py`) ; message à jean-luc-dariol (scan abandonné, images à la main, retouche IA disponible) ; trois validations utilisateur pour toucher le CLAUDE.md d'une autre session.
+3. Fermer les sessions creation_videos (migration validée en phase 6), creation_3d et WorldModel (abandonnés le 2026-11-20).
+4. Renouveler la pause Windows Update avant le 2026-12-18 si creation_llm s'entraîne encore.
+5. Reprise auto de creation_llm après un vrai redémarrage Windows : à constater au prochain redémarrage (ligne dans `_orchestration/state/reprise.log`, `tests_manuels.md`, « Reprise auto après redémarrage ») ; sans objet si l'entraînement se termine avant.
+6. FLUX 3 Klein : licence à accepter et jeton à fournir par l'utilisateur, puis essai dans `engines/comfy-flux3` (~11 Go, ComfyUI 0.46.0 jamais lancé : vérifier la prise en charge de FLUX 3) ; résultat dans `benchmarks/veille/rapport_resultats.md`.
+7. MemoryError de l'encodeur Qwen sous pression de RAM : options ComfyUI `--disable-pinned-memory` ou `--disable-dynamic-vram` si l'erreur revient.
+8. Page d'interface dédiée au module image, ou besoin écarté.
+9. Licence Qwen Research de Qwen-Image 2.1 à lire avant tout usage commercial.
+10. Benchmark agents : tâches plus discriminantes, T1 OpenCode rejoué avec contrôle des fichiers.
+11. 9 dépôts avec travail non poussé : traité en phase 12 (archivage avant suppression).
 
 ## Phases 8 (modélisation 3D), 9 (animation 3D) et 10 (WorldModel) [ABANDONNÉ]
 - Décision utilisateur du 2026-11-20 : creation_3d et WorldModel arrêtés, les résultats montrant qu'aucun outil local n'est assez performant pour la machine (RTX 4060 8 Go). Aucune migration ; les projets sont traités en phase 12.

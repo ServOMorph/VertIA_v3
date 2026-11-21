@@ -1,5 +1,15 @@
 # Changelog
 
+## v0.6.0 - 2026-11-21
+
+### Ajouté
+- Gate benchmark de la retouche dialoguée : `scripts/benchmark_retouche_gate.py`, `benchmarks/retouche_gate/` (6 images, 24 zones de référence) ; 21/24 zones IoU >= 0,5, JSON 6/6.
+- Veille du 2026-11-19 et benchmarks associés versionnés (`veille/`, `benchmarks/veille/`, `scripts/benchmark_*_veille.py`).
+- Phase 7-ter dans `roadmap_portail.md` : LFM3 comme utilitaire texte et vision.
+
+### Modifié
+- granite4.2:8b et le fichier partiel MOSS-Image supprimés (hors dépôt).
+
 ## v0.5.0 - 2026-11-20
 
 ### Ajouté
